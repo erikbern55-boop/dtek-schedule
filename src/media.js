@@ -71,26 +71,42 @@ export async function publishCard({ schedule, date, label, update, source, messa
   })
   const same = lastMessage.scheduleText === message.scheduleText
   const priorPhoto = Boolean(lastMessage.message_id) && lastMessage.kind === "photo"
+  const imageRefresh = priorPhoto && same && (lastMessage.source !== source || lastMessage.update !== update)
 
-  // Keep the photo in place on routine checks; only its text timestamp is updated.
+  // Routine checks update the caption. A changed data timestamp or source
+  // replaces the photo in place, without posting a fresh notification.
   if (same && priorPhoto) {
     try {
-      const result = await callTelegram("editMessageCaption", {
-        chat_id: TELEGRAM_CHAT_ID, message_id: lastMessage.message_id,
-        caption, parse_mode: "HTML",
-      })
+      let result
+      if (imageRefresh) {
+        const png = await renderCardPng({ schedule, date, label, update, source })
+        const form = new FormData()
+        form.set("chat_id", String(TELEGRAM_CHAT_ID))
+        form.set("message_id", String(lastMessage.message_id))
+        form.set("media", JSON.stringify({
+          type: "photo", media: "attach://chart", caption, parse_mode: "HTML",
+        }))
+        form.set("chart", new Blob([png], { type: "image/png" }), "svitlopuls.png")
+        result = await callTelegram("editMessageMedia", form)
+        console.log("🟢 Refreshed existing card's source/time information")
+      } else {
+        result = await callTelegram("editMessageCaption", {
+          chat_id: TELEGRAM_CHAT_ID, message_id: lastMessage.message_id,
+          caption, parse_mode: "HTML",
+        })
+        console.log("🟢 Updated the existing card caption")
+      }
       saveLastMessage({
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
         scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-        scheduleDay: date, kind: "photo",
+        scheduleDay: date, kind: "photo", source, update,
       }, stateFile)
-      console.log("🟢 Updated the existing card caption")
     } catch (error) {
       if (String(error).includes("message is not modified")) {
         console.log("🟡 Caption already up to date")
       } else {
-        console.warn("⚠️ Telegram caption update failed: " + error.message)
+        console.warn("⚠️ Telegram photo edit failed: " + error.message)
       }
     }
     return
@@ -110,7 +126,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "photo",
+      scheduleDay: date, kind: "photo", source, update,
     }, stateFile)
     console.log("🟢 Svitlopuls graphical card with caption published")
   } catch (error) {
@@ -127,7 +143,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "text",
+      scheduleDay: date, kind: "text", source, update,
     }, stateFile)
     console.log("🟢 Backup text schedule published")
   }
