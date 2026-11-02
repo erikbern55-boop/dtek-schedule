@@ -1,4 +1,5 @@
 import { chromium } from "playwright"
+import { describeScheduleChanges } from "./changes.js"
 
 import {
   checkIsNight,
@@ -103,7 +104,7 @@ function generateSchedule({ data, today }) {
   }
 }
 
-function generateMessage(schedule = [], update) {
+function generateMessage(schedule = [], update, lastMessage = {}) {
   console.log("🌀 Generating message...")
 
   const isShutdownsExists = schedule.some(({ power }) => !power)
@@ -119,7 +120,15 @@ function generateMessage(schedule = [], update) {
       : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}</code>`)),
   ].join("\n")
 
+  const changeSummary =
+    lastMessage.scheduleText && lastMessage.scheduleText !== scheduleText
+      ? describeScheduleChanges(lastMessage.scheduleText, schedule)
+      : lastMessage.scheduleText === scheduleText
+        ? (lastMessage.changeSummary ?? "")
+        : ""
+
   const text = [
+    ...(changeSummary ? [changeSummary, ""] : []),
     `⚡️ <b>Графік відключень на сьогодні:</b>`,
     scheduleText,
     "",
@@ -127,10 +136,10 @@ function generateMessage(schedule = [], update) {
     `🤖 <i>${getCurrentTime()}</i>`,
   ].join("\n")
 
-  return { text, scheduleText }
+  return { text, scheduleText, changeSummary }
 }
 
-async function sendNotification({ text, scheduleText }) {
+async function sendNotification({ text, scheduleText, changeSummary }) {
   if (!TELEGRAM_BOT_TOKEN) throw Error("❌ Missing telegram bot token.")
   if (!TELEGRAM_CHAT_ID) throw Error("❌ Missing telegram chat id.")
 
@@ -176,7 +185,7 @@ async function sendNotification({ text, scheduleText }) {
       throw Error(data.description)
     }
 
-    saveLastMessage({ ...data.result, scheduleText })
+    saveLastMessage({ ...data.result, scheduleText, changeSummary })
 
     console.log("🟢 Notification sent.")
   } catch (error) {
@@ -205,7 +214,7 @@ async function run() {
   }
 
   const schedule = generateSchedule(data)
-  const message = generateMessage(schedule, data.update)
+  const message = generateMessage(schedule, data.update, loadLastMessage() || {})
 
   await sendNotification(message)
 }
