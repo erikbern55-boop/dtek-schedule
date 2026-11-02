@@ -130,7 +130,7 @@ export function buildCardHtml({ schedule, date, label, update, source, now = new
     ? allPeriods.slice(0, 5).join("") + '<div class="period">Ще ' + (allPeriods.length - 5) + ' періодів — у підписі</div>'
     : allPeriods.join("")
   const outageRows = outagePeriods.slice(0, 4).map((p) => {
-    return '<div class="outage-row"><span class="power-icon">⏻</span><strong>' +
+    return '<div class="outage-row"><span class="power-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 5v15" stroke="#ff6677" stroke-width="5" stroke-linecap="round"/><path d="M11 12a14 14 0 1 0 18 0" stroke="#ff6677" stroke-width="5" stroke-linecap="round" fill="none"/></svg></span><strong>' +
       escape(p.begin) + ' — ' + escape(p.end) + '</strong><em>' +
       escape(formatDuration(minutes(p.end) - minutes(p.begin))) + '</em></div>'
   }).join("")
