@@ -1,0 +1,564 @@
+<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>*{box-sizing:border-box}
+html,body{width:1404px;margin:0;background:#020e08;color:#f0fff3;font-family:Arial,sans-serif}
+.v3{width:1404px;padding:22px 26px 18px;background:radial-gradient(ellipse at 50% 10%,#083b20,#020e08 76%)}
+.v3-head{display:grid;grid-template-columns:245px 1fr 230px;align-items:center;gap:14px;min-height:112px}
+.v3-place{font-size:20px;line-height:1.4}.v3-place strong{display:block;font-size:28px;color:#caff9b}
+.v3-brand{text-align:center}.v3-brand strong{display:block;font-size:62px;letter-spacing:1px;color:#b4ffad;text-shadow:0 0 20px #3df55a}
+.v3-brand small{display:block;font-size:15px;color:#c9e5d1}
+.v3-tag{text-align:center;font-size:22px;font-weight:bold;line-height:1.3}
+.v3-row{display:grid;gap:14px;margin-top:14px;align-items:stretch}
+.v3-power{grid-template-columns:1.34fr .91fr 1.03fr}
+.v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border:3px solid #4dfd63;border-radius:24px;background:radial-gradient(ellipse at 50% 50%,#0b4b2b,#02190f 85%);box-shadow:inset 0 0 18px #0d7837,0 0 12px #158c35;padding:15px}
+.v3-power>.v3-panel{height:310px;overflow:hidden}
+.v3-date{text-align:center;font-size:24px;font-weight:bold}.v3-date b{display:block;font-size:30px;margin:5px}
+.v3-dial{width:260px;height:245px;margin:-5px auto 0}.v3-dial svg{width:100%;height:100%}
+.v3-title{font-size:28px;text-align:center;font-weight:900;margin:0 0 14px}
+.v3-count{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.v3-count .v3-clock{font-size:72px;color:#a6ff9c;font-weight:900;text-shadow:0 0 12px #20a34c}
+.v3-count .v3-next{font-size:21px;line-height:1.3;margin-top:14px}
+.v3-periods{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow:auto}
+.v3-period{display:flex;justify-content:space-between;gap:8px;border:2px solid #54ec78;border-radius:15px;padding:7px 10px;font-size:18px;background:#08472a}
+.v3-period.off{background:#4d1b24;border-color:#ff6977}
+.v3-totals{display:flex;justify-content:space-between;font-size:16px;margin-top:12px}
+.v3-timeline{margin-top:12px}.v3-timeline .timeline{height:24px;display:flex;overflow:hidden;border-radius:20px}
+.v3-timeline .timeline span{display:block;height:24px}
+.v3-timeline .timeline-labels{display:flex;justify-content:space-between;font-size:14px}
+.v3-weather .weather-zone{margin:0;padding:0;border:0;background:transparent}
+.v3-weather .weather-title{display:none}
+.v3-weather .wx-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.v3-weather .weather-air{grid-column:1/6;grid-row:1}
+.v3-weather .weather-tomorrow{grid-column:6/9;grid-row:1}
+.v3-weather .weather-sun{grid-column:9/11;grid-row:1}
+.v3-weather .weather-soil{grid-column:11/13;grid-row:1}
+.v3-weather .wx-right-stack{display:contents}
+.v3-weather .weather-garden{grid-column:1/13;grid-row:2}
+.v3-weather .weather-moon{grid-column:1/6;grid-row:3}
+.v3-weather .weather-astro{grid-column:6/13;grid-row:3}
+.v3-weather .wx-box{min-width:0;padding:16px}
+.v3-weather .wx-box h3{font-size:27px;margin:0 0 12px}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:230px}
+.v3-weather .weather-garden{min-height:245px}
+.v3-weather .weather-moon,.v3-weather .weather-astro{min-height:190px}
+.v3-weather .weather-sun,.v3-weather .weather-soil{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px}
+.v3-weather .wx-sun-pair,.v3-weather .wx-soil-pair{display:flex;flex-direction:column;gap:14px;align-items:center}
+.v3-weather .wx-sun-pair b{font-size:29px}.v3-weather .wx-soil-pair strong{font-size:58px}
+.v3-weather .wx-garden-art{font-size:74px;min-width:120px}
+.v3-weather .wx-garden-copy{font-size:21px}
+.v3-weather .wx-credit{font-size:13px;line-height:1.3;margin-top:10px}
+.v3-sources{display:grid;grid-template-columns:1.35fr repeat(5,1fr);gap:10px;font-size:16px;margin-top:14px}
+.v3-sources span{border-left:1px solid #58b979;padding-left:9px}
+.v3-footer{margin-top:14px;display:flex;justify-content:space-between;font-size:16px;padding:12px 18px}
+.weather-zone{margin-top:14px;padding:17px;border:2px solid #44ef7b;border-radius:27px;background:linear-gradient(145deg,#062e21,#00160e);box-shadow:inset 0 0 18px #063d26,0 0 14px #09592e}.weather-title{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #2bb46b;padding:0 3px 13px;gap:12px}.weather-title strong{font-size:35px;color:#e1ffe8;text-shadow:0 0 8px #2ba965;white-space:nowrap}.weather-title span{font-size:16px;color:#b4dcc3;text-align:right}.wx-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:13px}.wx-box{min-width:0;border:2px solid #31e27f;border-radius:21px;padding:16px 15px;background:radial-gradient(circle at 10% 100%,#12432b,#032318 72%);box-shadow:inset 0 0 12px #075632;overflow:hidden}.wx-box h3{font-size:25px;font-weight:900;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid #389e70;line-height:1.14}.wx-warning{background:#f5d637;color:#142312;display:inline-block;border-radius:11px;padding:8px 12px;margin-bottom:12px;font-size:20px;font-weight:900;max-width:100%;line-height:1.22}.wx-warning.neutral{background:#175639;color:#d4f8dd;border:1px solid #398a5a}.wx-weather-main{display:flex;align-items:center;gap:13px;margin:3px 0 10px}.wx-symbol{font-size:68px;line-height:1}.wx-now-label{font-size:19px;color:#d2ffde;font-weight:800}.wx-now{font-size:55px;font-weight:900;white-space:nowrap;line-height:1.05}.wx-now-at{font-size:15px;color:#acd5bc;margin-top:4px}.wx-today-box{border:1px solid #48ad72;border-radius:12px;background:#0d422d;padding:10px 11px;margin:13px 0 8px}.wx-today-heading{font-size:20px;font-weight:900;color:#d0ffb9;margin-bottom:8px}.wx-today-box .wx-forecast-values div{background:#062d1c}.wx-forecast-box{border:1px solid #c9b24b;border-radius:12px;background:#0c3c2b;padding:9px 10px;margin:12px 0}.wx-forecast-heading{font-size:19px;font-weight:900;color:#edffb1;margin-bottom:8px}.wx-forecast-values{display:grid;grid-template-columns:1fr 1fr;gap:6px}.wx-forecast-values div{border-radius:9px;background:#082d20;padding:7px 5px;font-size:17px;text-align:center;color:#dcf5e5}.wx-forecast-values b{display:block;font-size:29px;color:white;white-space:nowrap}.wx-cond{font-size:21px;color:#dcefe6;line-height:1.25}.wx-facts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}.wx-fact{background:transparent;border:0;border-radius:0;padding:8px 10px;font-size:18px;line-height:1.3;color:#e9ffef}.wx-fact.wide{grid-column:1/-1}.wx-fact b{font-size:22px;color:white}.wx-right-stack{min-width:0;display:flex;flex-direction:column;gap:11px}.wx-right-stack .wx-box{flex:none;min-width:0}.wx-right-stack .weather-garden{flex:none;display:flex;flex-direction:column}.wx-right-stack .weather-soil{flex:none}.wx-right-stack .wx-box h3{font-size:23px;margin-bottom:9px}.wx-right-stack .wx-garden-body{gap:10px;flex:none;align-items:center}.wx-right-stack .wx-garden-art{font-size:66px;min-width:78px;min-height:110px;padding:12px 0}.wx-right-stack .wx-garden-heading{font-size:21px;margin-bottom:8px}.wx-right-stack .wx-garden-copy{font-size:19px;line-height:1.3}.wx-right-stack .wx-soil-icon{font-size:32px;margin:0}.wx-right-stack .wx-soil-number{font-size:37px}.wx-right-stack .wx-caption{font-size:15px}.wx-right-stack .wx-sun-label{font-size:16px}.wx-right-stack .wx-sun-time{font-size:32px;margin:2px 0 4px}.wx-right-stack .wx-sun-divider{margin:5px 0}.wx-right-stack .weather-soil{padding:9px 12px;border-radius:14px}.wx-right-stack .weather-soil h3{font-size:17px;margin-bottom:5px;padding-bottom:5px}.wx-right-stack .wx-soil-sun{grid-template-columns:1fr 1.35fr;gap:8px;align-items:center}.wx-right-stack .wx-soil-icon{display:none}.wx-right-stack .wx-soil-number{font-size:28px}.wx-right-stack .wx-caption{font-size:11px;line-height:1.15}.wx-right-stack .wx-half+.wx-half{padding-left:8px}.wx-right-stack .wx-sun-label{font-size:12px}.wx-right-stack .wx-sun-time{font-size:23px;margin:0}.wx-right-stack .wx-sun-divider{margin:3px 0}.wx-moon-disc{width:123px;height:123px;display:block;filter:drop-shadow(0 0 9px #4d7f8c)}.wx-astro{border-color:#9c81ec;background:linear-gradient(135deg,#112d2f,#16112f 95%);box-shadow:inset 0 0 16px #29204f,0 0 10px #35266c}.wx-astro h3{border-bottom-color:#7465b4}.wx-astro-tag{color:#ffd85b;font-weight:900;font-size:20px;margin:-2px 0 9px}.wx-astro-body{display:flex;gap:13px;align-items:flex-start}.wx-astro-symbol{flex:0 0 105px;width:105px;height:105px;border-radius:50%;border:2px solid #ae9bea;background:radial-gradient(circle,#262052,#0e1e2b);font-size:66px;color:#d8c0ff;display:flex;align-items:center;justify-content:center;text-shadow:0 0 15px #a063f7;box-shadow:0 0 18px #6e4497}.wx-astro-copy{font-size:20px;line-height:1.32;color:#f5f4ff}.wx-astro-copy b{color:#ffe36c;display:block;margin-bottom:7px;font-size:23px}.wx-astro-disclaimer{border-top:1px solid #7c6db6;padding-top:9px;margin-top:14px;font-size:16px;color:#dfd6ef;text-align:center;font-style:italic}.wx-fact.gust{background:#0b3c2c}.wx-fact.windline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;font-size:17px;white-space:nowrap}.wx-fact.windline b{flex-shrink:0;white-space:nowrap;font-size:21px}.wx-facts{margin-top:8px;margin-bottom:11px}.wx-fact{font-size:17px;padding:7px 8px}.wx-fact b{font-size:20px}.wx-forecast-box{margin-top:9px;margin-bottom:0}.wx-soil-sun{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wx-half{min-width:0}.wx-half+.wx-half{border-left:2px solid #25794e;padding-left:12px}.wx-soil-icon{font-size:48px;line-height:1.15;margin:4px 0}.wx-soil-number{font-size:51px;font-weight:900;color:#f4fff7;white-space:nowrap}.wx-caption{font-size:17px;color:#b9e3cb;line-height:1.34}.wx-sun-label{font-size:18px;color:#d8f4dd}.wx-sun-time{font-size:40px;font-weight:900;color:white;margin:3px 0 8px}.wx-sun-divider{border-top:1px solid #2a7853;margin:9px 0}.wx-moon-main{display:flex;gap:18px;align-items:center;margin:5px 0 12px}.wx-moon-icon{font-size:105px;line-height:1.07;min-width:125px;text-align:center}.wx-moon-number{font-size:46px;font-weight:900;color:#e8ffc4;white-space:nowrap}.wx-moon-note{font-size:18px;color:#d9f6e3;line-height:1.33}.wx-moon-rows{border-top:1px solid #3d9f6a}.wx-moon-row{font-size:21px;padding:7px 1px;border-bottom:1px solid #245e44;display:flex;justify-content:space-between;gap:9px;line-height:1.3}.wx-moon-row b{color:#fafffc;text-align:right}.weather-moon .wx-moon-rows .wx-moon-row:first-child{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}.v3-weather .weather-moon .wx-moon-row .wx-lunar-day{font-size:21px!important;margin-right:12px!important;font-weight:900!important}.weather-moon .wx-lunar-day{color:#fff5a1;font-weight:900}.wx-garden-body{display:flex;gap:14px;align-items:flex-start}.wx-garden-art{font-size:95px;line-height:1.05;min-width:120px;text-align:center;background:radial-gradient(circle,#1c5b31,#08261a 72%);border-radius:18px;padding:14px 0;min-height:165px}.wx-garden-copy{font-size:22px;line-height:1.35;min-width:0}.wx-garden-heading{font-size:22px;color:#edec5d;font-weight:900;margin:0 0 12px;line-height:1.25}.wx-sowing{margin-top:12px;display:flex;flex-direction:column;gap:8px}.wx-sowing-row{border:1px solid #397d57;border-radius:12px;padding:9px 11px;font-size:17px;line-height:1.32;background:#092d20}.wx-sowing-row b{display:block;font-size:18px;margin-bottom:3px}.wx-sowing-row.good{border-color:#40d977}.wx-sowing-row.good b{color:#b4ffbd}.wx-sowing-row.avoid{border-color:#dc6671}.wx-sowing-row.avoid b{color:#ffb8bc}.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}.wx-sowing-row.lunar b{color:#dec7ff}.wx-grid>.weather-sun,.wx-grid>.weather-soil{grid-column:auto;padding:8px 13px;min-height:62px}.wx-grid>.weather-sun h3,.wx-grid>.weather-soil h3{display:inline;font-size:15px;margin:0 7px 0 0;padding:0;border:0}.wx-sun-pair{display:inline-flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px}.wx-sun-pair span{white-space:nowrap}.wx-sun-pair b{font-size:18px;color:#fff;margin-left:4px}.wx-soil-pair{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}.wx-soil-pair strong{font-size:22px;color:#fff}.wx-soil-pair span{font-size:11px;color:#d8f4dd}.wx-grid>.weather-soil{grid-column:auto;padding:10px 14px}.wx-grid>.weather-soil h3{display:block;font-size:18px;margin:0 0 5px;padding:0;border:0}.wx-grid>.weather-soil .wx-soil-sun{display:flex;align-items:center;justify-content:space-around;gap:12px}.wx-grid>.weather-soil .wx-half{display:flex;align-items:center;gap:9px}.wx-grid>.weather-soil .wx-half+.wx-half{border-left:1px solid #25794e;padding-left:12px}.wx-grid>.weather-soil .wx-soil-icon{display:none}.wx-grid>.weather-soil .wx-soil-number{font-size:25px}.wx-grid>.weather-soil .wx-caption{font-size:12px;max-width:115px}.wx-grid>.weather-soil .wx-sun-label{font-size:13px}.wx-grid>.weather-soil .wx-sun-time{font-size:23px;margin:0}.wx-grid>.weather-soil .wx-sun-divider{margin:2px 0}.wx-right-stack .wx-garden-art{display:none}.wx-right-stack .wx-garden-copy{font-size:19px}.wx-right-stack .wx-garden-heading{font-size:19px;margin-bottom:5px}.wx-right-stack .wx-sowing{gap:6px;margin-top:8px}.wx-right-stack .wx-sowing-row{padding:7px 9px;font-size:18px;line-height:1.22}.wx-right-stack .wx-sowing-row b{font-size:19px;margin-bottom:2px}.wx-source-note{margin-top:9px;border-top:1px solid #387e58;padding-top:8px;color:#c4e7ce;font-size:15px;line-height:1.35}.wx-credit{margin-top:15px;font-size:16px;color:#b7debf;text-align:center;line-height:1.35}
+.v3-weather .wx-grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}
+.v3-weather .weather-air{grid-column:1/5!important;grid-row:1!important}
+.v3-weather .weather-tomorrow{grid-column:5/8!important;grid-row:1!important}
+.v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}
+.v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}
+.v3-weather .wx-right-stack{grid-column:1/13!important;grid-row:2!important;display:block!important}
+.v3-weather .weather-garden{width:100%!important;min-height:210px!important}
+.v3-weather .wx-garden-body{display:flex!important;align-items:center!important;gap:20px!important}
+.v3-weather .wx-garden-art{font-size:64px!important;min-width:110px!important}
+.v3-weather .wx-sowing{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+.v3-weather .wx-sowing-row.lunar,.v3-weather .wx-source-note{grid-column:1/3!important}
+.v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}
+.v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}
+.v3-weather .wx-box{min-height:0!important;overflow:visible!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:230px!important}
+.v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:center!important}
+.v3-weather .weather-air .wx-now{font-size:46px!important}
+.v3-weather .wx-box h3{font-size:21px!important}
+.v3-weather .wx-fact{font-size:15px!important}
+.v3-weather .wx-credit{font-size:13px!important}
+.v3-head{grid-template-columns:245px 1fr 210px!important;min-height:135px!important}
+.v3-brand strong{font-size:54px!important}
+.v3-place:before{content:'🤖';font-size:52px;float:left;margin-right:8px}
+.v3-power>.v3-panel{height:295px!important}
+.v3-dial{height:220px!important}
+.v3-count .v3-clock{font-size:65px!important}
+.v3-periods{max-height:145px!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{min-height:185px!important}
+.v3-weather .wx-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.v3-weather .weather-air{grid-column:1/6;grid-row:1}
+.v3-weather .weather-tomorrow{grid-column:6/9;grid-row:1}
+.v3-weather .weather-sun{grid-column:9/11;grid-row:1}
+.v3-weather .weather-soil{grid-column:11/13;grid-row:1}
+.v3-weather .wx-right-stack{display:contents}
+.v3-weather .weather-garden{grid-column:1/13;grid-row:2}
+.v3-weather .weather-moon{grid-column:1/6;grid-row:3}
+.v3-weather .weather-astro{grid-column:6/13;grid-row:3}
+.v3-weather .wx-box{border:3px solid #4dfd63;border-radius:24px;background:radial-gradient(ellipse,#0b4b2b,#02190f 85%);padding:16px;min-width:0}
+.v3-weather .weather-sun,.v3-weather .weather-soil{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px}
+.v3-weather .wx-sun-pair,.v3-weather .wx-soil-pair{display:flex;flex-direction:column;align-items:center;gap:14px}
+.v3-weather .weather-tomorrow .wx-forecast-box{display:block;border:0;background:transparent;padding:6px}
+.v3-weather .weather-tomorrow .wx-forecast-values{display:flex;flex-direction:column;gap:15px}
+.v3-weather .wx-box h3{font-size:22px;margin:0 0 9px}
+.v3-weather .wx-box{padding:12px}
+.v3-weather .wx-grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}
+.v3-weather .weather-air{grid-column:1/5!important;grid-row:1!important}
+.v3-weather .weather-tomorrow{grid-column:5/8!important;grid-row:1!important}
+.v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}
+.v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}
+.v3-weather .wx-right-stack{grid-column:1/13!important;grid-row:2!important;display:block!important}
+.v3-weather .weather-garden{grid-column:auto!important;grid-row:auto!important;width:100%!important;min-height:210px!important}
+.v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}
+.v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}
+.v3-weather .wx-box{min-height:0!important;overflow:visible!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:230px!important}
+.v3-weather .wx-sowing{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+.v3-weather .wx-sowing-row.lunar,.v3-weather .wx-source-note{grid-column:1/3!important}
+.v3-weather .wx-box h3{font-size:21px!important}
+.v3-weather .wx-fact{font-size:15px!important}
+.v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:center!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{min-height:185px!important}
+.v3-robot{width:105px;height:118px;float:left;margin:-8px 8px 0 -4px;filter:drop-shadow(0 0 12px #34e878)}
+.v3-place:before{content:none!important}
+.v3-place{font-size:17px!important}
+.v3-place strong{font-size:24px!important}
+.v3{padding:14px 20px 12px!important}
+.v3-row{gap:10px!important;margin-top:9px!important}
+.v3-power>.v3-panel{height:255px!important;padding:10px!important}
+.v3-dial{height:182px!important;width:210px!important}
+.v3-date{font-size:19px!important}
+.v3-date b{font-size:23px!important}
+.v3-title{font-size:23px!important;margin-bottom:8px!important}
+.v3-weather .wx-grid{gap:9px!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:190px!important}
+.v3-weather .wx-box{padding:11px!important;border-radius:19px!important}
+.v3-weather .weather-garden{min-height:190px!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{min-height:160px!important}
+.v3-sources{margin-top:9px!important;padding:10px!important;font-size:14px!important}
+.v3-footer{margin-top:9px!important;padding:9px!important;font-size:14px!important}
+.v3-weather .wx-garden-art{font-size:0!important;min-width:140px!important;width:140px!important;height:140px!important}
+.v3-weather .wx-garden-art svg{width:140px!important;height:140px!important}
+.v3-weather .wx-moon-icon svg{width:110px!important;height:110px!important}
+.v3-head{min-height:112px!important;gap:10px!important}
+.v3-robot{height:112px!important;width:103px!important}
+.v3-brand strong{font-size:49px!important}
+.v3-power>.v3-panel{height:240px!important}
+.v3-weather .wx-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:10px!important}
+.v3-weather .weather-air{grid-column:1/6!important;grid-row:1!important}
+.v3-weather .weather-tomorrow{grid-column:6/8!important;grid-row:1!important}
+.v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}
+.v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}
+.v3-weather .wx-right-stack{display:contents!important}
+.v3-weather .weather-garden{grid-column:1/13!important;grid-row:2!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px 18px!important;min-height:0!important}
+.v3-weather .weather-garden h3{grid-column:1/-1!important;margin-bottom:0!important}
+.v3-weather .wx-garden-body{grid-column:1!important;display:flex!important;align-items:flex-start!important}
+.v3-weather .wx-sowing{grid-column:2!important;display:flex!important;flex-direction:column!important;gap:5px!important;margin-top:0!important}
+.v3-weather .wx-sowing-row{font-size:15px!important;line-height:1.17!important;padding:5px 8px!important}
+.v3-weather .wx-sowing-row b{font-size:16px!important;margin-bottom:2px!important}
+.v3-weather .wx-source-note{font-size:12px!important;line-height:1.15!important;margin-top:3px!important;padding-top:4px!important}
+.v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}
+.v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}
+.v3-weather .weather-air .wx-facts{margin-top:4px!important;margin-bottom:3px!important;gap:3px!important}
+.v3-weather .weather-air .wx-fact{padding:3px 6px!important;font-size:14px!important}
+.v3-weather .wx-today-box{margin:4px 0!important;padding:5px!important}
+.v3-weather .wx-warning{font-size:14px!important;padding:4px 7px!important;margin-bottom:5px!important}
+.v3-weather .wx-weather-main{margin:1px 0 4px!important}
+.v3-weather .wx-box h3{padding-bottom:5px!important;margin-bottom:5px!important}
+.v3-weather .weather-moon .wx-moon-main{margin:0 0 5px!important}
+.v3-weather .wx-moon-row{font-size:17px!important;padding:3px!important}
+.v3-weather .wx-astro-disclaimer{margin-top:6px!important;padding-top:4px!important;font-size:12px!important}
+.v3-weather .wx-credit{font-size:11px!important;margin-top:5px!important;line-height:1.15!important}
+.v3-head{min-height:104px!important}
+.v3-row{margin-top:6px!important}
+.v3-power>.v3-panel{height:234px!important}
+.v3-weather .weather-zone{margin-top:7px!important;padding:8px!important}
+.v3-weather .wx-grid{gap:7px!important}
+.v3-sources{margin-top:6px!important;padding:7px!important}
+.v3-footer{margin-top:6px!important;padding:7px!important}
+.v3-sources,.v3-footer{margin-top:1px!important}
+.v3-weather .wx-garden-art{display:block!important;flex:0 0 110px!important;min-width:110px!important;width:110px!important;height:105px!important;min-height:105px!important;padding:0!important;margin-right:10px!important;background:transparent!important}
+.v3-weather .wx-garden-art svg{display:block!important;width:110px!important;height:105px!important}
+.v3-weather .wx-garden-copy{font-size:18px!important;line-height:1.23!important}
+.v3-weather .weather-garden{align-items:start!important}
+.v3{padding-top:10px!important;padding-bottom:8px!important}
+.v3-head{min-height:100px!important}
+.v3-brand strong{font-size:52px!important;letter-spacing:-1px!important;color:#63fa59!important;text-shadow:0 0 12px #3df55a!important}
+.v3-brand small{font-size:16px!important}
+.v3-tag{border:2px solid #67fa58;border-radius:20px;padding:9px 6px;font-size:17px!important;background:#05210f}
+.v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{box-shadow:inset 0 0 14px #0d7837,0 0 10px #158c35!important}
+.v3{padding-top:8px!important;padding-bottom:6px!important}
+.v3-robot{filter:drop-shadow(0 0 7px #6dfb91) drop-shadow(0 0 16px #217f52)!important}
+.v3-brand strong{font-weight:900!important;letter-spacing:-1.5px!important;text-shadow:0 0 5px #9fff8e,0 0 19px #2ad958!important}
+.v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#5cf86a!important;box-shadow:inset 0 0 12px #0a6c35,0 0 8px #168f3b,0 0 2px #b7ffb9!important}
+.v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}
+.v3-sources a{color:#80dcff!important;text-decoration:underline!important;text-underline-offset:3px!important}
+.v3-sources{min-height:86px!important;align-items:center!important;padding:12px 14px!important;box-sizing:border-box!important}
+.v3-sources span{line-height:1.35!important}
+.v3-footer{min-height:40px!important;align-items:center!important;box-sizing:border-box!important}
+.v3-row{margin-top:3px!important}
+.v3-weather .wx-grid{row-gap:5px!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:10px!important;padding-bottom:10px!important}
+.v3-weather .weather-moon .wx-moon-main{margin-bottom:3px!important}
+.v3-weather .weather-astro p{margin-top:4px!important;margin-bottom:4px!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;padding-left:2px!important;padding-right:2px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{min-width:0!important;max-width:100%!important}
+.v3-weather .weather-moon .wx-moon-main{min-width:0!important;max-width:100%!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:7px!important;padding-bottom:7px!important}
+.v3-weather .weather-moon .wx-moon-row{padding-top:2px!important;padding-bottom:2px!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:5px!important;padding-bottom:5px!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:4px!important;padding-bottom:4px!important}
+.v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:12px!important;margin-bottom:8px!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{margin-top:10px!important;margin-bottom:8px!important}
+.v3-weather .weather-sun,.v3-weather .weather-soil{align-items:stretch!important;text-align:left!important}
+.v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{width:100%!important;box-sizing:border-box!important}
+.v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:5px!important;padding-bottom:5px!important}
+.v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;display:block!important;min-height:0!important}
+.v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important;min-height:0!important}
+.v3-weather .weather-garden .wx-garden-body{display:flex!important}
+.v3-weather .weather-sowing .wx-sowing{display:flex!important;flex-direction:column!important;gap:5px!important;margin:0!important}
+.v3-head{grid-template-columns:350px 1fr 275px!important;gap:12px!important;align-items:center!important}
+.v3-place{display:flex!important;align-items:center!important;flex-wrap:wrap!important;align-content:center!important;column-gap:12px!important;line-height:1.25!important}
+.v3-robot{float:none!important;flex:0 0 105px!important;margin:0!important}
+.v3-place strong{flex:1!important;font-size:27px!important}
+.v3-brand strong{font-style:italic!important;font-size:49px!important;white-space:nowrap!important}
+.v3-brand small{border-top:1px solid #4cdf67!important;padding-top:5px!important}
+.v3-date-panel{display:grid!important;grid-template-columns:1fr 1fr!important;align-items:center!important;gap:4px!important}
+.v3-date-panel .v3-date{text-align:left!important;padding-left:8px!important;font-size:24px!important}
+.v3-date-panel .v3-date b{font-size:29px!important;margin:10px 0 0!important}
+.v3-date-panel .v3-dial{width:200px!important;height:200px!important;margin:0 auto!important}
+.v3-count .v3-clock{color:#50f529!important;text-shadow:0 0 14px #37e52e!important}
+.v3-brand-white{color:#fff!important;text-shadow:0 0 5px #d2e6d4!important}
+.v3-brand-green{color:#44f32d!important;text-shadow:0 0 12px #3fe52d!important}
+.v3-pulse-mark{color:#4aff55!important;font-size:62px!important;font-style:normal!important;margin-left:8px!important}
+.v3-brand strong{letter-spacing:-1.5px!important;font-size:48px!important}
+.v3-weekday{display:block;font-size:19px;line-height:1.2;font-weight:700;text-transform:lowercase;margin-top:6px;color:#caffc4}
+.v3-weather .weather-tomorrow{justify-content:flex-start!important}
+.v3-weather .weather-sun,.v3-weather .weather-soil{display:flex!important;flex-direction:column!important;justify-content:flex-start!important}
+.v3-weather .weather-sun h3,.v3-weather .weather-soil h3{display:block!important;margin:0 0 8px!important;padding:0 0 6px!important;border-bottom:1px solid #3d9d63!important;text-align:left!important}
+.v3-weather .weather-garden,.v3-weather .weather-sowing{align-self:start!important}
+.v3-weather .weather-garden,.v3-weather .weather-sowing{align-self:stretch!important}
+.v3-weather .weather-garden .wx-garden-body{align-items:flex-start!important;gap:10px!important}
+.v3-weather .weather-garden .wx-garden-art{margin:0!important;flex:0 0 110px!important}
+.v3-weather .weather-garden .wx-garden-copy{margin:0!important;line-height:1.2!important}
+.v3-weather .weather-sowing .wx-sowing-row{margin:0!important}
+.v3-weather .weather-garden{display:flex!important;flex-direction:column!important}
+.v3-weather .weather-garden .wx-garden-body{flex:1!important;align-items:center!important;padding:8px 12px!important;gap:20px!important}
+.v3-weather .weather-garden .wx-garden-art{flex:0 0 160px!important;min-width:160px!important;width:160px!important;height:155px!important;min-height:155px!important}
+.v3-weather .weather-garden .wx-garden-art svg{width:160px!important;height:155px!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:20px!important;line-height:1.28!important}
+.v3-head .v3-brand{min-width:0!important;align-self:center!important}
+.v3-head .v3-brand strong{display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;line-height:1.08!important}
+.v3-head .v3-brand small{margin-top:9px!important;line-height:1.2!important}
+.v3-head .v3-pulse-mark{display:inline-block!important;line-height:1!important;margin-left:10px!important;transform:rotate(-12deg)}
+.v3-head .v3-tag{align-self:center!important;line-height:1.35!important}
+.v3-head .v3-pulse-mark{flex:0 0 68px!important;width:68px!important;height:42px!important;margin-left:7px!important;transform:none!important}
+.v3-head .v3-pulse-mark svg{display:block!important;width:68px!important;height:42px!important;filter:drop-shadow(0 0 5px #2ae84e)}
+.v3-head{min-height:124px!important}
+.v3-head .v3-robot{max-height:112px!important;align-self:center!important}
+.v3-head .v3-robot{overflow:visible!important}
+.v3-head .v3-brand strong{max-width:100%!important}
+.v3-head .v3-robot{filter:drop-shadow(0 0 5px #7effee) drop-shadow(0 0 12px #2ad9a8)!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:160px!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:172px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{gap:7px!important}
+.v3-weather .wx-sun-pair,.v3-weather .wx-soil-pair{gap:7px!important}
+.v3-weather .weather-sun,.v3-weather .weather-soil{gap:5px!important}
+.v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:auto!important;margin-bottom:auto!important}
+.v3-weather .weather-sun .wx-sun-pair{gap:10px!important}
+.v3-weather .weather-soil .wx-soil-pair{gap:9px!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{margin-top:auto!important;margin-bottom:auto!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{gap:12px!important}
+.v3-weather .weather-garden .wx-garden-art{overflow:hidden!important;border-radius:16px!important}
+.v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:14px!important}
+.v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center center!important;background:#10231b!important}
+.v3-weather .weather-garden .wx-garden-art{background:#10231b!important;border:1px solid #3f9c68!important;box-sizing:border-box!important}
+.v3-weather .weather-garden .wx-garden-art img{border-radius:12px!important}
+.v3-weather .weather-sowing .wx-sowing{gap:3px!important}
+.v3-weather .weather-sowing .wx-sowing-row{padding:3px 7px!important;line-height:1.12!important;font-size:14px!important}
+.v3-weather .weather-sowing .wx-sowing-row b{font-size:15px!important;margin-bottom:1px!important}
+.v3-weather .weather-garden .wx-garden-body{padding:5px 10px!important}
+.v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{padding-top:10px!important;padding-bottom:10px!important}
+.v3-weather .weather-air .wx-facts{gap:2px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{gap:8px!important}
+.v3-weather .weather-air{grid-column:1/6!important}
+.v3-weather .weather-tomorrow{grid-column:6/8!important}
+.v3-weather .weather-sun{grid-column:8/11!important}
+.v3-weather .weather-soil{grid-column:11/13!important}
+.v3-head{grid-template-columns:305px minmax(0,1fr) 260px!important;gap:12px!important}
+.v3-head .v3-brand strong{font-size:58px!important;letter-spacing:-1.2px!important}
+.v3-head .v3-brand small{font-size:16px!important}
+.v3-head .v3-tag{font-size:19px!important}
+.v3-sources{align-items:center!important;font-size:17px!important;gap:8px!important}
+.v3-sources span{min-height:52px!important;display:flex!important;align-items:center!important}
+.v3-footer{font-size:16px!important;align-items:center!important}
+.v3-weather .weather-garden .wx-garden-body{gap:18px!important;align-items:center!important}
+.v3-weather .weather-garden .wx-garden-art{flex:0 0 195px!important;min-width:195px!important;width:195px!important;height:190px!important;min-height:190px!important}
+.v3-weather .weather-garden .wx-garden-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#10231b!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.32!important}
+.v3-weather .weather-garden h3{font-size:25px!important}
+.v3-count{justify-content:center!important;gap:4px!important}
+.v3-count .v3-title{margin:0 0 3px!important;font-size:28px!important}
+.v3-count .v3-count-event{font-size:21px!important;font-weight:700!important;color:#f2ffe9!important}
+.v3-count .v3-next{font-size:18px!important;line-height:1.25!important;margin-top:3px!important}
+.v3-weather .weather-garden{position:relative!important;padding-right:196px!important}
+.v3-weather .weather-garden .wx-garden-body{gap:12px!important}
+.v3-weather .weather-garden .wx-garden-art{flex-basis:195px!important;min-width:195px!important;width:195px!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:19px!important}
+.v3-garden-source{position:absolute;right:12px;top:51px;bottom:12px;width:176px;border:2px solid #72ec79;border-radius:17px;padding:12px;background:#07391f;display:flex;flex-direction:column;justify-content:center;gap:12px;font-size:17px;line-height:1.28}
+.v3-garden-source b{color:#e6ffac;font-size:17px}
+.v3-garden-source a{color:#9ceaff;text-decoration:underline;overflow-wrap:anywhere}
+.v3-weather .weather-moon .wx-moon-icon{flex:0 0 104px!important;width:104px!important;height:104px!important;min-width:104px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.v3-weather .weather-moon .wx-moon-icon svg{display:block!important;width:104px!important;height:104px!important;max-width:100%!important}
+.v3-weather .weather-moon .wx-moon-row{align-items:center!important;gap:16px!important}
+.v3-weather .weather-moon .wx-moon-main{line-height:1.3!important}
+.v3-weather .weather-garden .wx-credit{display:block!important;font-size:14px!important;line-height:1.35!important;margin-top:8px!important;border-top:1px solid #3b8557!important;padding-top:6px!important}
+.v3{padding:8px 14px 18px!important;background:#010b05!important}
+.v3-head{min-height:111px!important;grid-template-columns:365px minmax(0,1fr) 278px!important;gap:12px!important}
+.v3-row{gap:12px!important;margin-top:12px!important}
+.v3-power{grid-template-columns:560px 389px minmax(0,1fr)!important}
+.v3-power>.v3-panel{height:236px!important;min-height:236px!important;padding:12px!important}
+.v3-date-panel{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:6px!important}
+.v3-date-panel .v3-date{flex:1 1 48%!important;min-width:0!important}
+.v3-date-panel .v3-dial{flex:0 0 230px!important;width:230px!important;height:215px!important;margin:0!important}
+.v3-weather{margin-top:12px!important}
+.v3-weather .wx-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;grid-template-rows:270px 311px 234px!important;gap:12px!important;align-items:stretch!important}
+.v3-weather .weather-air{grid-column:1/6!important;grid-row:1!important}
+.v3-weather .weather-tomorrow{grid-column:6/8!important;grid-row:1!important}
+.v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}
+.v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}
+.v3-weather .wx-right-stack{display:contents!important}
+.v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important}
+.v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important}
+.v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}
+.v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}
+.v3-weather .wx-box{height:100%!important;min-height:0!important;max-height:none!important;align-self:stretch!important;overflow:hidden!important;padding:12px!important}
+.v3-weather .weather-garden{padding-right:205px!important}
+.v3-weather .weather-garden .wx-garden-body{min-height:0!important;flex:1!important}
+.v3-weather .weather-garden .wx-garden-art{width:195px!important;height:190px!important;min-width:195px!important;min-height:190px!important;flex:0 0 195px!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:18px!important;line-height:1.24!important}
+.v3-garden-source{right:12px!important;top:56px!important;bottom:12px!important;width:181px!important}
+.v3-weather .weather-sowing .wx-sowing-row{font-size:16px!important;line-height:1.2!important}
+.v3-sources{margin-top:12px!important;min-height:167px!important;grid-template-columns:1.35fr repeat(5,1fr)!important;align-items:stretch!important;padding:14px!important;font-size:17px!important}
+.v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:6px!important}
+.v3-footer{margin-top:16px!important;min-height:68px!important;align-items:center!important;padding:12px 16px!important;font-size:15px!important}
+.v3-weather .weather-air{display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr)!important;gap:4px 12px!important;align-content:stretch!important}
+.v3-weather .weather-air>h3{grid-column:1/-1!important;grid-row:1!important;margin:0!important;padding:0 0 5px!important;font-size:23px!important;line-height:1.1!important}
+.v3-weather .weather-air>.wx-warning{grid-column:1/-1!important;grid-row:2!important;margin:0!important;padding:3px 7px!important;font-size:13px!important}
+.v3-weather .weather-air>.wx-weather-main{grid-column:1!important;grid-row:3!important;margin:0!important;gap:5px!important;min-height:0!important}
+.v3-weather .weather-air .wx-symbol{font-size:42px!important}
+.v3-weather .weather-air .wx-now{font-size:40px!important}
+.v3-weather .weather-air .wx-now-label{font-size:13px!important}
+.v3-weather .weather-air .wx-cond{font-size:14px!important}
+.v3-weather .weather-air>.wx-today-box{grid-column:1!important;grid-row:4!important;margin:0!important;padding:3px 5px!important;min-height:0!important}
+.v3-weather .weather-air .wx-today-heading{font-size:13px!important;margin:0 0 2px!important}
+.v3-weather .weather-air .wx-forecast-values{gap:3px!important}
+.v3-weather .weather-air .wx-forecast-values div{font-size:11px!important;padding:2px!important}
+.v3-weather .weather-air .wx-forecast-values b{font-size:18px!important}
+.v3-weather .weather-air>.wx-facts{grid-column:2!important;grid-row:3/5!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;margin:0!important;min-height:0!important}
+.v3-weather .weather-air .wx-fact{padding:3px 5px!important;font-size:12px!important;line-height:1.1!important}
+.v3-weather .weather-air .wx-fact b{font-size:14px!important}
+.v3-weather .weather-moon{display:grid!important;grid-template-columns:150px minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;column-gap:12px!important;align-items:center!important}
+.v3-weather .weather-moon>h3{grid-column:1/-1!important;grid-row:1!important;font-size:24px!important;margin:0!important;padding:0 0 6px!important}
+.v3-weather .weather-moon .wx-moon-main{grid-column:1!important;grid-row:2!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;margin:0!important;min-width:0!important}
+.v3-weather .weather-moon .wx-moon-icon{min-width:0!important;width:122px!important;height:122px!important;flex:0 0 122px!important}
+.v3-weather .weather-moon .wx-moon-icon svg{width:122px!important;height:122px!important}
+.v3-weather .weather-moon .wx-moon-main>div:last-child{text-align:center!important}
+.v3-weather .weather-moon .wx-moon-number{font-size:22px!important;line-height:1.1!important}
+.v3-weather .weather-moon .wx-moon-note{font-size:11px!important;line-height:1.1!important}
+.v3-weather .weather-moon .wx-moon-rows{grid-column:2!important;grid-row:2!important;border-top:0!important;min-width:0!important}
+.v3-weather .weather-moon .wx-moon-row{font-size:17px!important;padding:5px 0!important;line-height:1.2!important;gap:6px!important;flex-wrap:wrap!important}
+.v3-weather .weather-moon .wx-moon-row b{font-size:17px!important;white-space:normal!important}
+.v3-weather .weather-astro{display:flex!important;flex-direction:column!important;gap:4px!important}
+.v3-weather .weather-astro h3{font-size:24px!important;margin:0!important;padding:0 0 6px!important}
+.v3-weather .weather-astro .wx-astro-tag{font-size:15px!important;margin:0!important}
+.v3-weather .weather-astro .wx-astro-body{gap:12px!important;align-items:center!important;min-height:0!important}
+.v3-weather .weather-astro .wx-astro-symbol{flex:0 0 90px!important;width:90px!important;height:90px!important;font-size:54px!important}
+.v3-weather .weather-astro .wx-astro-copy{font-size:17px!important;line-height:1.2!important;min-width:0!important}
+.v3-weather .weather-astro .wx-astro-copy b{font-size:20px!important;margin-bottom:3px!important}
+.v3-weather .weather-astro .wx-astro-disclaimer{font-size:11px!important;line-height:1.2!important;margin-top:6px!important;padding-top:4px!important}
+.v3-weather .weather-zone>.wx-credit{font-size:13px!important;line-height:1.25!important;margin:8px 8px 4px!important;text-align:left!important;color:#d1e9d9!important}
+.v3-sources{min-height:144px!important;grid-template-columns:1.35fr repeat(5,minmax(0,1fr))!important;gap:0!important}
+.v3-sources>b{font-size:22px!important;line-height:1.2!important;align-self:center!important;padding:0 10px!important}
+.v3-sources>span{font-size:17px!important;line-height:1.3!important;align-items:flex-start!important;text-align:left!important;padding:8px 12px!important;overflow-wrap:anywhere!important}
+.v3-sources a{font-size:16px!important;line-height:1.3!important}
+.v3-footer{min-height:60px!important;gap:12px!important;font-size:16px!important}
+.v3-weather .weather-garden .wx-garden-body{align-items:stretch!important;justify-content:flex-start!important;gap:16px!important;padding:10px 4px!important}
+.v3-weather .weather-garden .wx-garden-art{flex:0 0 205px!important;min-width:205px!important;width:205px!important;height:215px!important;min-height:215px!important;align-self:center!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.3!important;align-self:center!important}
+.v3-weather .weather-garden .wx-garden-heading{font-size:23px!important;line-height:1.2!important}
+.v3-garden-source{top:52px!important;bottom:14px!important;justify-content:center!important;gap:9px!important}
+.v3-sources{min-height:144px!important;padding:12px 10px!important}
+.v3-sources>span{justify-content:center!important;gap:4px!important;padding:8px 10px!important}
+.v3-sources>span a{display:inline!important;max-width:100%!important;overflow-wrap:anywhere!important}
+.v3-footer{min-height:60px!important;justify-content:space-around!important}
+.v3-sources{min-height:145px!important;align-items:stretch!important}
+.v3-sources>b{display:flex!important;align-items:center!important;font-size:23px!important;line-height:1.22!important}
+.v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;gap:10px!important;font-size:19px!important;line-height:1.3!important}
+.v3-sources>span a{font-size:19px!important;line-height:1.25!important}
+.v3-footer{min-height:62px!important;justify-content:space-between!important;font-size:17px!important}
+.v3-footer>span{white-space:normal!important;line-height:1.2!important;text-align:center!important}
+.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{justify-content:flex-start!important;gap:8px!important}
+.v3-weather .weather-tomorrow h3,.v3-weather .weather-sun h3,.v3-weather .weather-soil h3{font-size:21px!important;line-height:1.13!important;min-height:44px!important;margin:0!important;padding:0 0 6px!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{margin:8px 0 0!important;padding:4px!important;flex:1!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important}
+.v3-weather .weather-tomorrow .wx-forecast-heading{font-size:14px!important;line-height:1.2!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{gap:5px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values div{font-size:14px!important;padding:5px 2px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values b{font-size:25px!important}
+.v3-weather .weather-sun .wx-sun-pair{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:8px!important;flex:1!important;margin:0!important;font-size:17px!important}
+.v3-weather .weather-sun .wx-sun-pair span{display:flex!important;justify-content:space-between!important;gap:6px!important;white-space:normal!important}
+.v3-weather .weather-sun .wx-sun-pair b{font-size:21px!important}
+.v3-weather .weather-soil .wx-soil-pair{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12px!important;flex:1!important;margin:0!important;text-align:center!important}
+.v3-weather .weather-soil .wx-soil-pair strong{font-size:52px!important;line-height:1.1!important}
+.v3-weather .weather-soil .wx-soil-pair span{font-size:15px!important;line-height:1.3!important}
+.v3-sources{grid-template-columns:1.35fr repeat(5,minmax(0,1fr))!important;min-height:156px!important;gap:0!important}
+.v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;gap:6px!important;font-size:16px!important;line-height:1.2!important;padding:9px 10px!important}
+.v3-sources>span strong{font-size:17px!important;line-height:1.2!important;font-weight:600!important}
+.v3-sources>span a{font-size:16px!important;line-height:1.2!important}
+.v3-footer{display:grid!important;grid-template-columns:1.1fr 1fr 1.15fr 1.4fr 1fr!important;align-items:center!important;gap:8px!important;min-height:64px!important;padding:8px 12px!important}
+.v3-footer>span{font-size:14px!important;line-height:1.15!important;white-space:nowrap!important;text-align:center!important}
+.v3-weather .weather-sun{display:flex!important;flex-direction:column!important;justify-content:flex-start!important}
+.v3-weather .weather-sun h3{display:block!important;min-height:0!important;padding:0 0 12px!important;margin:0 0 10px!important;border-bottom:1px solid #3cc85c!important;text-align:center!important;font-size:23px!important;line-height:1.35!important}
+.v3-weather .weather-sun .wx-sun-pair{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;justify-content:center!important;gap:0!important;margin:0!important;padding:0 8px!important}
+.v3-weather .weather-sun .wx-sun-pair span{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;padding:13px 2px!important;border-bottom:1px solid #216b38!important;font-size:18px!important;white-space:normal!important}
+.v3-weather .weather-sun .wx-sun-pair span:last-child{border-bottom:0!important}
+.v3-weather .weather-sun .wx-sun-pair b{font-size:22px!important;white-space:nowrap!important}
+.v3-footer .v3-source-detail{display:block!important;font-size:10px!important;font-weight:400!important;opacity:.7!important;line-height:1.1!important;white-space:normal!important}
+.v3-weather .weather-garden{display:grid!important;grid-template-columns:minmax(0,1fr) 190px!important;grid-template-rows:46px minmax(0,1fr)!important;column-gap:12px!important;padding:10px 12px!important;align-items:stretch!important}
+.v3-weather .weather-garden>h3{grid-column:1/-1!important;grid-row:1!important;margin:0!important;padding:0 0 6px!important;font-size:27px!important;line-height:1.12!important}
+.v3-weather .weather-garden .wx-garden-body{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:205px minmax(0,1fr)!important;align-items:stretch!important;gap:14px!important;margin:0!important;padding:0!important;min-width:0!important;min-height:0!important}
+.v3-weather .weather-garden .wx-garden-art{grid-column:1!important;grid-row:1!important;align-self:stretch!important;width:205px!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:236px!important;margin:0!important}
+.v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;width:100%!important;height:100%!important;background:#10231b!important}
+.v3-weather .weather-garden .wx-garden-copy{grid-column:2!important;grid-row:1!important;align-self:start!important;min-width:0!important;margin:0!important;font-size:18px!important;line-height:1.23!important}
+.v3-weather .weather-garden .wx-garden-heading{font-size:22px!important;line-height:1.15!important;margin-bottom:6px!important}
+.v3-garden-source{position:static!important;grid-column:2!important;grid-row:2!important;align-self:stretch!important;width:auto!important;height:auto!important;min-width:0!important;margin:0!important;padding:10px!important;font-size:15px!important;line-height:1.2!important;gap:8px!important}
+.v3-garden-source b{font-size:16px!important}
+.v3-weather .weather-garden>.wx-credit{display:none!important}
+.v3-weather .weather-sun h3{font-size:22px!important;min-height:0!important;margin-bottom:2px!important;padding-bottom:7px!important}
+.v3-daylight-duration{display:block!important;text-align:center!important;font-size:33px!important;font-weight:800!important;line-height:1.1!important;color:#fff!important;margin:7px 0!important;white-space:nowrap!important}
+.v3-weather .weather-sun .wx-sun-pair{justify-content:flex-start!important;gap:0!important}
+.v3-weather .weather-sun .wx-sun-pair span{padding:8px 2px!important;font-size:17px!important}
+.v3-head{height:119px!important;min-height:0!important;align-items:center!important}
+.v3-place{font-size:19px!important;line-height:1.23!important}
+.v3-place strong{font-size:24px!important}
+.v3-brand strong{font-size:56px!important;line-height:1.12!important}
+.v3-brand small{font-size:14px!important;line-height:1.2!important}
+.v3-weather .wx-grid{grid-template-columns:560px 248px 270px minmax(0,1fr)!important;grid-template-rows:255px 311px 234px!important;gap:12px!important;margin-left:-8px!important;margin-right:-8px!important}
+.v3-weather .weather-air{grid-column:1!important;grid-row:1!important}
+.v3-weather .weather-tomorrow{grid-column:2!important;grid-row:1!important}
+.v3-weather .weather-sun{grid-column:3!important;grid-row:1!important}
+.v3-weather .weather-soil{grid-column:4!important;grid-row:1!important}
+.v3-weather .weather-garden{grid-column:1/4!important;grid-row:2!important;width:954px!important}
+.v3-weather .weather-sowing{grid-column:4!important;grid-row:2!important;width:407px!important;transform:translateX(-144px)!important}
+.v3-weather .weather-moon{grid-column:1!important;grid-row:3!important;width:570px!important}
+.v3-weather .weather-astro{grid-column:2/5!important;grid-row:3!important;width:792px!important;transform:translateX(13px)!important}
+.v3-weather .weather-zone>.wx-credit{display:none!important}
+.v3-sources{min-height:167px!important}
+.v3-footer{min-height:68px!important}
+.v3-date-panel{display:grid!important;grid-template-columns:minmax(0,1fr) 235px!important;gap:4px!important;align-items:center!important}
+.v3-date-panel .v3-date{padding-left:12px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:9px!important;text-align:left!important;font-size:28px!important;line-height:1.12!important}
+.v3-date-panel .v3-date b{font-size:34px!important;line-height:1.1!important;margin:0!important;white-space:nowrap!important}
+.v3-date-panel .v3-weekday{font-size:25px!important;line-height:1.12!important}
+.v3-date-panel .v3-dial{width:225px!important;height:210px!important;min-width:0!important;flex:none!important;margin:0!important}
+.v3-weather .weather-moon{display:grid!important;grid-template-columns:168px minmax(0,1fr)!important;grid-template-rows:43px minmax(0,1fr)!important;column-gap:14px!important;align-items:center!important;padding:10px 13px!important}
+.v3-weather .weather-moon>h3{grid-column:1/-1!important;grid-row:1!important;font-size:27px!important;line-height:1.1!important;padding:0!important}
+.v3-weather .weather-moon .wx-moon-main{grid-column:1!important;grid-row:2!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:0!important;margin:0!important;min-width:0!important}
+.v3-weather .weather-moon .wx-moon-icon{width:155px!important;height:155px!important;min-width:0!important;flex:none!important}
+.v3-weather .weather-moon .wx-moon-icon svg{width:155px!important;height:155px!important}
+.v3-weather .weather-moon .wx-moon-main>div:last-child{display:none!important}
+.v3-weather .weather-moon .wx-moon-rows{grid-column:2!important;grid-row:2!important;align-self:center!important;min-width:0!important;border-top:0!important}
+.v3-weather .weather-moon .wx-moon-row{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:7px!important;flex-wrap:nowrap!important;font-size:17px!important;line-height:1.25!important;padding:9px 0!important}
+.v3-weather .weather-moon .wx-moon-row b{font-size:17px!important;white-space:normal!important;text-align:right!important}
+.v3-weather .weather-astro{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;padding:10px 15px!important;gap:7px!important}
+.v3-weather .weather-astro h3{font-size:27px!important;line-height:1.1!important;margin:0!important;padding:0!important}
+.v3-weather .weather-astro .wx-astro-tag{display:none!important}
+.v3-weather .weather-astro .wx-astro-body{display:grid!important;grid-template-columns:115px minmax(0,1fr)!important;gap:17px!important;align-items:center!important;flex:1!important;min-height:0!important}
+.v3-weather .weather-astro .wx-astro-symbol{width:108px!important;height:108px!important;font-size:68px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.v3-weather .weather-astro .wx-astro-copy{font-size:20px!important;line-height:1.26!important;min-width:0!important}
+.v3-weather .weather-astro .wx-astro-copy b{font-size:24px!important;line-height:1.15!important;margin-bottom:5px!important}
+.v3-weather .weather-astro .wx-astro-disclaimer{font-size:12px!important;line-height:1.2!important;margin-top:6px!important;padding-top:5px!important}
+.v3-weather .weather-air{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr) auto!important;gap:5px 10px!important;padding:12px 15px!important}
+.v3-weather .weather-air>h3{font-size:28px!important;line-height:1.12!important;padding:0 0 6px!important}
+.v3-weather .weather-air>.wx-weather-main{grid-column:1!important;grid-row:3!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}
+.v3-weather .weather-air .wx-symbol{font-size:69px!important;line-height:1!important}
+.v3-weather .weather-air .wx-now{font-size:57px!important;line-height:1.05!important;font-weight:900!important}
+.v3-weather .weather-air .wx-now-label{font-size:14px!important}
+.v3-weather .weather-air .wx-cond{font-size:17px!important;line-height:1.2!important}
+.v3-weather .weather-air>.wx-facts{grid-column:2!important;grid-row:3/5!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;gap:0!important;padding-left:12px!important;border-left:1px solid #238d42!important}
+.v3-weather .weather-air .wx-fact{padding:9px 3px!important;font-size:16px!important;line-height:1.17!important;border-bottom:1px solid #287b3c!important}
+.v3-weather .weather-air .wx-fact b{font-size:18px!important}
+.v3-weather .weather-air>.wx-today-box{grid-column:1!important;grid-row:4!important;min-height:0!important;padding:3px 5px!important}
+.v3-weather .weather-tomorrow{padding:12px 12px!important;gap:5px!important}
+.v3-weather .weather-tomorrow h3{font-size:22px!important;min-height:0!important;line-height:1.2!important;padding:0 0 8px!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:13px!important;margin:0!important;padding:8px 2px!important}
+.v3-weather .weather-tomorrow .wx-forecast-heading{font-size:17px!important;text-align:center!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{gap:7px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values div{font-size:15px!important;line-height:1.2!important;padding:7px 3px!important}
+.v3-weather .weather-tomorrow .wx-forecast-values b{font-size:27px!important;line-height:1.1!important}
+.v3-weather .weather-garden{grid-template-columns:minmax(0,1fr) 206px!important;grid-template-rows:48px minmax(0,1fr)!important;column-gap:12px!important;padding:11px 13px!important}
+.v3-weather .weather-garden>h3{font-size:29px!important;line-height:1.13!important;padding:0 0 5px!important}
+.v3-weather .weather-garden .wx-garden-body{grid-template-columns:224px minmax(0,1fr)!important;gap:14px!important}
+.v3-weather .weather-garden .wx-garden-art{width:224px!important;height:100%!important;max-height:228px!important;min-height:0!important;align-self:stretch!important;border-radius:12px!important;overflow:hidden!important}
+.v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;width:100%!important;height:100%!important}
+.v3-weather .weather-garden .wx-garden-copy{font-size:19px!important;line-height:1.25!important;align-self:center!important}
+.v3-weather .weather-garden .wx-garden-heading{font-size:23px!important;line-height:1.2!important;margin-bottom:8px!important;color:#e8ff9c!important}
+.v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;padding:12px!important;gap:9px!important;font-size:16px!important;line-height:1.22!important}
+.v3-garden-source b{font-size:17px!important;line-height:1.2!important}
+.v3-weather .weather-air{min-width:0!important;overflow:hidden!important;grid-template-columns:minmax(0,1fr) minmax(0,0.92fr)!important;column-gap:7px!important;padding-left:12px!important;padding-right:12px!important}
+.v3-weather .weather-air>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.v3-weather .weather-air>.wx-weather-main{min-width:0!important;max-width:100%!important;gap:4px!important;justify-content:flex-start!important}
+.v3-weather .weather-air>.wx-weather-main>div{min-width:0!important;max-width:100%!important}
+.v3-weather .weather-air .wx-symbol{font-size:54px!important;flex:0 1 auto!important}
+.v3-weather .weather-air .wx-now{font-size:48px!important;white-space:nowrap!important}
+.v3-weather .weather-air .wx-cond{font-size:15px!important;overflow-wrap:anywhere!important}
+.v3-weather .weather-air>.wx-facts{min-width:0!important;max-width:100%!important;padding-left:8px!important}
+.v3-weather .weather-air .wx-fact{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important;font-size:14px!important;line-height:1.13!important;padding:6px 2px!important}
+.v3-weather .weather-air .wx-fact b{font-size:15px!important;white-space:normal!important}
+.v3-weather .weather-air .wx-today-box,.v3-weather .weather-air .wx-forecast-values{min-width:0!important;max-width:100%!important}
+.v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important}
+.v3-weather .weather-tomorrow h3{font-size:24px!important;line-height:1.2!important;margin:0!important;padding:0 0 9px!important;white-space:nowrap!important}
+.v3-weather .weather-tomorrow .wx-forecast-box{display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;flex:1!important;gap:10px!important;padding:0!important}
+.v3-weather .weather-tomorrow .wx-forecast-heading{font-size:16px!important;text-align:left!important;padding:3px 0!important}
+.v3-weather .weather-tomorrow .wx-forecast-values{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;align-items:stretch!important}
+.v3-weather .weather-tomorrow .wx-forecast-values>div{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:8px!important;padding:12px 2px!important;font-size:14px!important;min-width:0!important}
+.v3-weather .weather-tomorrow .wx-forecast-values b{font-size:32px!important;line-height:1.1!important;white-space:nowrap!important}
+.v3-weather .weather-garden{display:grid!important;grid-template-columns:minmax(0,1fr) 206px!important;grid-template-rows:48px minmax(0,1fr)!important;column-gap:10px!important;row-gap:0!important;overflow:hidden!important}
+.v3-weather .weather-garden .wx-garden-body{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;gap:12px!important;min-width:0!important;min-height:0!important;align-items:stretch!important;padding:0!important}
+.v3-weather .weather-garden .wx-garden-art{grid-column:1!important;grid-row:1!important;min-width:0!important;min-height:0!important;width:224px!important;height:100%!important;max-height:none!important;align-self:stretch!important;margin:0!important}
+.v3-weather .weather-garden .wx-garden-copy{grid-column:2!important;grid-row:1!important;align-self:center!important;min-width:0!important;max-width:100%!important;margin:0!important;font-size:17px!important;line-height:1.19!important;overflow-wrap:break-word!important}
+.v3-weather .weather-garden .wx-garden-heading{font-size:21px!important;line-height:1.15!important;margin:0 0 7px!important}
+.v3-weather .weather-garden .wx-garden-copy p,.v3-weather .weather-garden .wx-garden-copy li{font-size:17px!important;line-height:1.2!important;margin:0 0 5px!important}
+.v3-weather .weather-garden .wx-garden-copy ul{margin:0!important;padding-left:19px!important}
+.v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}
+.v3-weather .weather-garden .v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;box-sizing:border-box!important;width:100%!important;height:100%!important;min-height:0!important;max-width:100%!important;align-self:stretch!important;justify-content:center!important;gap:10px!important;padding:11px!important;font-size:15px!important;line-height:1.18!important;overflow-wrap:anywhere!important}
+.v3-weather .weather-garden .v3-garden-source b{font-size:16px!important;line-height:1.15!important}
+.v3-weather .weather-garden .v3-garden-source a{font-size:15px!important}
+.v3-weather .weather-garden .wx-garden-copy{align-self:start!important;padding-top:13px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:8px!important;font-size:19px!important;line-height:1.27!important}
+.v3-weather .weather-garden .wx-garden-heading{font-size:24px!important;line-height:1.15!important;margin:0 0 4px!important}
+.v3-weather .weather-garden .wx-garden-art{border:1px solid #8bda6a!important;border-radius:12px!important;overflow:hidden!important}
+.v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important}
+.v3-weather .weather-garden .v3-garden-source{justify-content:flex-start!important;padding-top:20px!important;gap:12px!important;font-size:17px!important}
+.v3-weather .weather-garden .v3-garden-source b{font-size:18px!important}
+.v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}
+.v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}
+.v3-sources .v3-tips-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;align-self:flex-start!important;padding:7px 11px!important;border:1px solid #82ff9b!important;border-radius:12px!important;background:linear-gradient(135deg,#38c764,#157d3a)!important;color:#04240f!important;text-decoration:none!important;font-size:14px!important;font-weight:800!important;line-height:1.2!important;box-shadow:0 0 10px #32e06666!important;white-space:nowrap!important}
+.v3-weather .weather-air .wx-fact{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 2px!important;font-size:12px!important;line-height:1.05!important;min-height:0!important;white-space:nowrap!important;border-bottom:1px solid #287b3c!important}
+.v3-weather .weather-air .wx-fact b{font-size:14px!important;white-space:nowrap!important}</style><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"><style>
+html,body{width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:hidden!important}
+body{margin:0!important;background:#020e08!important}
+#v3-stage{width:100%;position:relative;overflow:hidden}
+#v3-card{width:1404px;transform-origin:top left}
+#v3-controls{position:fixed;right:9px;bottom:12px;z-index:100000;display:flex;gap:6px}
+#v3-controls button{font:700 13px system-ui;border:1px solid #79f88c;border-radius:10px;background:#052516;color:#eaffed;padding:9px 11px}
+#v3-stage[data-mode="detail"]{overflow-x:auto;touch-action:pan-x pan-y}
+</style></head><body><nav id="v3-controls" aria-label="Масштаб картки"><button id="v3-fit" type="button">Умістити</button><button id="v3-detail" type="button">100%</button></nav><div id="v3-stage"><div id="v3-card"><article class="v3"><header class="v3-head"><div class="v3-place"><svg class="v3-robot" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Бірюзовий робот Світлопульсу з блискавкою"><defs><linearGradient id="v3bot" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#74f8ed"/><stop offset=".55" stop-color="#2bc8c7"/><stop offset="1" stop-color="#087b9c"/></linearGradient></defs><path d="M65 18V7" stroke="#8dfff4" stroke-width="6"/><circle cx="65" cy="7" r="6" fill="#d7fff5"/><rect x="13" y="25" width="104" height="90" rx="26" fill="url(#v3bot)" stroke="#9affed" stroke-width="6"/><rect x="24" y="42" width="82" height="55" rx="19" fill="#082c39" stroke="#5ae9df" stroke-width="2"/><ellipse cx="46" cy="66" rx="12" ry="16" fill="#b4fff0"/><ellipse cx="84" cy="66" rx="12" ry="16" fill="#b4fff0"/><path d="M48 87Q65 102 82 87" fill="none" stroke="#91fff0" stroke-width="5" stroke-linecap="round"/><path d="M73 100l-18 24h12l-7 19 27-32H74l7-11Z" fill="#e7ff45" stroke="#f6ffa6" stroke-width="2" stroke-linejoin="round"/><path d="M70 108l-8 14h10l-4 11 11-19H69Z" fill="#fffbd2" opacity=".88"/><circle cx="65" cy="7" r="11" fill="none" stroke="#9affed" stroke-width="2" opacity=".55"/><path d="M32 52Q65 39 98 52" fill="none" stroke="#aafff0" stroke-width="2" opacity=".25"/><path d="M12 70H3M118 70H127" stroke="#68f0e6" stroke-width="9" stroke-linecap="round"/><path d="M42 115v22m46-22v22" stroke="#68f0e6" stroke-width="10" stroke-linecap="round"/><path d="M28 31Q65 14 102 31" fill="none" stroke="#d1fff7" stroke-width="3" opacity=".7"/><circle cx="41" cy="60" r="4" fill="#fff" opacity=".9"/><circle cx="79" cy="60" r="4" fill="#fff" opacity=".9"/><path d="M18 111Q65 128 112 111" fill="none" stroke="#13a8ad" stroke-width="3"/><circle cx="19" cy="108" r="4" fill="#e7ff45"/><circle cx="111" cy="108" r="4" fill="#e7ff45"/></svg><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div><div class="v3-brand"><strong><span class="v3-brand-white">СВІТЛО</span><span class="v3-brand-green">ПУЛЬС 3.0</span><span class="v3-pulse-mark" aria-hidden="true"><svg viewBox="0 0 100 46" width="100" height="46" xmlns="http://www.w3.org/2000/svg"><path d="M2 25H22L31 13L43 38L55 5L66 25H98" fill="none" stroke="#5bff70" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div><div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header><main class="v3-row v3-power"><section class="v3-panel v3-date-panel"><div class="v3-date">🗓️ Сьогодні<b>28.11.2026</b><span class="v3-weekday">субота</span></div><div class="v3-dial"><svg viewBox="0 0 520 520" role="img" aria-label="Точний 24-годинний графік"><circle cx="260" cy="260" r="185" stroke="#123a29" stroke-width="47" fill="none" /><path d="M 260.000 75.000 A 185 185 0 0 1 445.000 260.000" fill="none" stroke="#30f176" stroke-width="47" /><path d="M 445.000 260.000 A 185 185 0 0 1 406.770 372.621" fill="none" stroke="#ff5264" stroke-width="47" /><path d="M 406.770 372.621 A 185 185 0 0 1 147.379 406.770" fill="none" stroke="#30f176" stroke-width="47" /><path d="M 147.379 406.770 A 185 185 0 0 1 129.185 129.185" fill="none" stroke="#ff5264" stroke-width="47" /><path d="M 129.185 129.185 A 185 185 0 0 1 260.000 75.000" fill="none" stroke="#30f176" stroke-width="47" /><line x1="260" y1="41" x2="260" y2="31" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="318.23428514806716" y1="42.66668908495964" x2="319.26956132847727" y2="38.80298577980335" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="369.5" y1="70.34043657120793" x2="374.5" y2="61.680182533363535" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="419.0990257669732" y1="100.90097423302683" x2="421.9274528917194" y2="98.07254710828065" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="449.659563428792" y1="150.5" x2="458.31981746663644" y2="145.5" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="477.33331091504033" y1="201.76571485193284" x2="481.19701422019665" y2="200.73043867152276" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="479" y1="260" x2="489" y2="260" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="477.33331091504033" y1="318.2342851480672" x2="481.1970142201966" y2="319.26956132847727" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="449.65956342879207" y1="369.49999999999994" x2="458.31981746663644" y2="374.49999999999994" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="419.0990257669732" y1="419.09902576697317" x2="421.9274528917194" y2="421.9274528917193" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="369.5" y1="449.65956342879207" x2="374.5" y2="458.31981746663644" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="318.2342851480672" y1="477.33331091504033" x2="319.2695613284773" y2="481.1970142201966" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="260" y1="479" x2="260" y2="489" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="201.7657148519329" y1="477.3333109150404" x2="200.73043867152282" y2="481.1970142201967" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="150.49999999999994" y1="449.659563428792" x2="145.49999999999994" y2="458.31981746663644" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="100.90097423302683" y1="419.0990257669732" x2="98.07254710828065" y2="421.9274528917194" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="70.34043657120796" y1="369.50000000000006" x2="61.68018253336359" y2="374.50000000000006" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="42.66668908495964" y1="318.2342851480671" x2="38.80298577980335" y2="319.2695613284772" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="41" y1="260" x2="31" y2="260" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="42.666689084959614" y1="201.76571485193293" x2="38.80298577980332" y2="200.73043867152285" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="70.34043657120796" y1="150.49999999999997" x2="61.68018253336356" y2="145.49999999999997" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="100.90097423302677" y1="100.90097423302683" x2="98.07254710828059" y2="98.07254710828065" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><line x1="150.4999999999999" y1="70.34043657120796" x2="145.4999999999999" y2="61.68018253336359" stroke="#d2f3dd" opacity=".85" stroke-width="3" /><line x1="201.76571485193284" y1="42.66668908495964" x2="200.7304386715228" y2="38.80298577980335" stroke="#d2f3dd" opacity=".85" stroke-width="1.5" /><text x="260" y="22" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">00</text><text x="383.5" y="55.09172526524364" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">02</text><text x="473.90827473475633" y="145.5" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">04</text><text x="507" y="269" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">06</text><text x="473.90827473475633" y="392.49999999999994" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">08</text><text x="383.5" y="482.90827473475633" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">10</text><text x="260" y="516" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">12</text><text x="136.49999999999994" y="482.90827473475633" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">14</text><text x="46.091725265243696" y="392.5000000000001" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">16</text><text x="13" y="269.00000000000006" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">18</text><text x="46.09172526524367" y="145.49999999999997" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">20</text><text x="136.4999999999999" y="55.091725265243696" text-anchor="middle" fill="#f5fff8" font-size="25" font-weight="700">22</text><circle cx="260" cy="260" r="121" stroke="#1bdc75" opacity=".5" stroke-width="2" fill="#06241c" /><text x="260" y="244" text-anchor="middle" font-size="92" fill="#d7ff85">ϟ</text><text x="260" y="297" text-anchor="middle" font-size="62" font-weight="900" fill="#fff">24 год</text><text x="260" y="333" text-anchor="middle" font-size="25" font-style="italic" fill="#a3ddbd">ритм доби</text></svg></div></section><section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">До планового ввімкнення</div><div class="v3-clock" data-countdown-minutes="95">01:35</div><div class="v3-next">Очікуване ввімкнення: 21:00 · станом на 19:25 (Київ)</div></section><section class="v3-panel"><h2 class="v3-title">💡 Графік сьогодні</h2><div class="v3-periods"><div class="v3-period"><span>⚡ Світло</span><b>00:00 — 06:00</b></div><div class="v3-period off"><span>🔴 Без світла</span><b>06:00 — 08:30</b></div><div class="v3-period"><span>⚡ Світло</span><b>08:30 — 14:30</b></div><div class="v3-period off"><span>🔴 Без світла</span><b>14:30 — 21:00</b></div><div class="v3-period"><span>⚡ Світло</span><b>21:00 — 24:00</b></div></div><div class="v3-totals"><span>⚡ 15 год</span><span>🔴 9 год</span></div><div class="v3-timeline"><div class="timeline"><span style="width:25.0000%;background:#30f176"></span><span style="width:10.4167%;background:#ff5264"></span><span style="width:25.0000%;background:#30f176"></span><span style="width:27.0833%;background:#ff5264"></span><span style="width:12.5000%;background:#30f176"></span></div><div class="timeline-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div></div></section></main><div class="v3-weather"><section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong><span>СТ «Хімік» · Фастівський район</span></div><div class="wx-grid"><section class="wx-box weather-air"><h3>🌤 Погода — СЬОГОДНІ · 28.11</h3><div class="wx-warning">⚠ Сьогодні: Можливі заморозки</div><div class="wx-weather-main"><div class="wx-symbol">🌤</div><div><div class="wx-now-label">🌡 Температура зараз</div><div class="wx-now">-3°C</div><div class="wx-cond">Мінлива хмарність</div></div></div><div class="wx-today-box"><div class="wx-today-heading">📅 Сьогодні · 28.11 · 🌤 Мінлива хмарність</div><div class="wx-forecast-values"><div>Мінімум<b>-4°C</b></div><div>Максимум<b>-2°C</b></div></div></div><div class="wx-facts"><div class="wx-fact windline">🌬 Вітер зараз <b>2 м/с</b></div><div class="wx-fact windline">💨 Пориви сьогодні <b>7 м/с</b></div><div class="wx-fact windline">☔ Опади сьогодні <b>0%</b></div><div class="wx-fact windline wx-pressure">🧭 Тиск <b>1016 гПа / 762 мм рт. ст.</b></div><div class="wx-fact windline">💧 Вологість <b>73%</b></div></div></section><section class="wx-box weather-tomorrow"><h3>🌤 Завтра</h3><div class="v3-tomorrow-readings" style="display:flex;flex-direction:column;justify-content:center;flex:1;gap:16px"><div style="font-size:17px;font-weight:700">📅 Завтра · 29.11</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="v3-tomorrow-min" style="text-align:center;background:#082d20;border-radius:9px;padding:12px 3px">Мінімум<strong style="display:block;font-size:29px;color:white">-6°C</strong></div><div class="v3-tomorrow-max" style="text-align:center;background:#082d20;border-radius:9px;padding:12px 3px">Максимум<strong style="display:block;font-size:29px;color:white">-2°C</strong></div></div></div></section><div class="wx-right-stack"><section class="wx-box weather-garden"><h3>🌿 Поради городникам</h3><div class="wx-garden-body"><div class="wx-garden-art"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_garlic.png" alt="Еталонне фото часнику" loading="eager"/></div><div class="wx-garden-copy"><div class="wx-garden-heading">Актуально сьогодні:</div>❄️ Перевірте теплицю та накрийте чутливі посадки агроволокном, якщо очікується нічний мороз.</div></div><aside class="v3-garden-source"><b>📖 Джерело порад</b><span>RHS · Royal Horticultural Society</span><a href="./guide/garden/">Відкрити довідник</a></aside></section><section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3><div class="wx-sowing"><div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>🌱 Зелень у теплій теплиці з достатнім світлом.</div><div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>🌱 Посів і висадка у відкритий холодний або мерзлий ґрунт.</div><div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>🌱 За традицією можна готувати грядки, перевіряти насіння й планувати посів. Строки визначає погода.</div><div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div></div></section></div><section class="wx-box weather-sun"><h3>☀️ Світловий день</h3><div class="v3-daylight-duration">8 год 28 хв</div><div class="wx-sun-pair"><span>🌅 Схід <b>07:33</b></span><span>🌇 Захід <b>16:01</b></span></div></section><section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3><div class="wx-soil-pair"><strong>-2°C</strong><span>Глибина ≈6 см · Прогноз моделі · на 19:00</span></div></section><section class="wx-box weather-moon"><h3>🌙 Місячний календар</h3><div class="wx-moon-main"><div class="wx-moon-icon"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_moon.png" alt="Еталонний Місяць" loading="eager"/></div><div><div class="wx-moon-number">20-й день</div><div class="wx-moon-note">від молодика<br>на 12:00 за Києвом</div></div></div><div class="wx-moon-rows"><div class="wx-moon-row"><span>Місячний день (12:00, Київ):</span><b class="wx-lunar-day">20-й</b></div><div class="wx-moon-row"><span>Фаза Місяця:</span><b>Спадний Місяць</b></div><div class="wx-moon-row"><span>Освітленість:</span><b>82%</b></div><div class="wx-moon-row"><span>Знак Місяця:</span><b>Рак</b></div></div></section><section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3><div class="wx-astro-tag">🌟 Для настрою та натхнення</div><div class="wx-astro-body"><div class="wx-astro-symbol">♋</div><div class="wx-astro-copy"><b>Місяць у Раку.</b>Спробуйте новий підхід до звичного завдання.</div></div><div class="wx-astro-disclaimer">Астрологічна інтерпретація · розважальний характер · авторський текст, не науковий прогноз</div></section></div><div class="wx-credit">Прогноз: Open-Meteo · оновлено 28.11, 18:55 · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак) · Джерела: <a href="https://open-meteo.com/en/docs">Open-Meteo</a>; астрономічні розрахунки — Ж. Меєс; городні поради — локальні правила, не перевірені незалежним агрономом; астрологія — для розваги</div></section></div><section class="v3-sources"><b>▰ Джерела та<br>методика</b><span><strong>⚡ Графіки відключень:</strong><a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · dtek.com.ua</a></span><span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span><span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span><span><strong>🌙 Місячний календар:</strong><a href="./guide/moon/">Відкрити довідник</a></span><span><strong>✨ Астропрогноз:</strong><a href="./guide/astro/">Відкрити довідник</a><a href="https://minfin.com.ua/ua/currency/kiev/" target="_blank" rel="noopener noreferrer">💱 Курс валют</a><a class="v3-tips-button" href="https://erikbern55-boop.github.io/dtek-schedule/guide/lifehacks/">💡 Корисні хитрощі</a></span></section><footer class="v3-footer"><span>⟳ Оновлено: 28.11.2026 19:15</span><span>🔄 Погода: кожні 30 хв</span><span>⚡ Графіки ДТЕК: кожні 5 хв</span><span>ⓘ Рекомендації: перевірені джерела</span><span>⬡ Дані для СТ «Хімік»<small class="v3-source-detail"> · ДТЕК</small></span></footer></article></div></div><script>(function(){const el=document.querySelector(".v3-clock[data-countdown-minutes]");const minutes=el?Number(el.dataset.countdownMinutes):NaN;if(el&&Number.isFinite(minutes)&&minutes>=0&&el.dataset.countdownMinutes!==""){const deadline=Date.now()+minutes*60000;function tick(){const left=Math.max(0,Math.ceil((deadline-Date.now())/60000));el.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");if(left===0){el.setAttribute("aria-label","Планова подія настала — оновіть графік");}}tick();setInterval(tick,1000);}setInterval(function(){if(document.visibilityState!=="visible"||location.protocol==="about:")return;const x=window.scrollX,y=window.scrollY;try{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([x,y]));}catch(e){}location.reload();},300000);try{const p=JSON.parse(sessionStorage.getItem("svitlopuls-v3-scroll")||"null");if(Array.isArray(p)){try{history.scrollRestoration="manual";}catch(e){}function restoreScroll(){const x=Math.max(0,Number(p[0])||0),y=Math.max(0,Number(p[1])||0);window.scrollTo(x,y);}requestAnimationFrame(restoreScroll);window.addEventListener("load",restoreScroll,{once:true});setTimeout(restoreScroll,150);setTimeout(restoreScroll,600);setTimeout(function(){restoreScroll();sessionStorage.removeItem("svitlopuls-v3-scroll");},1200);}}catch(e){}})();</script><script>
+(function(){
+const stage=document.getElementById('v3-stage'),card=document.getElementById('v3-card');
+let mode='fit';
+function layout(){
+ const scale=mode==='fit'?Math.min(1,Math.max(1,stage.clientWidth)/1404):1;
+ card.style.transform='scale('+scale+')';
+ stage.style.height=Math.ceil(card.scrollHeight*scale)+'px';
+ stage.style.overflowX=mode==='detail'?'auto':'hidden';
+ stage.dataset.mode=mode;
+}
+document.getElementById('v3-fit').addEventListener('click',()=>{mode='fit';layout();});
+document.getElementById('v3-detail').addEventListener('click',()=>{mode='detail';layout();});
+window.addEventListener('resize',layout);
+window.addEventListener('orientationchange',()=>requestAnimationFrame(layout));
+window.addEventListener('load',layout);
+if('ResizeObserver' in window)new ResizeObserver(layout).observe(card);
+layout();
+})();
+</script></body></html>
