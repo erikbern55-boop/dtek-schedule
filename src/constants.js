@@ -7,6 +7,7 @@ export const shutdownsPages = {
   o: "https://www.dtek-oem.com.ua/ua/shutdowns",
   d: "https://www.dtek-dem.com.ua/ua/shutdowns",
 }
+export const REGION = process.env.REGION ?? "kr"
 export const SHUTDOWNS_PAGE =
   shutdownsPages[String(process.env.REGION).toLocaleLowerCase()] ??
   shutdownsPages["kr"]
@@ -35,3 +36,5 @@ export const LAST_MESSAGE_FILE = path.resolve(
 
 export const RETRIES_MAX_COUNT = 5
 export const RETRIES_TIMEOUT = 5000
+
+export const TOMORROW_MESSAGE_FILE = path.resolve("artifacts", process.env.TARGET ?? "", "tomorrow-message.json")

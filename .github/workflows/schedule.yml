@@ -59,6 +59,11 @@ jobs:
           npm ci
           npx playwright install chromium
 
+      - name: Test updated schedule logic
+        run: |
+          node --check ./src/schedule.js
+          node --test
+
       - name: Run schedule generation script
         env:
           TARGET: ${{ matrix.target }}
