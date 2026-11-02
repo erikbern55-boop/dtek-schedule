@@ -1,5 +1,6 @@
 import { getShutdownsData, selectScheduleDays } from "./source.js"
 import { describeScheduleChanges } from "./changes.js"
+import { calculateDailyTotals, formatDuration } from "./summary.js"
 
 import {
   checkIsNight,
@@ -70,6 +71,7 @@ function generateSchedule({ data, dayKey }) {
 function generateMessage(schedule = [], update, lastMessage = {}, dayLabel, date, source) {
   console.log("🌀 Generating message...")
 
+  const { withPower, withoutPower } = calculateDailyTotals(schedule)
   const isShutdownsExists = schedule.some(({ power }) => !power)
   isShutdownsExists
     ? console.log("🪫 Power shutdowns detected!")
@@ -93,6 +95,12 @@ function generateMessage(schedule = [], update, lastMessage = {}, dayLabel, date
   const text = [
     ...(changeSummary ? [changeSummary, ""] : []),
     `⚡️ <b>Графік відключень на ${dayLabel} (${date.split("-").reverse().join(".")}):</b>`,
+    "",
+    "📊 <b>За графіком на добу:</b>",
+    "🟢 <b>Зі світлом:</b> " + formatDuration(withPower),
+    "🔴 <b>Без світла:</b> " + formatDuration(withoutPower),
+    "",
+    ...(isShutdownsExists ? ["🪫 <b>Періоди відключень:</b>"] : []),
     scheduleText,
     "",
     `📢 <i>${update ?? ""}</i>`,
