@@ -1,0 +1,32 @@
+name: Test Svitlopuls cards (no Telegram publishing)
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - name: Check and test card generator
+        run: |
+          node --check ./src/card.js
+          node --check ./src/media.js
+          node --check ./src/schedule.js
+          node --test
+          node ./test/card-smoke.js
+      - uses: actions/upload-artifact@v6
+        with:
+          name: svitlopuls-card-preview
+          path: svitlopuls-preview.png
