@@ -1,14 +1,12 @@
 import { getShutdownsData, selectScheduleDays } from "./source.js"
 import { describeScheduleChanges } from "./changes.js"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
+import { publishCard } from "./media.js"
 
 import {
-  checkIsNight,
   createPeriod,
   getCurrentTime,
   loadLastMessage,
-  saveLastMessage,
-  deleteLastMessage,
   useSchedule,
 } from "./helpers.js"
 import {
@@ -17,13 +15,7 @@ import {
   LAST_MESSAGE_FILE,
   TOMORROW_MESSAGE_FILE,
   PowerState,
-  TELEGRAM_BOT_TOKEN,
-  TELEGRAM_CHAT_ID,
-  RETRIES_TIMEOUT,
-  RETRIES_MAX_COUNT,
 } from "./constants.js"
-
-let sendNotificationRetries = 0
 
 function generateSchedule({ data, dayKey }) {
   console.log("🌀 Generating schedule...")
@@ -111,70 +103,6 @@ function generateMessage(schedule = [], update, lastMessage = {}, dayLabel, date
   return { text, scheduleText, changeSummary }
 }
 
-async function sendNotification({ text, scheduleText, changeSummary, stateFile, scheduleDay, lastMessage }) {
-  if (!TELEGRAM_BOT_TOKEN) throw Error("❌ Missing telegram bot token.")
-  if (!TELEGRAM_CHAT_ID) throw Error("❌ Missing telegram chat id.")
-
-  console.log("🌀 Sending notification...")
-
-  const isScheduleChanged = lastMessage.scheduleText !== scheduleText
-  const isEdit = Boolean(lastMessage.message_id) && !isScheduleChanged
-  const isReply = Boolean(lastMessage.message_id) && isScheduleChanged
-
-  try {
-    const response = await fetch(
-      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${
-        isEdit ? "editMessageText" : "sendMessage"
-      }`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text,
-          parse_mode: "HTML",
-          disable_notification: checkIsNight(),
-          message_id: isEdit ? lastMessage.message_id : undefined,
-          reply_parameters: isReply
-            ? {
-                message_id: lastMessage.message_id,
-                allow_sending_without_reply: true,
-              }
-            : undefined,
-        }),
-      }
-    )
-
-    const data = await response.json()
-
-    if (data.description?.includes("not modified")) {
-      console.log("🟡 Notification not changed.")
-      return
-    }
-    if (!data.ok) {
-      deleteLastMessage(stateFile)
-      throw Error(data.description)
-    }
-
-    saveLastMessage({ ...data.result, scheduleText, changeSummary, scheduleDay }, stateFile)
-
-    console.log("🟢 Notification sent.")
-  } catch (error) {
-    console.error(`❌ Sending notification failed: ${error.message}.`)
-
-    if (sendNotificationRetries < RETRIES_MAX_COUNT) {
-      console.log("🌀 Try sending notification again...")
-      await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
-      sendNotificationRetries++
-      return await sendNotification({ text, scheduleText, changeSummary, stateFile, scheduleDay, lastMessage })
-    }
-
-    throw Error(
-      `❌ Sending notification failed after ${RETRIES_MAX_COUNT} retries.`
-    )
-  }
-}
-
 async function run() {
   const { fact, source } = await getShutdownsData()
   const days = selectScheduleDays(fact)
@@ -192,7 +120,7 @@ async function run() {
     const stateFile = label === "сьогодні" ? LAST_MESSAGE_FILE : TOMORROW_MESSAGE_FILE
     const lastMessage = loadLastMessage(stateFile, date) || {}
     const message = generateMessage(schedule, fact.update, lastMessage, label, date, source)
-    await sendNotification({ ...message, stateFile, scheduleDay: date, lastMessage })
+    await publishCard({ schedule, date, label, update: fact.update, source, message, lastMessage, stateFile })
   }
 }
 
