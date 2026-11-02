@@ -46,7 +46,7 @@ test("next outage respects Kyiv local date and time",()=>{
   assert.match(nearestEvent(example,"2026-11-03",new Date("2026-11-02T19:30:00Z")),/06:00/)
   assert.match(nearestEvent(example,"2026-11-03",new Date("2026-11-03T08:00:00Z")),/13:30/)
   assert.match(nearestEvent(example,"2026-11-03",new Date("2026-11-03T12:00:00Z")),/16:30/)
-  assert.match(nearestEvent(example,"2026-11-03",new Date("2026-11-03T22:00:00Z")),/Більше/)
+  assert.match(nearestEvent(example,"2026-11-03",new Date("2026-11-03T21:50:00Z")),/Більше/)
 })
 test("caption includes outages and totals in Telegram safe length",()=>{
   const c=buildCaption(details)
