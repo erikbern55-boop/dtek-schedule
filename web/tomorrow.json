@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-21",
+  "label": "завтра",
+  "group": "1.1",
+  "generatedAt": "2026-11-20T21:56:10.128Z",
+  "source": "ДТЕК",
+  "sourceUpdated": "20.11.2026 23:47",
+  "weather": {
+    "date": "2026-11-21",
+    "fetchedAt": "2026-11-20T21:46:03.019Z",
+    "stale": false,
+    "currentTemp": null,
+    "currentNowTemp": 6.9,
+    "currentNowCode": 3,
+    "currentNowWind": 2.93,
+    "currentNowPressure": 980.7,
+    "currentNowHumidity": 92,
+    "currentNowGust": 6.4,
+    "currentNowAt": "2026-11-20T23:45",
+    "todayDate": "2026-11-20",
+    "todayMin": 6.5,
+    "todayMax": 7.5,
+    "todayRain": 100,
+    "todayGust": 11.1,
+    "tomorrowDate": "2026-11-21",
+    "tomorrowMin": -0.6,
+    "tomorrowMax": 7.6,
+    "currentWind": null,
+    "code": 61,
+    "min": -0.6,
+    "max": 7.6,
+    "rain": 68,
+    "gust": 8.3,
+    "soilTemp": 6.7,
+    "soilAt": "12:00",
+    "soilDepthCm": 6,
+    "sunrise": "07:22",
+    "sunset": "16:07",
+    "warnings": [
+      "Можливі заморозки",
+      "Можлива слизька дорога"
+    ],
+    "forecastSource": "Open-Meteo"
+  },
+  "periods": [
+    {
+      "begin": "00:00",
+      "end": "01:00",
+      "power": false
+    },
+    {
+      "begin": "01:00",
+      "end": "04:30",
+      "power": true
+    },
+    {
+      "begin": "04:30",
+      "end": "09:00",
+      "power": false
+    },
+    {
+      "begin": "09:00",
+      "end": "16:00",
+      "power": true
+    },
+    {
+      "begin": "16:00",
+      "end": "20:30",
+      "power": false
+    },
+    {
+      "begin": "20:30",
+      "end": "24:00",
+      "power": true
+    }
+  ]
+}
