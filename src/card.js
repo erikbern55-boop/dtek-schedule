@@ -174,7 +174,7 @@ export function buildCardHtml({ schedule, date, label, update, source, now = new
     'background:#051f19}.outage-row{display:flex;align-items:center;gap:19px;padding:11px 18px;margin:8px 0;',
     'background:linear-gradient(90deg,#4a1223,#1b111a);border-radius:12px;border:1px solid #e44862}',
     '.outage-row strong{font-size:32px;flex:1}.outage-row em{font-size:20px;font-style:normal;',
-    'color:#f6eeee}.power-icon{font-size:33px;color:#ff5b6f}',
+    'color:#f6eeee}.power-icon{display:inline-flex;width:38px;height:38px;flex:0 0 38px}.power-icon svg{width:38px;height:38px;display:block}',
     '.more{font-size:19px;color:#ced8d2;padding:5px}.next{margin:14px 1px 0;',
     'border:2px solid #f7d553;border-radius:16px;background:#26291a;padding:14px;',
     'color:#ffe76c;font-size:26px;font-weight:800;text-align:center}',
