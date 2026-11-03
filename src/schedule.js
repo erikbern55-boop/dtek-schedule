@@ -2,6 +2,7 @@ import { getShutdownsData, selectScheduleDays } from "./source.js"
 import { describeScheduleChanges } from "./changes.js"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { publishCard } from "./media.js"
+import { publishDueTransitions } from "./transitions.js"
 
 import {
   createPeriod,
@@ -121,6 +122,15 @@ async function run() {
     const lastMessage = loadLastMessage(stateFile, date) || {}
     const message = generateMessage(schedule, fact.update, lastMessage, label, date, source)
     await publishCard({ schedule, date, label, update: fact.update, source, message, lastMessage, stateFile })
+    if (label === "сьогодні") {
+      try {
+        await publishDueTransitions({ schedule, date, source })
+      } catch (error) {
+        // Keep the regular schedule cards available even when a transition
+        // notification fails; a subsequent poll can retry within the window.
+        console.warn("⚠️ Planned transition notification failed: " + error.message)
+      }
+    }
   }
 }
 
