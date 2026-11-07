@@ -66,6 +66,7 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   const snap=await loadWeather({now:start,file,requester:async()=>sender()})
   const today=weatherForDate(snap,"2026-11-07",start)
   assert.equal(today.currentTemp,-1)
+  assert.equal(today.currentNowWind,4)
   assert.equal(today.currentNowTemp,-1)
   assert.equal(today.tomorrowMin,2)
   assert.equal(today.tomorrowMax,8)
@@ -80,6 +81,7 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(tomorrow.currentTemp,null)
   assert.equal(tomorrow.currentNowTemp,-1)
   assert.equal(tomorrow.currentNowCode,3)
+  assert.equal(tomorrow.currentNowWind,4)
   assert.equal(tomorrow.tomorrowMin,2)
   assert.equal(tomorrow.tomorrowMax,8)
   assert.equal(tomorrow.tomorrowDate,"2026-11-08")
@@ -173,11 +175,15 @@ test("weather and garden layout uses exactly two wide columns and four panels",(
  }
  const html=renderWeatherPanel(weather,"2026-11-07")
  assert.match(html,/class="wx-grid"/)
- assert.equal((html.match(/class="wx-box/g)||[]).length,4)
+ assert.equal((html.match(/class="wx-box/g)||[]).length,5)
  assert.match(html,/class="wx-box weather-air"/)
  assert.match(html,/class="wx-box weather-soil"/)
  assert.match(html,/class="wx-box weather-moon"/)
  assert.match(html,/class="wx-box weather-garden"/)
+ assert.match(html,/class="wx-box wx-astro weather-astro"/)
+ assert.match(html,/class="wx-right-stack"/)
+ assert.match(html,/Для настрою та натхнення/)
+ assert.match(html,/розважальний характер/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
    update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
  assert.match(card,/grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/)
@@ -218,4 +224,38 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
   assert.doesNotMatch(today,/Пориви завтра/)
   assert.match(tomorrow,/Пориви завтра/)
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+
+test("wind now and daily wind gusts have clear labels and correct units on both cards",async()=>{
+ const dir=makeDir(),file=path.join(dir,"cache.json")
+ try {
+  const snap=await loadWeather({now:start,file,requester:async()=>sender()})
+  for(const [day,label,expectedGust] of [
+    ["2026-11-07","сьогодні",17],["2026-11-08","завтра",9],
+  ]){
+   const w=weatherForDate(snap,day,start)
+   const h=renderWeatherPanel(w,day,label)
+   assert.match(h,/Вітер зараз: <b>4 м\/с<\/b>/)
+   assert.match(h,new RegExp("Пориви вітру "+(label==="завтра"?"завтра":"сьогодні")+
+    ": <b>"+expectedGust+" м/с"))
+   assert.doesNotMatch(h,/Пориви вітру завтра: <b>4 м\/с/)
+  }
+ }finally{fs.rmSync(dir,{recursive:true,force:true})}
+})
+
+test("astrology is visibly marked as entertainment, independent of weather availability",()=>{
+ const day="2026-11-08"
+ for (const w of [null,{currentNowTemp:2,soilTemp:5,code:2,min:0,max:6,
+  tomorrowDate:"2026-11-08",tomorrowMin:0,tomorrowMax:6}]){
+  const h=renderWeatherPanel(w,day,"завтра")
+  assert.match(h,/Астропрогноз дня/)
+  assert.match(h,/Для настрою та натхнення/)
+  assert.match(h,/Астрологічна інтерпретація · розважальний характер/)
+  assert.match(h,/wx-moon-disc/)
+  assert.ok(h.indexOf("weather-garden") < h.indexOf("weather-soil"),
+    "gardener calendar must precede soil and sun")
+  assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-moon"))
+  assert.ok(h.indexOf("weather-moon") < h.indexOf("weather-astro"))
+ }
 })
