@@ -11,7 +11,9 @@ const schedule=[
 {begin:"22:30",end:"24:00",power:true},
 ]
 const weather={
- currentTemp:3,min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
+ currentTemp:3,currentNowTemp:3,currentNowCode:2,
+ tomorrowDate:"2026-11-08",tomorrowMin:-2,tomorrowMax:5,
+ min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
  soilTemp:5.6,soilAt:"16:00",soilDepthCm:6,
  sunrise:"07:01",sunset:"16:29",warnings:["Можливі заморозки"],
  fetchedAt:"2026-11-07T14:30:00.000Z",stale:false,

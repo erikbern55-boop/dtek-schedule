@@ -66,6 +66,10 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   const snap=await loadWeather({now:start,file,requester:async()=>sender()})
   const today=weatherForDate(snap,"2026-11-07",start)
   assert.equal(today.currentTemp,-1)
+  assert.equal(today.currentNowTemp,-1)
+  assert.equal(today.tomorrowMin,2)
+  assert.equal(today.tomorrowMax,8)
+  assert.equal(today.tomorrowDate,"2026-11-08")
   assert.equal(today.sunrise,"07:02")
   assert.equal(today.sunset,"16:25")
   assert.equal(today.soilTemp,4.5)
@@ -74,6 +78,11 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.deepEqual(today.warnings,["Можливі заморозки","Сильні пориви вітру"])
   const tomorrow=weatherForDate(snap,"2026-11-08",start)
   assert.equal(tomorrow.currentTemp,null)
+  assert.equal(tomorrow.currentNowTemp,-1)
+  assert.equal(tomorrow.currentNowCode,3)
+  assert.equal(tomorrow.tomorrowMin,2)
+  assert.equal(tomorrow.tomorrowMax,8)
+  assert.equal(tomorrow.tomorrowDate,"2026-11-08")
   assert.equal(tomorrow.sunrise,"07:04")
   assert.equal(tomorrow.soilTemp,6.1)
   assert.equal(tomorrow.soilAt,"12:00")
@@ -177,4 +186,36 @@ test("weather and garden layout uses exactly two wide columns and four panels",(
  assert.match(card,/class="power-layout"/)
  assert.match(card,/class="wx-grid"/)
  assert.match(card,/Дані: 07\.11\.2026 12:00/)
+})
+
+test("today and tomorrow cards both show actual current reading and clearly labeled tomorrow range",async()=>{
+ const dir=makeDir(),file=path.join(dir,"weather.json")
+ try {
+  const snapshot=await loadWeather({now:start,file,requester:async()=>sender()})
+  const current=weatherForDate(snapshot,"2026-11-07",start)
+  const next=weatherForDate(snapshot,"2026-11-08",start)
+  for (const [day,label,weather] of [
+   ["2026-11-07","сьогодні",current],["2026-11-08","завтра",next]
+  ]) {
+   const html=renderWeatherPanel(weather,day,label)
+   assert.match(html,/Температура зараз/)
+   assert.match(html,/Прогноз на завтра · 08\.11/)
+   assert.match(html,/Мінімум<b>\+2°C<\/b>/)
+   assert.match(html,/Максимум<b>\+8°C<\/b>/)
+   assert.match(html,/class="wx-now">-1°C<\/div>/)
+   assert.doesNotMatch(html,/class="wx-now">\+8°C<\/div>/)
+  }
+ } finally {fs.rmSync(dir,{recursive:true,force:true})}
+})
+test("day-specific range and tomorrow range are not conflated",async()=>{
+ const dir=makeDir(),file=path.join(dir,"weather.json")
+ try {
+  const snap=await loadWeather({now:start,file,requester:async()=>sender()})
+  const today=renderWeatherPanel(weatherForDate(snap,"2026-11-07",start),"2026-11-07")
+  const tomorrow=renderWeatherPanel(weatherForDate(snap,"2026-11-08",start),"2026-11-08","завтра")
+  assert.match(today,/Прогноз на сьогодні/)
+  assert.match(tomorrow,/Прогноз на завтра/)
+  assert.doesNotMatch(today,/Пориви завтра/)
+  assert.match(tomorrow,/Пориви завтра/)
+ } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
