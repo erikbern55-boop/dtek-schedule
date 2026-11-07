@@ -143,9 +143,9 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
   const percentOff = (withoutPower / 14.4).toFixed(1).replace(".", ",")
   const dateLabel = label === "завтра" ? "ЗАВТРА" : "СЬОГОДНІ"
   const css = [
-    '*{box-sizing:border-box}html,body{margin:0;width:920px;height:1970px;overflow:hidden}',
+    '*{box-sizing:border-box}html,body{margin:0;width:920px;height:auto;overflow:visible}',
     'body{font-family:Arial,"DejaVu Sans",sans-serif;background:#011610;color:white}',
-    '.card{width:900px;height:1950px;margin:10px;padding:30px;border:3px solid #39e37d;border-radius:34px;',
+    '.card{width:900px;height:auto;margin:10px;padding:30px;border:3px solid #39e37d;border-radius:34px;',
     'background:radial-gradient(circle at 50% 40%,#14392d 0%,#031a15 60%,#00120f 100%);overflow:hidden}',
     '.header{height:111px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #1fac64}',
     '.robot{width:101px;height:103px;filter:drop-shadow(0 0 12px #3edbfb)}',
@@ -212,11 +212,11 @@ export async function renderCardPng(details) {
   const browser = await chromium.launch({ headless: true })
   try {
     const page = await browser.newPage({
-      viewport: { width: SIZE, height: 1970 },
+      viewport: { width: SIZE, height: 800 },
       deviceScaleFactor: 1,
     })
     await page.setContent(buildCardHtml(details), { waitUntil: "load" })
-    const png = await page.screenshot({ type: "png" })
+    const png = await page.screenshot({ type: "png", fullPage: true })
     if (png.length < 2000) throw Error("Empty card image")
     return png
   } finally {
