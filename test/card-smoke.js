@@ -10,6 +10,7 @@ const schedule=[
 ]
 const weather={
  currentTemp:3,min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
+ soilTemp:5.6,soilAt:"16:00",soilDepthCm:6,
  sunrise:"07:01",sunset:"16:29",warnings:["Можливі заморозки"],
  fetchedAt:"2026-11-07T14:30:00.000Z",stale:false,
 }
