@@ -113,7 +113,7 @@ test("styled forecast widget contains warning, sunrise, sunset, date-specific ad
  assert.match(html,/Глибина ~6 см/)
  assert.match(html,/Місячний календар/)
  assert.match(html,/Освітленість/)
- assert.match(html,/Місячний день — на 12:00 Київ/)
+ assert.match(html,/Місяць — на 12:00 Київ/)
  assert.match(html,/Фастівський район/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
   update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
