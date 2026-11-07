@@ -7,6 +7,12 @@ const zodiacSymbols = Object.freeze({
   "Стрілець":"♐", "Козоріг":"♑", "Водолій":"♒", "Риби":"♓",
 })
 
+const locatives=Object.freeze({
+ "Овен":"Овні", "Телець":"Тельці", "Близнюки":"Близнюках", "Рак":"Раку",
+ "Лев":"Леві", "Діва":"Діві", "Терези":"Терезах", "Скорпіон":"Скорпіоні",
+ "Стрілець":"Стрільці", "Козоріг":"Козорозі", "Водолій":"Водолії", "Риби":"Рибах",
+})
+
 const messages = Object.freeze({
   "Овен":"Знайдіть час для ініціативи та невеликої корисної справи. Перш ніж діяти, оберіть один головний пріоритет.",
   "Телець":"Створіть навколо себе більше затишку та спокою. Приємні домашні дрібниці можуть додати гарного настрою.",
@@ -25,11 +31,12 @@ const messages = Object.freeze({
 export function astroForMoon(moon) {
   const sign=moon?.zodiac
   if (!Object.hasOwn(messages,sign)) {
-    return {sign:"—",symbol:"✦",message:"Знайдіть хвилину для відпочинку й натхнення."}
+    return {sign:"—",inSign:"невідомому знаку",symbol:"✦",message:"Знайдіть хвилину для відпочинку й натхнення."}
   }
   return {
     sign,
     symbol:zodiacSymbols[sign],
+    inSign:locatives[sign],
     message:messages[sign],
   }
 }
