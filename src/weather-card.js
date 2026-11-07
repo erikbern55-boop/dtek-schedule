@@ -43,7 +43,7 @@ export const WEATHER_CSS = [
   '.wx-credit{font-size:16px;color:#aed0ba;text-align:right;padding-top:8px}',
 ].join("")
 
-export function renderWeatherPanel(weather, date) {
+export function renderWeatherPanel(weather, date, label = "сьогодні") {
   const heading = '<section class="weather-zone"><div class="weather-title"><span>🌿 Погода та садиба</span>' +
     '<span class="weather-sub">СТ «Хімік» · Фастівський район</span></div>'
   if (!weather) {
@@ -52,6 +52,7 @@ export function renderWeatherPanel(weather, date) {
   }
   const [symbol, description] = condition(weather.code)
   const minmax = t(weather.min) + " … " + t(weather.max)
+  const primaryTemp = weather.currentTemp === null ? weather.max : weather.currentTemp
   const warning = weather.stale
     ? '<div class="wx-alert">⚠ Прогноз потребує оновлення</div>'
     : weather.warnings?.length
@@ -61,8 +62,8 @@ export function renderWeatherPanel(weather, date) {
   const timestamp = weather.fetchedAt
     ? new Intl.DateTimeFormat("uk-UA", {timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"}).format(new Date(weather.fetchedAt)) : "—"
   return heading + '<div class="weather-columns">' +
-    '<div class="weather-box"><h3>☁ Погода в СТ «Хімік»</h3>' + warning +
-    '<div class="wx-temp">' + e(weather.currentTemp === null ? minmax : t(weather.currentTemp)) + '</div>' +
+    '<div class="weather-box"><h3>☁ Погода ' + (label === "завтра" ? "завтра" : "в СТ «Хімік»") + '</h3>' + warning +
+    '<div class="wx-temp">' + e(t(primaryTemp)) + '</div>' +
     '<div class="wx-condition">' + e(symbol + " " + description) + '</div>' +
     '<div class="wx-day">Прогноз доби:<br><b>' + e(minmax) + '</b></div>' +
     '<div class="wx-data">🌬 Вітер: ' + e(n(weather.currentWind ?? weather.gust," м/с")) + '</div>' +
@@ -71,7 +72,7 @@ export function renderWeatherPanel(weather, date) {
     '<div class="wx-astr">☀ Схід сонця<b>' + e(weather.sunrise || "—:—") + '</b></div>' +
     '<div class="wx-astr set">◕ Захід сонця<b>' + e(weather.sunset || "—:—") + '</b></div></div>' +
     '<div class="weather-box"><h3>🌱 Календар городника</h3>' +
-    '<div class="wx-quote">Порада на сьогодні:</div>' +
+    '<div class="wx-quote">Порада ' + (label === "завтра" ? "на завтра:" : "на сьогодні:") + '</div>' +
     '<div class="wx-garden">' + e(tip) + '</div></div></div>' +
     '<div class="wx-credit">Прогноз Open-Meteo · оновлено ' + e(timestamp) +
     ' · погодна модель, не місцевий датчик</div></section>'
