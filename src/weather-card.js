@@ -1,103 +1,133 @@
 import { gardenTip } from "./garden.js"
 import { lunarForDate } from "./moon.js"
 
-const escape=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
- .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
-const temp=n=>Number.isFinite(n)?(Math.round(n)>0?"+":"")+Math.round(n)+"°C":"—"
-const val=(n,u)=>Number.isFinite(n)?Math.round(n)+u:"—"
+const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
+const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
 
 function condition(code) {
- if(code===0)return ["☀","Ясно"]
- if([1,2].includes(code))return ["⛅","Мінлива хмарність"]
- if(code===3)return ["☁","Хмарно"]
- if([45,48].includes(code))return ["≋","Туман"]
- if([51,53,55,56,57].includes(code))return ["☂","Мряка"]
- if([61,63,65,66,67,80,81,82].includes(code))return ["☂","Дощ"]
- if([71,73,75,77,85,86].includes(code))return ["❄","Сніг"]
- if([95,96,99].includes(code))return ["⚡","Гроза"]
- return ["◌","Погода"]
+  if (code === 0) return ["☀️","Ясно"]
+  if ([1,2].includes(code)) return ["🌤","Мінлива хмарність"]
+  if (code === 3) return ["☁️","Хмарно"]
+  if ([45,48].includes(code)) return ["🌫","Туман"]
+  if ([51,53,55,56,57].includes(code)) return ["🌦","Мряка"]
+  if ([61,63,65,66,67,80,81,82].includes(code)) return ["🌧","Дощ"]
+  if ([71,73,75,77,85,86].includes(code)) return ["❄️","Сніг"]
+  if ([95,96,99].includes(code)) return ["⛈","Гроза"]
+  return ["☁️","Прогноз недоступний"]
 }
 
-export const WEATHER_CSS=[
-'.weather-zone{border:2px solid #35e881;border-radius:26px;background:linear-gradient(140deg,#06321f,#021b15);',
-'padding:16px 16px 19px;margin-top:17px;height:598px;overflow:hidden}',
-'.weather-title{font-size:34px;font-weight:900;color:#d0ffe0;padding:4px 5px 13px;',
-'border-bottom:2px solid #279d5f;display:flex;justify-content:space-between;align-items:center}',
-'.weather-sub{font-size:16px;color:#a5d7bc;font-weight:500}',
-'.wx-grid{display:grid;grid-template-columns:1.17fr .91fr .97fr 1.18fr;gap:9px;',
-'margin-top:13px;height:470px}',
-'.wx-box{border:2px solid #26d77b;border-radius:18px;background:#082c1e;min-width:0;',
-'height:100%;padding:13px 10px;overflow:hidden}',
-'.wx-box h3{margin:0 0 10px;font-size:20px;line-height:1.17;',
-'border-bottom:1px solid #459c70;padding-bottom:10px}',
-'.wx-stack{display:flex;flex-direction:column;gap:9px;min-width:0;height:100%}',
-'.wx-stack .wx-box{height:auto;flex:1}',
-'.wx-alert{background:#f6cb39;color:#142010;border-radius:9px;',
-'font-weight:900;font-size:18px;line-height:1.2;padding:9px 7px;margin:6px 0 14px}',
-'.wx-safe{border:1px solid #369268;border-radius:9px;',
-'color:#d5efdd;font-size:16px;padding:8px;margin:8px 0 14px;line-height:1.22}',
-'.wx-temp{font-size:49px;font-weight:900;color:white;margin:4px 0 8px}',
-'.wx-condition{font-size:18px;color:#e6ffed;line-height:1.24;min-height:57px}',
-'.wx-range{font-size:19px;line-height:1.4;background:#125038;',
-'padding:9px 7px;border-radius:11px;margin:13px 0 12px}',
-'.wx-data{font-size:18px;line-height:1.5;color:#f2fff6}',
-'.wx-soil{font-size:43px;color:#d9ffdf;font-weight:900;margin:12px 0 9px}',
-'.wx-soil-hint{font-size:16px;line-height:1.32;color:#b8e5cf}',
-'.wx-time{margin:6px 0;padding:4px 0;border-bottom:1px solid #235c42;',
-'font-size:16px;color:#dcffe8}',
-'.wx-time strong{display:block;font-size:30px;color:white;margin-top:3px}',
-'.wx-moon-symbol{font-size:55px;text-align:center;height:78px;line-height:1.3}',
-'.wx-moon-day{font-size:30px;color:#f1ffbd;font-weight:900;text-align:center;white-space:nowrap}',
-'.wx-moon-small{text-align:center;color:#d4ebdf;font-size:15px;margin-bottom:10px}',
-'.wx-moon-row{font-size:18px;line-height:1.4;margin:7px 0}',
-'.wx-moon-row b{color:white}',
-'.wx-tip-title{color:#eff37b;font-size:21px;font-weight:900;line-height:1.25;margin:13px 0}',
-'.wx-tip{color:#edfff1;font-size:19px;line-height:1.35}',
-'.wx-credit{font-size:16px;text-align:center;color:#b4d6c1;padding-top:13px}',
+// Two genuinely wide columns, two stacked rows, rather than four narrow
+// columns. All blocks are live HTML, not a static picture with fake readings.
+export const WEATHER_CSS = [
+  '.weather-zone{margin-top:14px;padding:17px;border:2px solid #44ef7b;',
+  'border-radius:27px;background:linear-gradient(145deg,#062e21,#00160e);',
+  'box-shadow:inset 0 0 18px #063d26,0 0 14px #09592e}',
+  '.weather-title{display:flex;align-items:center;justify-content:space-between;',
+  'border-bottom:2px solid #2bb46b;padding:0 3px 13px;gap:12px}',
+  '.weather-title strong{font-size:35px;color:#e1ffe8;',
+  'text-shadow:0 0 8px #2ba965;white-space:nowrap}',
+  '.weather-title span{font-size:16px;color:#b4dcc3;text-align:right}',
+  '.wx-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);',
+  'gap:12px;margin-top:13px}',
+  '.wx-box{min-width:0;border:2px solid #31e27f;border-radius:21px;',
+  'padding:16px 15px;background:radial-gradient(circle at 10% 100%,#12432b,#032318 72%);',
+  'box-shadow:inset 0 0 12px #075632;overflow:hidden}',
+  '.wx-box h3{font-size:25px;font-weight:900;margin:0 0 12px;',
+  'padding-bottom:10px;border-bottom:1px solid #389e70;line-height:1.14}',
+  '.wx-warning{background:#f5d637;color:#142312;display:inline-block;',
+  'border-radius:11px;padding:8px 12px;margin-bottom:12px;font-size:20px;',
+  'font-weight:900;max-width:100%;line-height:1.22}',
+  '.wx-warning.neutral{background:#175639;color:#d4f8dd;border:1px solid #398a5a}',
+  '.wx-weather-main{display:flex;align-items:center;gap:13px;margin:3px 0 10px}',
+  '.wx-symbol{font-size:68px;line-height:1}',
+  '.wx-now{font-size:59px;font-weight:900;white-space:nowrap;line-height:1.05}',
+  '.wx-cond{font-size:21px;color:#dcefe6;line-height:1.25}',
+  '.wx-facts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}',
+  '.wx-fact{background:#0c422d;border:1px solid #24764d;border-radius:11px;',
+  'padding:8px 10px;font-size:18px;line-height:1.3;color:#e9ffef}',
+  '.wx-fact.wide{grid-column:1/-1}',
+  '.wx-fact b{font-size:22px;color:white}',
+  '.wx-soil-sun{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+  '.wx-half{min-width:0}',
+  '.wx-half+.wx-half{border-left:2px solid #25794e;padding-left:12px}',
+  '.wx-soil-icon{font-size:48px;line-height:1.15;margin:4px 0}',
+  '.wx-soil-number{font-size:51px;font-weight:900;color:#f4fff7;white-space:nowrap}',
+  '.wx-caption{font-size:17px;color:#b9e3cb;line-height:1.34}',
+  '.wx-sun-label{font-size:18px;color:#d8f4dd}',
+  '.wx-sun-time{font-size:40px;font-weight:900;color:white;margin:3px 0 8px}',
+  '.wx-sun-divider{border-top:1px solid #2a7853;margin:9px 0}',
+  '.wx-moon-main{display:flex;gap:18px;align-items:center;margin:5px 0 12px}',
+  '.wx-moon-icon{font-size:105px;line-height:1.07;min-width:125px;text-align:center}',
+  '.wx-moon-number{font-size:46px;font-weight:900;color:#e8ffc4;white-space:nowrap}',
+  '.wx-moon-note{font-size:18px;color:#d9f6e3;line-height:1.33}',
+  '.wx-moon-rows{border-top:1px solid #3d9f6a}',
+  '.wx-moon-row{font-size:21px;padding:7px 1px;border-bottom:1px solid #245e44;',
+  'display:flex;justify-content:space-between;gap:9px;line-height:1.3}',
+  '.wx-moon-row b{color:#fafffc;text-align:right}',
+  '.wx-garden-body{display:flex;gap:14px;align-items:flex-start}',
+  '.wx-garden-art{font-size:95px;line-height:1.05;min-width:120px;',
+  'text-align:center;background:radial-gradient(circle,#1c5b31,#08261a 72%);',
+  'border-radius:18px;padding:14px 0;min-height:165px}',
+  '.wx-garden-copy{font-size:22px;line-height:1.35;min-width:0}',
+  '.wx-garden-heading{font-size:22px;color:#edec5d;font-weight:900;',
+  'margin:0 0 12px;line-height:1.25}',
+  '.wx-credit{margin-top:15px;font-size:16px;color:#b7debf;',
+  'text-align:center;line-height:1.35}',
 ].join("")
 
 export function renderWeatherPanel(weather,date,label="сьогодні") {
- const moon=lunarForDate(date)
- const heading='<section class="weather-zone"><div class="weather-title">'+
-  '<span>🌿 Погода та садиба</span><span class="weather-sub">СТ «Хімік» · Фастівський район</span></div>'
- const warning=!weather
-    ?'<div class="wx-alert">⚠ Прогноз недоступний</div>'
+  const moon=lunarForDate(date)
+  const [symbol,desc]=condition(weather?.code)
+  const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA", {
+    timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"
+  }).format(new Date(weather.fetchedAt)):"—"
+  const safeWeather=weather&&!weather.stale
+  const warning=!weather
+    ?'<div class="wx-warning">⚠ Прогноз недоступний</div>'
     :weather.stale
-      ?'<div class="wx-alert">⚠ Дані погоди застаріли</div>'
+      ?'<div class="wx-warning">⚠ Дані погоди застаріли</div>'
       :weather.warnings?.length
-        ?'<div class="wx-alert">⚠ '+escape(weather.warnings.join(" · "))+'</div>'
-        :'<div class="wx-safe">✓ Небезпечних умов за прогнозом не виявлено</div>'
- const [symbol,desc]=condition(weather?.code)
- const temperature=weather?(weather.currentTemp??weather.max):null
- const weatherCard='<section class="wx-box"><h3>☁ Погода в СТ «Хімік»</h3>'+
-  warning+'<div class="wx-temp">'+escape(temp(temperature))+'</div>'+
-  '<div class="wx-condition">'+escape(symbol+" "+desc)+'</div>'+
-  '<div class="wx-range">Прогноз доби:<br><b>'+escape(temp(weather?.min))+
-  ' … '+escape(temp(weather?.max))+'</b></div>'+
-  '<div class="wx-data">🌬 Вітер: '+escape(val(weather?.currentWind??weather?.gust," м/с"))+'</div>'+
-  '<div class="wx-data">☂ Опади: '+escape(val(weather?.rain,"%"))+'</div></section>'
- const soilValue=temp(weather?.soilTemp)
- const soilCard='<section class="wx-box"><h3>🌱 Температура ґрунту</h3>'+
-  '<div class="wx-soil">'+escape(soilValue)+'</div>'+
-  '<div class="wx-soil-hint">Глибина ~6 см<br>Прогноз моделі'+
-  (weather?.soilAt?'<br>На '+escape(weather.soilAt):"")+'</div></section>'
- const sunCard='<section class="wx-box"><h3>🌅 Сонце</h3>'+
-  '<div class="wx-time">☀ Схід<strong>'+escape(weather?.sunrise||"—:—")+'</strong></div>'+
-  '<div class="wx-time">◕ Захід<strong>'+escape(weather?.sunset||"—:—")+'</strong></div></section>'
- const moonCard='<section class="wx-box"><h3>🌙 Місячний календар</h3>'+
-  '<div class="wx-moon-symbol">'+escape(moon.moonGlyph)+'</div>'+
-  '<div class="wx-moon-day">'+escape(moon.lunarDay)+'-й день</div>'+
-  '<div class="wx-moon-small">від молодика · на 12:00</div>'+
-  '<div class="wx-moon-row">Фаза:<br><b>'+escape(moon.phase)+'</b></div>'+
-  '<div class="wx-moon-row">Освітленість: <b>'+escape(moon.illumination)+'%</b></div>'+
-  '<div class="wx-moon-row">Знак: <b>'+escape(moon.zodiac)+'</b></div></section>'
- const gardenCard='<section class="wx-box"><h3>🌿 Календар городника</h3>'+
-  '<div class="wx-tip-title">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
-  '<div class="wx-tip">'+escape(gardenTip(date,weather))+'</div></section>'
- const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA",{timeZone:"Europe/Kyiv",
-  hour:"2-digit",minute:"2-digit"}).format(new Date(weather.fetchedAt)):"—"
- return heading+'<div class="wx-grid">'+weatherCard+
-  '<div class="wx-stack">'+soilCard+sunCard+'</div>'+moonCard+gardenCard+
-  '</div><div class="wx-credit">Прогноз: Open-Meteo · оновлено '+escape(stamp)+
-  ' · ґрунт — модельний · Місяць — на 12:00 Київ (тропічний знак)</div></section>'
+        ?'<div class="wx-warning">❄️ '+esc(weather.warnings.join(" · "))+'</div>'
+        :'<div class="wx-warning neutral">✓ Небезпечних умов за прогнозом не виявлено</div>'
+  const air=weather?(weather.currentTemp??weather.max):null
+  const forecast=weather
+    ?'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
+      '<div class="wx-weather-main"><div class="wx-symbol">'+esc(symbol)+'</div>'+
+      '<div><div class="wx-now">'+esc(temp(air))+'</div><div class="wx-cond">'+esc(desc)+'</div></div></div>'+
+      '<div class="wx-facts"><div class="wx-fact wide">Прогноз доби: <b>'+esc(temp(weather.min))+
+      ' … '+esc(temp(weather.max))+'</b></div>'+
+      '<div class="wx-fact">🌬 Вітер: <b>'+esc(val(weather.currentWind??weather.gust," м/с"))+'</b></div>'+
+      '<div class="wx-fact">☔ Опади: <b>'+esc(val(weather.rain,"%"))+'</b><br><small>імовірність</small></div></div></section>'
+    :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
+      '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
+  const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
+    '<div class="wx-soil-sun"><div class="wx-half">'+
+    '<div class="wx-soil-icon">🌱🌡️</div>'+
+    '<div class="wx-soil-number">'+esc(temp(weather?.soilTemp))+'</div>'+
+    '<div class="wx-caption">Глибина ≈6 см<br>Прогноз моделі'+
+      (weather?.soilAt?'<br>на '+esc(weather.soilAt):'')+'</div></div>'+
+    '<div class="wx-half"><div class="wx-sun-label">🌅 Схід сонця</div>'+
+    '<div class="wx-sun-time">'+esc(weather?.sunrise||"—:—")+'</div>'+
+    '<div class="wx-sun-divider"></div>'+
+    '<div class="wx-sun-label">🌇 Захід сонця</div>'+
+    '<div class="wx-sun-time">'+esc(weather?.sunset||"—:—")+'</div></div></div></section>'
+  const moonHtml='<section class="wx-box weather-moon"><h3>🌙 Місячний календар</h3>'+
+    '<div class="wx-moon-main"><div class="wx-moon-icon">'+esc(moon.moonGlyph)+'</div>'+
+    '<div><div class="wx-moon-number">'+esc(moon.lunarDay)+'-й день</div>'+
+    '<div class="wx-moon-note">від молодика<br>на 12:00 за Києвом</div></div></div>'+
+    '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
+    '<div class="wx-moon-row"><span>Освітленість:</span><b>'+esc(moon.illumination)+'%</b></div>'+
+    '<div class="wx-moon-row"><span>Знак Місяця:</span><b>'+esc(moon.zodiac)+'</b></div></div></section>'
+  const tip=gardenTip(date,weather)
+  const garden='<section class="wx-box weather-garden"><h3>🌿 Календар городника</h3>'+
+    '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
+    '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
+    esc(tip)+'</div></div></section>'
+  const foot='<div class="wx-credit">Прогноз: Open-Meteo · оновлено '+esc(stamp)+
+    ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак)</div>'
+  return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
+    '<span>СТ «Хімік» · Фастівський район</span></div>'+
+    '<div class="wx-grid">'+forecast+soil+moonHtml+garden+'</div>'+foot+'</section>'
 }

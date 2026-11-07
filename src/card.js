@@ -144,65 +144,100 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
   const dateLabel = label === "завтра" ? "ЗАВТРА" : "СЬОГОДНІ"
   const css = [
     '*{box-sizing:border-box}html,body{margin:0;width:920px;height:auto;overflow:visible}',
-    'body{font-family:Arial,"DejaVu Sans",sans-serif;background:#011610;color:white}',
-    '.card{width:900px;height:auto;margin:10px;padding:30px;border:3px solid #39e37d;border-radius:34px;',
-    'background:radial-gradient(circle at 50% 40%,#14392d 0%,#031a15 60%,#00120f 100%);overflow:hidden}',
-    '.header{height:111px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #1fac64}',
-    '.robot{width:101px;height:103px;filter:drop-shadow(0 0 12px #3edbfb)}',
-    '.brand{font-size:55px;font-weight:900;font-style:italic;letter-spacing:1px;text-shadow:0 0 18px #28d96e}',
-    '.brand b{color:#7aff90}.smallbrand{font-size:18px;font-weight:700;color:#9ad5b2;letter-spacing:1.3px}',
-    '.date{margin:18px 0 10px;border:2px solid #31e57e;border-radius:35px;background:#09281d;',
-    'padding:12px;text-align:center;font-size:27px;font-weight:800}',
-    '.sub{text-align:center;font-style:italic;font-size:22px;color:#cefbd8;margin-bottom:6px}',
-    '.dashboard{height:506px;display:flex;gap:7px}.dial{width:514px;flex-shrink:0}',
-    '.right{width:312px;display:flex;flex-direction:column;gap:10px;padding-top:24px}',
-    '.metric{border:2px solid;border-radius:21px;padding:15px 13px 12px 16px;text-align:center;',
-    'background:#071a19}.metric.on{border-color:#3afa83;box-shadow:inset 0 0 14px #176d39}',
-    '.metric.off{border-color:#ff5264;box-shadow:inset 0 0 14px #612635}',
-    '.metric .name{font-size:24px;font-weight:700}.metric .value{font-size:39px;font-weight:900;white-space:nowrap}',
-    '.metric.on .value{color:#7aff8c}.metric.off .value{color:#ffa2aa}',
-    '.metric .pct{font-size:20px;color:#cbded5}',
-    '.periods{display:flex;flex-direction:column;gap:5px}.period{height:32px;',
-    'display:flex;align-items:center;justify-content:space-between;gap:8px;background:#071d18;',
-    'border-radius:10px;padding:2px 9px;border-left:9px solid #35ee74;font-size:19px}',
-    '.period.off{border-color:#ff5362;background:#29121b}.period-kind{font-size:16px;color:#c9d7d1}',
-    '.timeline-box{margin:7px 0 20px;border:2px solid #3de480;padding:17px 25px 14px;border-radius:22px;',
-    'background:#08251d}.secttitle{font-size:27px;font-weight:900;margin-bottom:12px}',
-    '.timeline{display:flex;overflow:hidden;height:31px;border-radius:17px;box-shadow:0 0 14px #367a49}',
-    '.timeline span{height:31px;display:block;flex-shrink:0}',
-    '.timeline-labels{display:flex;justify-content:space-between;font-size:18px;color:#e4f6ea;margin-top:10px}',
-    '.outages{min-height:250px;padding:18px 20px;border:2px solid #248b63;border-radius:24px;',
-    'background:#051f19}.outage-row{display:flex;align-items:center;gap:19px;padding:11px 18px;margin:8px 0;',
-    'background:linear-gradient(90deg,#4a1223,#1b111a);border-radius:12px;border:1px solid #e44862}',
-    '.outage-row strong{font-size:32px;flex:1}.outage-row em{font-size:20px;font-style:normal;',
-    'color:#f6eeee}.power-icon{display:inline-flex;width:38px;height:38px;flex:0 0 38px}.power-icon svg{width:38px;height:38px;display:block}',
-    '.more{font-size:19px;color:#ced8d2;padding:5px}.next{margin:14px 1px 0;',
-    'border:2px solid #f7d553;border-radius:16px;background:#26291a;padding:14px;',
-    'color:#ffe76c;font-size:26px;font-weight:800;text-align:center}',
-    '.footer{margin-top:16px;font-size:19px;display:flex;justify-content:space-between;',
-    'border-top:1px solid #3baa77;padding:14px 7px;color:#c2e5d1}',
-    '.signature{text-align:center;color:#70dc93;letter-spacing:5px;font-size:18px;padding-top:12px}',
+    'body{font-family:Arial,"DejaVu Sans",sans-serif;color:#fff;background:#01150e}',
+    '.card{width:900px;height:auto;margin:10px;padding:22px;border:3px solid #43f37c;',
+    'border-radius:32px;background:radial-gradient(circle at 50% 35%,#103529 0%,#051b16 59%,#00120c 100%);',
+    'box-shadow:0 0 16px #135a35;overflow:hidden}',
+    '.header{height:101px;display:flex;align-items:center;justify-content:space-between;',
+    'gap:12px;border-bottom:2px solid #31be68;padding-bottom:8px}',
+    '.header-left{display:flex;align-items:center;min-width:0;gap:11px;flex:1}',
+    '.robot{height:82px;width:83px;flex-shrink:0;filter:drop-shadow(0 0 11px #3acff8)}',
+    '.smallbrand{font-size:17px;font-weight:800;color:#b8d2bf;letter-spacing:1px;white-space:nowrap}',
+    '.brand{font-size:47px;font-weight:900;font-style:italic;color:#f1fff8;white-space:nowrap;',
+    'text-shadow:0 0 14px #28d96e}',
+    '.brand b{color:#75ff83}',
+    '.version{display:inline-block;font-size:28px;font-style:italic;color:#d9ffbf;',
+    'border:2px solid #b5fb7e;border-radius:14px;padding:2px 7px;vertical-align:middle;',
+    'margin-left:8px;text-shadow:0 0 7px #4dae5d}',
+    '.header-place{width:186px;border-left:2px solid #5fa66b;padding-left:13px;',
+    'color:#d4efdc;font-size:17px;line-height:1.26;text-align:left}',
+    '.header-place b{color:#ddffb6;font-size:19px}',
+    '.date{margin:14px 0 7px;padding:10px 12px;border:2px solid #42ee7a;border-radius:34px;',
+    'font-size:27px;font-weight:900;text-align:center;background:#06291e;',
+    'box-shadow:inset 0 0 8px #0b5733}',
+    '.sub{text-align:center;font-size:21px;font-style:italic;color:#d7f4dc;margin:7px 0 6px}',
+    '.power-layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:13px}',
+    '.power-left{display:flex;flex-direction:column;min-width:0}',
+    '.dial{width:330px;height:330px}.dial svg{width:100%;height:100%;display:block}',
+    '.power-right{min-width:0}',
+    '.power-overview{display:grid;grid-template-columns:235px minmax(0,1fr);gap:8px}',
+    '.metrics-col{display:flex;flex-direction:column;gap:8px}',
+    '.metric{min-height:93px;border:2px solid;border-radius:16px;padding:10px 8px;',
+    'text-align:center;background:#061d18}',
+    '.metric.on{border-color:#37ee77;box-shadow:inset 0 0 12px #0e7139}',
+    '.metric.off{border-color:#ff5b6d;box-shadow:inset 0 0 12px #70313d}',
+    '.metric .name{font-size:22px;font-weight:800;line-height:1.1}',
+    '.metric .value{font-size:31px;font-weight:900;white-space:nowrap;line-height:1.3}',
+    '.metric.on .value{color:#86ff92}.metric.off .value{color:#ffabb4}',
+    '.metric .pct{font-size:18px;color:#dce7dd}',
+    '.periods{display:flex;flex-direction:column;gap:5px;min-width:0}',
+    '.period{min-height:28px;padding:3px 7px;display:flex;align-items:center;',
+    'justify-content:space-between;gap:4px;background:#06231a;border-radius:9px;',
+    'border-left:8px solid #3bf182;font-size:17px;white-space:nowrap}',
+    '.period.off{border-left-color:#ff5970;background:#391923}',
+    '.period-kind{font-size:13px;color:#ddece3}',
+    '.timeline-box{margin-top:8px;padding:11px 13px 9px;border:2px solid #33d875;',
+    'border-radius:17px;background:#05241a}',
+    '.secttitle{font-size:23px;font-weight:900;margin:0 0 7px}',
+    '.timeline{display:flex;overflow:hidden;height:23px;border-radius:16px;',
+    'box-shadow:0 0 10px #25734d}',
+    '.timeline span{height:23px;display:block;flex-shrink:0}',
+    '.timeline-labels{display:flex;justify-content:space-between;font-size:15px;',
+    'color:#e4f6e8;margin-top:6px}',
+    '.outages{margin-top:8px;padding:10px 12px;border:2px solid #268354;',
+    'border-radius:16px;background:#041d17}',
+    '.outage-row{display:flex;align-items:center;gap:10px;min-height:37px;',
+    'background:linear-gradient(90deg,#501327,#1b111a);',
+    'border:1px solid #de4964;border-radius:9px;padding:2px 8px;margin:5px 0}',
+    '.outage-row strong{font-size:23px;flex:1;white-space:nowrap}',
+    '.outage-row em{font-size:16px;font-style:normal;color:#f1eeed;white-space:nowrap}',
+    '.power-icon{display:inline-flex;width:27px;height:27px;flex:0 0 27px}',
+    '.power-icon svg{display:block;width:27px;height:27px}',
+    '.more{font-size:16px;color:#cce0d1}',
+    '.next{margin-top:8px;padding:15px 10px;min-height:88px;',
+    'border:2px solid #f8db4e;border-radius:17px;background:#24301a;',
+    'box-shadow:inset 0 0 15px #51521d;color:#ffe76e;',
+    'font-size:23px;font-weight:900;text-align:center;line-height:1.2;',
+    'display:flex;align-items:center;justify-content:center}',
+    '.footer{margin-top:13px;padding:13px 8px 4px;border-top:1px solid #36a66c;',
+    'display:flex;justify-content:space-between;font-size:17px;color:#c5e4d1;gap:8px}',
+    '.signature{text-align:center;font-size:21px;font-style:italic;color:#90ed9a;',
+    'letter-spacing:3px;padding-top:10px;text-shadow:0 0 9px #116d38}',
     WEATHER_CSS,
   ].join("")
-  const content = '<div class="card"><header class="header">' + robotIcon() +
-    '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div><div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b></div></div></header>' +
+  const content = '<div class="card"><header class="header"><div class="header-left">' + robotIcon() +
+    '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div>' +
+    '<div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b><span class="version">2.1</span></div></div></div>' +
+    '<div class="header-place"><b>📍 СТ «Хімік»</b><div>Фастівський район<br>Київська область</div></div></header>' +
     '<div class="date">' + dateLabel + ' · ' + escape(formatDate(date)) + ' · ' + escape(weekday(date)) + '</div>' +
     '<div class="sub">Ритм електропостачання · графік на 24 години</div>' +
-    '<main class="dashboard"><div class="dial">' + buildDial(schedule) + '</div>' +
-    '<div class="right"><div class="metric on"><div class="name">💡 Зі світлом</div><div class="value">' +
+    '<main class="power-layout"><div class="power-left"><div class="dial">' + buildDial(schedule) + '</div>' +
+    '<div class="next">⚡ ' + escape(status) + '</div></div>' +
+    '<div class="power-right"><div class="power-overview"><div class="metrics-col">' +
+    '<div class="metric on"><div class="name">💡 Зі світлом</div><div class="value">' +
     escape(formatDuration(withPower)) + '</div><div class="pct">' + percentOn + '% доби</div></div>' +
     '<div class="metric off"><div class="name">◉ Без світла</div><div class="value">' +
     escape(formatDuration(withoutPower)) + '</div><div class="pct">' + percentOff + '% доби</div></div>' +
-    '<div class="periods">' + visiblePeriods + '</div></div></main>' +
+    '</div><div class="periods">' + visiblePeriods + '</div></div>' +
     '<section class="timeline-box"><div class="secttitle">▰ Графік доби · 24 години</div>' +
     buildTimeline(schedule) + '</section>' +
     '<section class="outages"><div class="secttitle">◷ Періоди відключень</div>' +
     (outageRows || '<div class="outage-row">Відключень не заплановано</div>') + remaining +
-    '<div class="next">⚡ ' + escape(status) + '</div></section>' +
+    '</section></div></main>' +
     renderWeatherPanel(weather, date, label) +
     '<footer class="footer"><span>📡 ' + escape(sourceLabel) +
     '</span><span>Дані: ' + escape(update) + '</span></footer>' +
-    '<div class="signature">СВІТЛОПУЛЬС · СТ «ХІМІК»</div></div>'
+    '<div class="signature">⚡ СВІТЛОПУЛЬС 2.1 · СТ «ХІМІК»</div></div>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>' + css +
     '</style></head><body>' + content + '</body></html>'
 }

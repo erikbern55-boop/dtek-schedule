@@ -110,10 +110,10 @@ test("styled forecast widget contains warning, sunrise, sunset, date-specific ad
  assert.match(html,/16:25/)
  assert.match(html,/Можливі заморозки/)
  assert.match(html,/Open-Meteo/)
- assert.match(html,/Глибина ~6 см/)
+ assert.match(html,/Глибина ≈6 см/)
  assert.match(html,/Місячний календар/)
  assert.match(html,/Освітленість/)
- assert.match(html,/Місяць — на 12:00 Київ/)
+ assert.match(html,/Місяць — на 12:00/)
  assert.match(html,/Фастівський район/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
   update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
@@ -142,7 +142,7 @@ test("unavailable soil never becomes a fabricated 0°C or sensor reading", async
   assert.equal(weather.soilTemp,null)
   const html=renderWeatherPanel(weather,"2026-11-07")
   assert.match(html,/Прогноз моделі/)
-  assert.match(html,/Глибина ~6 см/)
+  assert.match(html,/Глибина ≈6 см/)
   assert.doesNotMatch(html,/Ґрунт.*0°C/)
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 })
@@ -152,6 +152,29 @@ test("tomorrow's card uses its own moon date and the forecast soil at noon",()=>
  assert.match(a,/3°C/)
  assert.match(b,/7°C/)
  assert.match(b,/Порада на завтра/)
- assert.match(b,/На 12:00/)
+ assert.match(b,/на 12:00/)
  assert.notEqual(a,b)
+})
+
+test("weather and garden layout uses exactly two wide columns and four panels",()=>{
+ const weather={
+  currentTemp:2,min:0,max:4,currentWind:2,rain:10,code:2,
+  soilTemp:4,soilAt:"17:00",sunrise:"06:59",sunset:"16:26",
+  warnings:["Можливі заморозки"],fetchedAt:start.toISOString(),stale:false
+ }
+ const html=renderWeatherPanel(weather,"2026-11-07")
+ assert.match(html,/class="wx-grid"/)
+ assert.equal((html.match(/class="wx-box/g)||[]).length,4)
+ assert.match(html,/class="wx-box weather-air"/)
+ assert.match(html,/class="wx-box weather-soil"/)
+ assert.match(html,/class="wx-box weather-moon"/)
+ assert.match(html,/class="wx-box weather-garden"/)
+ const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
+   update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
+ assert.match(card,/grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/)
+ assert.match(card,/СВІТЛО/)
+ assert.match(card,/2\.1/)
+ assert.match(card,/class="power-layout"/)
+ assert.match(card,/class="wx-grid"/)
+ assert.match(card,/Дані: 07\.11\.2026 12:00/)
 })
