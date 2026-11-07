@@ -2,6 +2,7 @@ import { getShutdownsData, selectScheduleDays } from "./source.js"
 import { describeScheduleChanges } from "./changes.js"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { publishCard } from "./media.js"
+import { loadWeather, weatherForDate } from "./weather.js"
 import { publishDueTransitions } from "./transitions.js"
 
 import {
@@ -112,6 +113,12 @@ async function run() {
     return
   }
 
+  // Weather is optional. A forecast/API failure must never stop DTEK notifications.
+  const weatherSnapshot = await loadWeather().catch(error => {
+    console.warn("⚠️ Weather module failed: " + error.message)
+    return null
+  })
+
   for (const { key, date, label } of days) {
     if (!fact.data[key]?.[GROUP]) {
       console.log("🟡 Немає графіка для " + GROUP + " на " + date)
@@ -121,7 +128,7 @@ async function run() {
     const stateFile = label === "сьогодні" ? LAST_MESSAGE_FILE : TOMORROW_MESSAGE_FILE
     const lastMessage = loadLastMessage(stateFile, date) || {}
     const message = generateMessage(schedule, fact.update, lastMessage, label, date, source)
-    await publishCard({ schedule, date, label, update: fact.update, source, message, lastMessage, stateFile })
+    await publishCard({ schedule, date, label, update: fact.update, source, message, lastMessage, stateFile, weather: weatherForDate(weatherSnapshot, date) })
     if (label === "сьогодні") {
       try {
         await publishDueTransitions({ schedule, date, source })
