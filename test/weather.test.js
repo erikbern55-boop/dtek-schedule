@@ -221,8 +221,8 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
   const tomorrow=renderWeatherPanel(weatherForDate(snap,"2026-11-08",start),"2026-11-08","завтра")
   assert.match(today,/Прогноз на сьогодні/)
   assert.match(tomorrow,/Прогноз на завтра/)
-  assert.doesNotMatch(today,/Пориви завтра/)
-  assert.match(tomorrow,/Пориви завтра/)
+  assert.doesNotMatch(today,/Пориви вітру завтра/)
+  assert.match(tomorrow,/Пориви вітру завтра/)
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 
