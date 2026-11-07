@@ -11,7 +11,7 @@ const schedule=[
 {begin:"22:30",end:"24:00",power:true},
 ]
 const weather={
- currentTemp:3,currentNowTemp:3,currentNowCode:2,
+ currentTemp:3,currentNowTemp:3,currentNowCode:2,currentNowWind:4,
  tomorrowDate:"2026-11-08",tomorrowMin:-2,tomorrowMax:5,
  min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
  soilTemp:5.6,soilAt:"16:00",soilDepthCm:6,
@@ -43,15 +43,18 @@ try {
    const rect=(sel)=>{const el=document.querySelector(sel);if(!el)return null
       const r=el.getBoundingClientRect()
       return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}
-   const elements=[...document.querySelectorAll(".wx-grid > .wx-box")].map(el=>{
+   const elements=[...document.querySelector(".wx-grid").children].map(el=>{
       const r=el.getBoundingClientRect()
       return {x:r.x,y:r.y,width:r.width,height:r.height,clipped:el.scrollHeight>el.clientHeight+2}
    })
    return {items:elements,footer:rect(".footer"),garden:rect(".weather-garden"),
+     soil:rect(".weather-soil"),right:rect(".wx-right-stack"),
+     astro:rect(".weather-astro"),moon:rect(".weather-moon"),
      weather:rect(".weather-zone"),card:rect(".card"),power:rect(".power-layout"),
-     source:document.querySelector(".footer")?.textContent}
+     source:document.querySelector(".footer")?.textContent,
+     entertainment:document.querySelector(".wx-astro-disclaimer")?.textContent}
  })
- assert.equal(geometry.items.length,4,"Exactly four large weather panels")
+ assert.equal(geometry.items.length,4,"Four major dashboard cells: weather / garden+soil / moon / astro")
  const [a,b,c,d]=geometry.items
  assert.ok(Math.abs(a.y-b.y)<3,"top row must be aligned")
  assert.ok(Math.abs(c.y-d.y)<3,"second row must be aligned")
@@ -65,7 +68,13 @@ try {
    "source footer must not overlap weather section")
  assert.ok(geometry.card.bottom>=geometry.footer.bottom,
    "footer must remain inside the card")
- assert.ok(geometry.items.every(x=>!x.clipped),"weather panels must not clip text")
+ assert.ok(geometry.items.every(x=>!x.clipped),"weather cells must not clip text")
+ assert.ok(geometry.garden.bottom<=geometry.soil.y+3,"gardener card must be above soil and sun")
+ assert.ok(geometry.soil.bottom<=geometry.right.bottom+3,"soil card must remain inside right stack")
+ assert.ok(geometry.garden.x>=geometry.right.x-3,"garden card must remain inside right stack")
+ assert.ok(geometry.astro.y>=geometry.right.bottom-3,"astrology must be in lower-right")
+ assert.ok(Math.abs(geometry.astro.y-geometry.moon.y)<3,"moon and astrology aligned")
+ assert.match(geometry.entertainment,/розважальний характер/)
  assert.match(geometry.source,/ДТЕК/)
  console.log("✅ Verified 2×2 wide weather cards, footer and responsive card height",geometry)
 }finally{

@@ -79,7 +79,7 @@ function moonGeometry(time) {
 }
 
 function phaseLabel(fraction) {
-  if (fraction < .035 || fraction >= .965) return "Молодик"
+  if (fraction < .035) return "Молодик"
   if (fraction < .215) return "Зростаючий серп"
   if (fraction < .285) return "Перша чверть"
   if (fraction < .465) return "Зростаючий Місяць"

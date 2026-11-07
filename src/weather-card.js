@@ -1,5 +1,6 @@
 import { gardenTip } from "./garden.js"
 import { lunarForDate } from "./moon.js"
+import { astroForMoon, moonDiscSvg } from "./astro.js"
 
 const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
   .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
@@ -58,6 +59,36 @@ export const WEATHER_CSS = [
   'padding:8px 10px;font-size:18px;line-height:1.3;color:#e9ffef}',
   '.wx-fact.wide{grid-column:1/-1}',
   '.wx-fact b{font-size:22px;color:white}',
+  '.wx-right-stack{min-width:0;display:flex;flex-direction:column;gap:11px}',
+  '.wx-right-stack .wx-box{flex:1;min-width:0}',
+  '.wx-right-stack .weather-garden{flex:1.08;display:flex;flex-direction:column}',
+  '.wx-right-stack .weather-soil{flex:.92}',
+  '.wx-right-stack .wx-box h3{font-size:23px;margin-bottom:9px}',
+  '.wx-right-stack .wx-garden-body{gap:10px;flex:1;align-items:center}',
+  '.wx-right-stack .wx-garden-art{font-size:66px;min-width:78px;min-height:110px;padding:12px 0}',
+  '.wx-right-stack .wx-garden-heading{font-size:21px;margin-bottom:8px}',
+  '.wx-right-stack .wx-garden-copy{font-size:19px;line-height:1.3}',
+  '.wx-right-stack .wx-soil-icon{font-size:32px;margin:0}',
+  '.wx-right-stack .wx-soil-number{font-size:37px}',
+  '.wx-right-stack .wx-caption{font-size:15px}',
+  '.wx-right-stack .wx-sun-label{font-size:16px}',
+  '.wx-right-stack .wx-sun-time{font-size:32px;margin:2px 0 4px}',
+  '.wx-right-stack .wx-sun-divider{margin:5px 0}',
+  '.wx-moon-disc{width:123px;height:123px;display:block;filter:drop-shadow(0 0 9px #4d7f8c)}',
+  '.wx-astro{border-color:#9c81ec;background:linear-gradient(135deg,#112d2f,#16112f 95%);',
+  'box-shadow:inset 0 0 16px #29204f,0 0 10px #35266c}',
+  '.wx-astro h3{border-bottom-color:#7465b4}',
+  '.wx-astro-tag{color:#ffd85b;font-weight:900;font-size:20px;margin:-2px 0 9px}',
+  '.wx-astro-body{display:flex;gap:13px;align-items:flex-start}',
+  '.wx-astro-symbol{flex:0 0 105px;width:105px;height:105px;border-radius:50%;',
+  'border:2px solid #ae9bea;background:radial-gradient(circle,#262052,#0e1e2b);',
+  'font-size:66px;color:#d8c0ff;display:flex;align-items:center;justify-content:center;',
+  'text-shadow:0 0 15px #a063f7;box-shadow:0 0 18px #6e4497}',
+  '.wx-astro-copy{font-size:20px;line-height:1.32;color:#f5f4ff}',
+  '.wx-astro-copy b{color:#ffe36c;display:block;margin-bottom:7px;font-size:23px}',
+  '.wx-astro-disclaimer{border-top:1px solid #7c6db6;padding-top:9px;margin-top:14px;',
+  'font-size:16px;color:#dfd6ef;text-align:center;font-style:italic}',
+  '.wx-fact.gust{background:#0b3c2c}',
   '.wx-soil-sun{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
   '.wx-half{min-width:0}',
   '.wx-half+.wx-half{border-left:2px solid #25794e;padding-left:12px}',
@@ -118,10 +149,11 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
         :'<div class="wx-forecast-box">📅 Прогноз на завтра недоступний</div>')+
       '<div class="wx-facts"><div class="wx-fact wide">Прогноз '+(label==="завтра"?"на завтра":"на сьогодні")+': <b>'+esc(temp(weather.min))+
       ' … '+esc(temp(weather.max))+'</b></div>'+
-      '<div class="wx-fact">🌬 '+(label==="завтра"?"Пориви завтра":"Вітер зараз")+': <b>'+
-      esc(val(weather.currentWind??weather.gust," м/с"))+'</b></div>'+
-      '<div class="wx-fact">☔ Опади'+(label==="завтра"?" завтра":"")+': <b>'+esc(val(weather.rain,"%"))+
-      '</b><br><small>імовірність</small></div></div></section>'
+      '<div class="wx-fact">🌬 Вітер зараз: <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
+      '<div class="wx-fact gust">💨 Пориви вітру'+(label==="завтра"?" завтра":" сьогодні")+': <b>'+
+      esc(val(weather.gust," м/с"))+'</b></div>'+
+      '<div class="wx-fact wide">☔ Імовірність опадів'+(label==="завтра"?" завтра":" сьогодні")+
+      ': <b>'+esc(val(weather.rain,"%"))+'</b></div></div></section>'
     :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
   const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
@@ -136,7 +168,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-sun-label">🌇 Захід сонця</div>'+
     '<div class="wx-sun-time">'+esc(weather?.sunset||"—:—")+'</div></div></div></section>'
   const moonHtml='<section class="wx-box weather-moon"><h3>🌙 Місячний календар</h3>'+
-    '<div class="wx-moon-main"><div class="wx-moon-icon">'+esc(moon.moonGlyph)+'</div>'+
+    '<div class="wx-moon-main"><div class="wx-moon-icon">'+moonDiscSvg(moon)+'</div>'+
     '<div><div class="wx-moon-number">'+esc(moon.lunarDay)+'-й день</div>'+
     '<div class="wx-moon-note">від молодика<br>на 12:00 за Києвом</div></div></div>'+
     '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
@@ -147,9 +179,18 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(tip)+'</div></div></section>'
+  const astro=astroForMoon(moon)
+  const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
+    '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+
+    '<div class="wx-astro-body"><div class="wx-astro-symbol">'+esc(astro.symbol)+'</div>'+
+    '<div class="wx-astro-copy"><b>Місяць у '+esc(astro.inSign)+'.</b>'+esc(astro.message)+
+    '</div></div>'+
+    '<div class="wx-astro-disclaimer">Астрологічна інтерпретація · розважальний характер</div></section>'
   const foot='<div class="wx-credit">Прогноз: Open-Meteo · оновлено '+esc(stamp)+
     ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак)</div>'
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
-    '<div class="wx-grid">'+forecast+soil+moonHtml+garden+'</div>'+foot+'</section>'
+    '<div class="wx-grid">'+forecast+
+      '<div class="wx-right-stack">'+garden+soil+'</div>'+
+      moonHtml+astroHtml+'</div>'+foot+'</section>'
 }

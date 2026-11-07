@@ -172,6 +172,8 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentTemp: Number.isFinite(current?.temperature_2m) ? current.temperature_2m : null,
     currentNowTemp: Number.isFinite(currentNow?.temperature_2m) ? currentNow.temperature_2m : null,
     currentNowCode: Number.isFinite(currentNow?.weather_code) ? currentNow.weather_code : null,
+    currentNowWind: Number.isFinite(currentNow?.wind_speed_10m) ? currentNow.wind_speed_10m : null,
+    currentNowGust: Number.isFinite(currentNow?.wind_gusts_10m) ? currentNow.wind_gusts_10m : null,
     currentNowAt: currentNow?.time ?? null,
     tomorrowDate, tomorrowMin, tomorrowMax,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
