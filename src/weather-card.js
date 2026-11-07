@@ -183,7 +183,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
     '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+
     '<div class="wx-astro-body"><div class="wx-astro-symbol">'+esc(astro.symbol)+'</div>'+
-    '<div class="wx-astro-copy"><b>Місяць у '+esc(astro.sign)+'.</b>'+esc(astro.message)+
+    '<div class="wx-astro-copy"><b>Місяць у '+esc(astro.inSign)+'.</b>'+esc(astro.message)+
     '</div></div>'+
     '<div class="wx-astro-disclaimer">Астрологічна інтерпретація · розважальний характер</div></section>'
   const foot='<div class="wx-credit">Прогноз: Open-Meteo · оновлено '+esc(stamp)+
