@@ -65,13 +65,14 @@ function replyTo(last) {
   return { message_id: last.message_id, allow_sending_without_reply: true }
 }
 
-export async function publishCard({ schedule, date, label, update, source, message, lastMessage, stateFile }) {
+export async function publishCard({ schedule, date, label, update, source, message, lastMessage, stateFile, weather = null }) {
   const caption = buildCaption({
     schedule, date, label, update, source, changeSummary: message.changeSummary,
   })
   const same = lastMessage.scheduleText === message.scheduleText
   const priorPhoto = Boolean(lastMessage.message_id) && lastMessage.kind === "photo"
-  const imageRefresh = priorPhoto && same && (lastMessage.source !== source || lastMessage.update !== update)
+  const weatherStamp = weather ? (weather.stale ? "stale:" : "fresh:") + weather.fetchedAt : "unavailable"
+  const imageRefresh = priorPhoto && same && (lastMessage.source !== source || lastMessage.update !== update || lastMessage.weatherStamp !== weatherStamp)
 
   // Routine checks update the caption. A changed data timestamp or source
   // replaces the photo in place, without posting a fresh notification.
@@ -79,7 +80,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     try {
       let result
       if (imageRefresh) {
-        const png = await renderCardPng({ schedule, date, label, update, source })
+        const png = await renderCardPng({ schedule, date, label, update, source, weather })
         const form = new FormData()
         form.set("chat_id", String(TELEGRAM_CHAT_ID))
         form.set("message_id", String(lastMessage.message_id))
@@ -100,7 +101,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
         scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-        scheduleDay: date, kind: "photo", source, update,
+        scheduleDay: date, kind: "photo", source, update, weatherStamp,
       }, stateFile)
     } catch (error) {
       if (String(error).includes("message is not modified")) {
@@ -113,7 +114,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
   }
 
   try {
-    const png = await renderCardPng({ schedule, date, label, update, source })
+    const png = await renderCardPng({ schedule, date, label, update, source, weather })
     const form = new FormData()
     form.set("chat_id", String(TELEGRAM_CHAT_ID))
     form.set("photo", new Blob([png], { type: "image/png" }), "svitlopuls.png")
@@ -126,7 +127,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "photo", source, update,
+      scheduleDay: date, kind: "photo", source, update, weatherStamp,
     }, stateFile)
     console.log("🟢 Svitlopuls graphical card with caption published")
   } catch (error) {
@@ -143,7 +144,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "text", source, update,
+      scheduleDay: date, kind: "text", source, update, weatherStamp,
     }, stateFile)
     console.log("🟢 Backup text schedule published")
   }

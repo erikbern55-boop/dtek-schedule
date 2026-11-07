@@ -1,4 +1,5 @@
 import { calculateDailyTotals, formatDuration } from "./summary.js"
+import { renderWeatherPanel, WEATHER_CSS } from "./weather-card.js"
 
 const GREEN = "#30f176"
 const RED = "#ff5264"
@@ -118,7 +119,7 @@ function robotIcon() {
     '</svg>'
 }
 
-export function buildCardHtml({ schedule, date, label, update, source, now = new Date() }) {
+export function buildCardHtml({ schedule, date, label, update, source, weather = null, now = new Date() }) {
   const { withPower, withoutPower } = calculateDailyTotals(schedule)
   const outagePeriods = schedule.filter((p) => !p.power)
   const allPeriods = schedule.map((p) => {
@@ -142,9 +143,9 @@ export function buildCardHtml({ schedule, date, label, update, source, now = new
   const percentOff = (withoutPower / 14.4).toFixed(1).replace(".", ",")
   const dateLabel = label === "завтра" ? "ЗАВТРА" : "СЬОГОДНІ"
   const css = [
-    '*{box-sizing:border-box}html,body{margin:0;width:920px;height:1360px;overflow:hidden}',
+    '*{box-sizing:border-box}html,body{margin:0;width:920px;height:1970px;overflow:hidden}',
     'body{font-family:Arial,"DejaVu Sans",sans-serif;background:#011610;color:white}',
-    '.card{width:900px;height:1340px;margin:10px;padding:30px;border:3px solid #39e37d;border-radius:34px;',
+    '.card{width:900px;height:1950px;margin:10px;padding:30px;border:3px solid #39e37d;border-radius:34px;',
     'background:radial-gradient(circle at 50% 40%,#14392d 0%,#031a15 60%,#00120f 100%);overflow:hidden}',
     '.header{height:111px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #1fac64}',
     '.robot{width:101px;height:103px;filter:drop-shadow(0 0 12px #3edbfb)}',
@@ -181,6 +182,7 @@ export function buildCardHtml({ schedule, date, label, update, source, now = new
     '.footer{margin-top:16px;font-size:19px;display:flex;justify-content:space-between;',
     'border-top:1px solid #3baa77;padding:14px 7px;color:#c2e5d1}',
     '.signature{text-align:center;color:#70dc93;letter-spacing:5px;font-size:18px;padding-top:12px}',
+    WEATHER_CSS,
   ].join("")
   const content = '<div class="card"><header class="header">' + robotIcon() +
     '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div><div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b></div></div></header>' +
@@ -197,6 +199,7 @@ export function buildCardHtml({ schedule, date, label, update, source, now = new
     '<section class="outages"><div class="secttitle">◷ Періоди відключень</div>' +
     (outageRows || '<div class="outage-row">Відключень не заплановано</div>') + remaining +
     '<div class="next">⚡ ' + escape(status) + '</div></section>' +
+    renderWeatherPanel(weather, date, label) +
     '<footer class="footer"><span>📡 ' + escape(sourceLabel) +
     '</span><span>Дані: ' + escape(update) + '</span></footer>' +
     '<div class="signature">СВІТЛОПУЛЬС · СТ «ХІМІК»</div></div>'
@@ -209,7 +212,7 @@ export async function renderCardPng(details) {
   const browser = await chromium.launch({ headless: true })
   try {
     const page = await browser.newPage({
-      viewport: { width: SIZE, height: 1360 },
+      viewport: { width: SIZE, height: 1970 },
       deviceScaleFactor: 1,
     })
     await page.setContent(buildCardHtml(details), { waitUntil: "load" })
