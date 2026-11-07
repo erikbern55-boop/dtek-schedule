@@ -9,6 +9,7 @@ test("all twelve tropical Moon signs receive original, deterministic entertainme
   const moon={zodiac:sign}
   const a=astroForMoon(moon)
   assert.equal(a.sign,sign)
+  assert.ok(a.inSign.length>0)
   assert.ok(a.symbol.length>0)
   assert.ok(a.message.length>=65&&a.message.length<240,sign)
   assert.deepEqual(a,astroForMoon(moon))
@@ -36,4 +37,9 @@ test("astrology is based on the Moon date, not on the current system date",()=>{
  const d=lunarForDate("2026-11-07")
  assert.equal(astroForMoon(d).sign,d.zodiac)
  assert.ok(astroForMoon(lunarForDate("2026-11-08")).message.length>0)
+})
+
+test("locative Ukrainian zodiac is grammatically correct",()=>{
+ assert.equal(astroForMoon({zodiac:"Скорпіон"}).inSign,"Скорпіоні")
+ assert.equal(astroForMoon({zodiac:"Терези"}).inSign,"Терезах")
 })
