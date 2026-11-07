@@ -47,7 +47,7 @@ export const WEATHER_CSS=[
 'font-size:16px;color:#dcffe8}',
 '.wx-time strong{display:block;font-size:30px;color:white;margin-top:3px}',
 '.wx-moon-symbol{font-size:55px;text-align:center;height:78px;line-height:1.3}',
-'.wx-moon-day{font-size:43px;color:#f1ffbd;font-weight:900;text-align:center;white-space:nowrap}',
+'.wx-moon-day{font-size:30px;color:#f1ffbd;font-weight:900;text-align:center;white-space:nowrap}',
 '.wx-moon-small{text-align:center;color:#d4ebdf;font-size:15px;margin-bottom:10px}',
 '.wx-moon-row{font-size:18px;line-height:1.4;margin:7px 0}',
 '.wx-moon-row b{color:white}',
@@ -99,5 +99,5 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
  return heading+'<div class="wx-grid">'+weatherCard+
   '<div class="wx-stack">'+soilCard+sunCard+'</div>'+moonCard+gardenCard+
   '</div><div class="wx-credit">Прогноз: Open-Meteo · оновлено '+escape(stamp)+
-  ' · температура ґрунту — модельна · Місячний день — на 12:00 Київ</div></section>'
+  ' · ґрунт — модельний · Місяць — на 12:00 Київ (тропічний знак)</div></section>'
 }
