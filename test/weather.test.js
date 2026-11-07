@@ -122,7 +122,7 @@ test("styled forecast widget contains warning, sunrise, sunset, date-specific ad
  assert.match(card,/24 години/)
  const fallback=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
   update:"07.11.2026 12:00",source:"ДТЕК",weather:null,now:start})
- assert.match(fallback,/Прогноз тимчасово недоступний/)
+ assert.match(fallback,/Прогноз недоступний/)
  assert.match(fallback,/03:00 — 10:00/)
 })
 test("bad response cannot masquerade as real settlement forecast",async()=>{
