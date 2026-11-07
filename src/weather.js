@@ -117,8 +117,19 @@ export function weatherForDate(snapshot, date, now = new Date()) {
   if (i < 0) return null
   const daily = snapshot.data.daily
   const get = key => Number.isFinite(daily[key]?.[i]) ? daily[key][i] : null
-  const today = date === kyivDate(now)
+  const todayDate = kyivDate(now)
+  const today = date === todayDate
   const current = today ? snapshot.data.current : null
+  // Always carry the SAME latest observation to both today and tomorrow cards.
+  // Its timestamp is separate from the future-day forecast.
+  const currentNow = snapshot.data.current
+  const iToday = dates.indexOf(todayDate)
+  const tomorrowIndex = iToday >= 0 ? iToday + 1 : -1
+  const tomorrowDate = tomorrowIndex >= 0 ? dates[tomorrowIndex] ?? null : null
+  const tomorrowMin = Number.isFinite(daily.temperature_2m_min?.[tomorrowIndex])
+    ? daily.temperature_2m_min[tomorrowIndex] : null
+  const tomorrowMax = Number.isFinite(daily.temperature_2m_max?.[tomorrowIndex])
+    ? daily.temperature_2m_max[tomorrowIndex] : null
   const min = get("temperature_2m_min")
   const max = get("temperature_2m_max")
   const rain = get("precipitation_probability_max")
@@ -159,6 +170,10 @@ export function weatherForDate(snapshot, date, now = new Date()) {
   return {
     date, fetchedAt: snapshot.fetchedAt, stale,
     currentTemp: Number.isFinite(current?.temperature_2m) ? current.temperature_2m : null,
+    currentNowTemp: Number.isFinite(currentNow?.temperature_2m) ? currentNow.temperature_2m : null,
+    currentNowCode: Number.isFinite(currentNow?.weather_code) ? currentNow.weather_code : null,
+    currentNowAt: currentNow?.time ?? null,
+    tomorrowDate, tomorrowMin, tomorrowMax,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
     code: today && Number.isFinite(current?.weather_code) ? current.weather_code : get("weather_code"),
     min, max, rain, gust, soilTemp, soilAt, soilDepthCm: 6,

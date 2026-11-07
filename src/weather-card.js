@@ -42,7 +42,16 @@ export const WEATHER_CSS = [
   '.wx-warning.neutral{background:#175639;color:#d4f8dd;border:1px solid #398a5a}',
   '.wx-weather-main{display:flex;align-items:center;gap:13px;margin:3px 0 10px}',
   '.wx-symbol{font-size:68px;line-height:1}',
-  '.wx-now{font-size:59px;font-weight:900;white-space:nowrap;line-height:1.05}',
+  '.wx-now-label{font-size:19px;color:#d2ffde;font-weight:800}',
+  '.wx-now{font-size:55px;font-weight:900;white-space:nowrap;line-height:1.05}',
+  '.wx-now-at{font-size:15px;color:#acd5bc;margin-top:4px}',
+  '.wx-forecast-box{border:1px solid #56bc7b;border-radius:12px;',
+  'background:#0c3c2b;padding:9px 10px;margin:12px 0}',
+  '.wx-forecast-heading{font-size:19px;font-weight:900;color:#edffb1;margin-bottom:8px}',
+  '.wx-forecast-values{display:grid;grid-template-columns:1fr 1fr;gap:6px}',
+  '.wx-forecast-values div{border-radius:9px;background:#082d20;padding:7px 5px;',
+  'font-size:17px;text-align:center;color:#dcf5e5}',
+  '.wx-forecast-values b{display:block;font-size:29px;color:white;white-space:nowrap}',
   '.wx-cond{font-size:21px;color:#dcefe6;line-height:1.25}',
   '.wx-facts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}',
   '.wx-fact{background:#0c422d;border:1px solid #24764d;border-radius:11px;',
@@ -79,7 +88,7 @@ export const WEATHER_CSS = [
 
 export function renderWeatherPanel(weather,date,label="сьогодні") {
   const moon=lunarForDate(date)
-  const [symbol,desc]=condition(weather?.code)
+  const [symbol,desc]=condition(weather?.currentNowCode ?? weather?.code)
   const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA", {
     timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"
   }).format(new Date(weather.fetchedAt)):"—"
@@ -91,15 +100,28 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       :weather.warnings?.length
         ?'<div class="wx-warning">❄️ '+esc(weather.warnings.join(" · "))+'</div>'
         :'<div class="wx-warning neutral">✓ Небезпечних умов за прогнозом не виявлено</div>'
-  const air=weather?(weather.currentTemp??weather.max):null
+  // A current reading is never substituted with the maximum of tomorrow.
+  const air=weather?(weather.currentNowTemp??weather.currentTemp):null
+  const hasTomorrow=weather && weather.tomorrowDate &&
+    (Number.isFinite(weather.tomorrowMin)||Number.isFinite(weather.tomorrowMax))
+  const tomorrowNumber=weather?.tomorrowDate
+    ? weather.tomorrowDate.split("-").slice(1).reverse().join(".") : "—"
   const forecast=weather
     ?'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-weather-main"><div class="wx-symbol">'+esc(symbol)+'</div>'+
-      '<div><div class="wx-now">'+esc(temp(air))+'</div><div class="wx-cond">'+esc(desc)+'</div></div></div>'+
-      '<div class="wx-facts"><div class="wx-fact wide">Прогноз доби: <b>'+esc(temp(weather.min))+
+      '<div><div class="wx-now-label">🌡 Температура зараз</div>'+
+      '<div class="wx-now">'+esc(temp(air))+'</div><div class="wx-cond">'+esc(desc)+'</div></div></div>'+
+      (hasTomorrow
+        ?'<div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Прогноз на завтра · '+esc(tomorrowNumber)+'</div>'+
+          '<div class="wx-forecast-values"><div>Мінімум<b>'+esc(temp(weather.tomorrowMin))+'</b></div>'+
+          '<div>Максимум<b>'+esc(temp(weather.tomorrowMax))+'</b></div></div></div>'
+        :'<div class="wx-forecast-box">📅 Прогноз на завтра недоступний</div>')+
+      '<div class="wx-facts"><div class="wx-fact wide">Прогноз '+(label==="завтра"?"на завтра":"на сьогодні")+': <b>'+esc(temp(weather.min))+
       ' … '+esc(temp(weather.max))+'</b></div>'+
-      '<div class="wx-fact">🌬 Вітер: <b>'+esc(val(weather.currentWind??weather.gust," м/с"))+'</b></div>'+
-      '<div class="wx-fact">☔ Опади: <b>'+esc(val(weather.rain,"%"))+'</b><br><small>імовірність</small></div></div></section>'
+      '<div class="wx-fact">🌬 '+(label==="завтра"?"Пориви завтра":"Вітер зараз")+': <b>'+
+      esc(val(weather.currentWind??weather.gust," м/с"))+'</b></div>'+
+      '<div class="wx-fact">☔ Опади'+(label==="завтра"?" завтра":"")+': <b>'+esc(val(weather.rain,"%"))+
+      '</b><br><small>імовірність</small></div></div></section>'
     :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
   const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
