@@ -21,6 +21,7 @@ export function weatherApiUrl() {
     latitude: String(KHIMIK.latitude), longitude: String(KHIMIK.longitude),
     timezone: "Europe/Kyiv", wind_speed_unit: "ms", forecast_days: "3",
     current: "temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day",
+    hourly: "soil_temperature_6cm",
     daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,wind_gusts_10m_max",
   }
   for (const [k, v] of Object.entries(p)) u.searchParams.set(k, v)
@@ -81,7 +82,8 @@ export async function loadWeather({
   const cached = readWeatherCache(file)
   const age = cached ? now.getTime() - Date.parse(cached.fetchedAt) : Infinity
   const fresh = cached && age >= 0 && age < WEATHER_REFRESH_MS &&
-    cached.data?.daily?.time?.includes(kyivDate(now))
+    cached.data?.daily?.time?.includes(kyivDate(now)) &&
+    Array.isArray(cached.data.hourly?.soil_temperature_6cm)
   if (fresh) return cached
   try {
     const response = await requester(weatherApiUrl(), {
@@ -127,6 +129,31 @@ export function weatherForDate(snapshot, date, now = new Date()) {
   if (min !== null && min <= 1 && rain !== null && rain >= 45) {
     warnings.push("Можлива слизька дорога")
   }
+  // Soil temperature at approx. 6 cm is a *model estimate*, never a local sensor reading.
+  // On the current date use the latest available past forecast hour.
+  // On future dates show the forecast around 12:00 Kyiv local time.
+  const hourly = snapshot.data?.hourly
+  const soilTimes = hourly?.time
+  const soil = hourly?.soil_temperature_6cm
+  let soilTemp = null
+  let soilAt = null
+  if (Array.isArray(soilTimes) && Array.isArray(soil) &&
+      soilTimes.length === soil.length) {
+    const timestamp = today
+      ? date + "T" + new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/Kyiv", hour:"2-digit", minute:"2-digit",hourCycle:"h23",
+        }).format(now)
+      : date + "T12:00"
+    let ix = -1
+    for (let j=0; j<soilTimes.length; j++) {
+      if (soilTimes[j].slice(0,10) === date && soilTimes[j] <= timestamp) ix=j
+    }
+    if (ix < 0 && !today) ix=soilTimes.indexOf(date+"T12:00")
+    if (ix >= 0 && Number.isFinite(soil[ix])) {
+      soilTemp = soil[ix]
+      soilAt = soilTimes[ix].slice(11,16)
+    }
+  }
   const stale = Boolean(snapshot.stale) ||
     now.getTime() - Date.parse(snapshot.fetchedAt) >= WEATHER_REFRESH_MS * 2
   return {
@@ -134,7 +161,7 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentTemp: Number.isFinite(current?.temperature_2m) ? current.temperature_2m : null,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
     code: today && Number.isFinite(current?.weather_code) ? current.weather_code : get("weather_code"),
-    min, max, rain, gust,
+    min, max, rain, gust, soilTemp, soilAt, soilDepthCm: 6,
     sunrise: (daily.sunrise[i] || "").slice(11, 16),
     sunset: (daily.sunset[i] || "").slice(11, 16),
     warnings: warnings.slice(0, 2),

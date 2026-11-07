@@ -12,6 +12,12 @@ const start = new Date("2026-11-07T14:30:00.000Z")
 const dates = ["2026-11-07","2026-11-08","2026-11-09"]
 const sample={
  latitude:50.35, longitude:30.07,
+ hourly:{
+  time:["2026-11-07T09:00","2026-11-07T10:00","2026-11-07T11:00",
+    "2026-11-07T12:00","2026-11-07T16:00","2026-11-08T11:00",
+    "2026-11-08T12:00","2026-11-09T12:00"],
+  soil_temperature_6cm:[2.5,3.2,3.4,3.6,4.5,5.2,6.1,7.0],
+ },
  current:{temperature_2m:-1,weather_code:3,wind_speed_10m:4},
  daily:{
   time:dates,weather_code:[3,61,2],
@@ -37,6 +43,7 @@ test("settlement weather query uses precise provided coordinates and Kyiv timezo
  assert.equal(u.searchParams.get("timezone"),"Europe/Kyiv")
  assert.equal(u.searchParams.get("wind_speed_unit"),"ms")
  assert.match(u.searchParams.get("daily"),/sunrise,sunset/)
+ assert.equal(u.searchParams.get("hourly"),"soil_temperature_6cm")
 })
 test("weather is fetched once and refreshed every 30 minutes (independent of five-minute polling)",async()=>{
  const d=makeDir(),file=path.join(d,"weather.json")
@@ -61,10 +68,15 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(today.currentTemp,-1)
   assert.equal(today.sunrise,"07:02")
   assert.equal(today.sunset,"16:25")
+  assert.equal(today.soilTemp,4.5)
+  assert.equal(today.soilAt,"16:00")
+  assert.equal(today.soilDepthCm,6)
   assert.deepEqual(today.warnings,["Можливі заморозки","Сильні пориви вітру"])
   const tomorrow=weatherForDate(snap,"2026-11-08",start)
   assert.equal(tomorrow.currentTemp,null)
   assert.equal(tomorrow.sunrise,"07:04")
+  assert.equal(tomorrow.soilTemp,6.1)
+  assert.equal(tomorrow.soilAt,"12:00")
   assert.deepEqual(tomorrow.warnings,[])
  } finally {fs.rmSync(d,{recursive:true,force:true})}
 })
@@ -89,6 +101,7 @@ test("calendar avoids watering in November and makes season-sensitive suggestion
 test("styled forecast widget contains warning, sunrise, sunset, date-specific advice and attribution",()=>{
  const weather={
   currentTemp:-1,min:-3,max:6,currentWind:4,rain:65,gust:17,code:3,
+  soilTemp:4.5,soilAt:"16:00",soilDepthCm:6,
   sunrise:"07:02",sunset:"16:25",warnings:["Можливі заморозки"],
   fetchedAt:start.toISOString(),stale:false,
  }
@@ -97,6 +110,10 @@ test("styled forecast widget contains warning, sunrise, sunset, date-specific ad
  assert.match(html,/16:25/)
  assert.match(html,/Можливі заморозки/)
  assert.match(html,/Open-Meteo/)
+ assert.match(html,/Глибина ~6 см/)
+ assert.match(html,/Місячний календар/)
+ assert.match(html,/Освітленість/)
+ assert.match(html,/Місяць — на 12:00 Київ/)
  assert.match(html,/Фастівський район/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
   update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
@@ -105,7 +122,7 @@ test("styled forecast widget contains warning, sunrise, sunset, date-specific ad
  assert.match(card,/24 години/)
  const fallback=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
   update:"07.11.2026 12:00",source:"ДТЕК",weather:null,now:start})
- assert.match(fallback,/Прогноз тимчасово недоступний/)
+ assert.match(fallback,/Прогноз недоступний/)
  assert.match(fallback,/03:00 — 10:00/)
 })
 test("bad response cannot masquerade as real settlement forecast",async()=>{
@@ -114,4 +131,27 @@ test("bad response cannot masquerade as real settlement forecast",async()=>{
   const snapshot=await loadWeather({now:start,file,requester:async()=>({ok:true,json:async()=>({...sample,daily:{time:dates}})})})
   assert.equal(snapshot,null)
  } finally {fs.rmSync(d,{recursive:true,force:true})}
+})
+
+test("unavailable soil never becomes a fabricated 0°C or sensor reading", async()=>{
+ const dir=makeDir(),file=path.join(dir,"cache.json")
+ try{
+  const data={...sample,hourly:{time:["2026-11-07T12:00"],soil_temperature_6cm:[null]}}
+  const snap=await loadWeather({now:start,file,requester:async()=>({ok:true,json:async()=>data})})
+  const weather=weatherForDate(snap,"2026-11-07",start)
+  assert.equal(weather.soilTemp,null)
+  const html=renderWeatherPanel(weather,"2026-11-07")
+  assert.match(html,/Прогноз моделі/)
+  assert.match(html,/Глибина ~6 см/)
+  assert.doesNotMatch(html,/Ґрунт.*0°C/)
+ }finally{fs.rmSync(dir,{recursive:true,force:true})}
+})
+test("tomorrow's card uses its own moon date and the forecast soil at noon",()=>{
+ const a=renderWeatherPanel({soilTemp:3.2,soilAt:"16:00"},"2026-11-07")
+ const b=renderWeatherPanel({soilTemp:7.3,soilAt:"12:00"},"2026-11-08","завтра")
+ assert.match(a,/3°C/)
+ assert.match(b,/7°C/)
+ assert.match(b,/Порада на завтра/)
+ assert.match(b,/На 12:00/)
+ assert.notEqual(a,b)
 })
