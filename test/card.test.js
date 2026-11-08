@@ -1,7 +1,7 @@
 import test from "node:test"
 import assert from "node:assert/strict"
 import { arcPath, buildCardHtml, buildDial, buildTimeline, nearestEvent } from "../src/card.js"
-import { buildCaption } from "../src/media.js"
+import { buildCaption, imageNeedsRefresh, CARD_RENDER_VERSION } from "../src/media.js"
 
 const example = [
   {begin:"00:00",end:"06:00",power:true},
@@ -68,4 +68,18 @@ test("long schedule caption remains within Telegram 1024 character limit",()=>{
   const c=buildCaption({...details,schedule,changeSummary:"⚠️ <b>Графік змінено</b>"})
   assert.ok(c.length<=1024)
   assert.match(c,/🟢 Зі світлом/)
+})
+
+test("visual-version changes force exactly one Telegram image redraw",()=>{
+ const base={source:"ДТЕК",update:"08.11.2026 12:00",weatherStamp:"fresh:2026-11-08T10:00:00Z"}
+ const noVersion={...base}
+ const changed={...base,renderVersion:"earlier-layout"}
+ const current={...base,renderVersion:CARD_RENDER_VERSION}
+ for(const state of [noVersion,changed]){
+  assert.equal(imageNeedsRefresh(state,base),true)
+ }
+ assert.equal(imageNeedsRefresh(current,base),false)
+ assert.equal(imageNeedsRefresh(current,{...base,weatherStamp:"fresh:new"}),true)
+ assert.equal(imageNeedsRefresh(current,{...base,source:"ДТЕК (резервні дані)"}),true)
+ assert.equal(imageNeedsRefresh(current,{...base,update:"new data"}),true)
 })

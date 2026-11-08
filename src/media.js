@@ -5,6 +5,16 @@ import { renderCardPng } from "./card.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
+// A visual redesign must update the existing Telegram photo even if neither
+// the weather timestamp nor the power schedule has changed.
+export const CARD_RENDER_VERSION = "2026-11-08-wind-full-width-v1"
+
+export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp }) {
+  return lastMessage.source !== source ||
+    lastMessage.update !== update ||
+    lastMessage.weatherStamp !== weatherStamp ||
+    lastMessage.renderVersion !== CARD_RENDER_VERSION
+}
 
 export function buildCaption({ schedule, date, label, source, changeSummary = "", update }) {
   const totals = calculateDailyTotals(schedule)
@@ -72,7 +82,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
   const same = lastMessage.scheduleText === message.scheduleText
   const priorPhoto = Boolean(lastMessage.message_id) && lastMessage.kind === "photo"
   const weatherStamp = weather ? (weather.stale ? "stale:" : "fresh:") + weather.fetchedAt : "unavailable"
-  const imageRefresh = priorPhoto && same && (lastMessage.source !== source || lastMessage.update !== update || lastMessage.weatherStamp !== weatherStamp)
+  const imageRefresh = priorPhoto && same && imageNeedsRefresh(lastMessage, { source, update, weatherStamp })
 
   // Routine checks update the caption. A changed data timestamp or source
   // replaces the photo in place, without posting a fresh notification.
@@ -101,7 +111,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
         scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-        scheduleDay: date, kind: "photo", source, update, weatherStamp,
+        scheduleDay: date, kind: "photo", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
       }, stateFile)
     } catch (error) {
       if (String(error).includes("message is not modified")) {
@@ -127,7 +137,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "photo", source, update, weatherStamp,
+      scheduleDay: date, kind: "photo", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
     }, stateFile)
     console.log("🟢 Svitlopuls graphical card with caption published")
   } catch (error) {
@@ -144,7 +154,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "text", source, update, weatherStamp,
+      scheduleDay: date, kind: "text", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
     }, stateFile)
     console.log("🟢 Backup text schedule published")
   }
