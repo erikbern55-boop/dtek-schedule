@@ -307,3 +307,18 @@ test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather 
   }
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 })
+
+test("current wind and today's gusts are two full-width, readable rows",async()=>{
+ const d=makeDir(),file=path.join(d,"weather.json")
+ try{
+  const snap=await loadWeather({now:start,file,requester:async()=>sender()})
+  for(const [date,label] of [["2026-11-07","сьогодні"],["2026-11-08","завтра"]]){
+   const h=renderWeatherPanel(weatherForDate(snap,date,start),date,label)
+   assert.match(h,/class="wx-fact wide windline">🌬 Вітер зараз: <b>4 м\/с<\/b>/)
+   assert.match(h,/class="wx-fact wide gust windline">💨 Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
+   assert.ok(h.indexOf("Вітер зараз")<h.indexOf("Пориви вітру сьогодні"))
+   assert.ok(h.indexOf("Пориви вітру сьогодні")<h.indexOf("Імовірність опадів сьогодні"))
+   assert.ok(h.indexOf("Імовірність опадів сьогодні")<h.indexOf("Завтра ·"))
+  }
+ }finally{fs.rmSync(d,{recursive:true,force:true})}
+})

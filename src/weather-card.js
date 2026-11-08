@@ -93,6 +93,9 @@ export const WEATHER_CSS = [
   '.wx-astro-disclaimer{border-top:1px solid #7c6db6;padding-top:9px;margin-top:14px;',
   'font-size:16px;color:#dfd6ef;text-align:center;font-style:italic}',
   '.wx-fact.gust{background:#0b3c2c}',
+  '.wx-fact.windline{display:flex;align-items:center;justify-content:space-between;',
+  'gap:8px;min-height:36px;font-size:17px;white-space:nowrap}',
+  '.wx-fact.windline b{flex-shrink:0;white-space:nowrap;font-size:21px}',
   '.wx-facts{margin-top:8px;margin-bottom:11px}',
   '.wx-fact{font-size:17px;padding:7px 8px}',
   '.wx-fact b{font-size:20px}',
@@ -160,8 +163,8 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div>Мінімум<b>'+esc(temp(weather.todayMin))+'</b></div>'+
       '<div>Максимум<b>'+esc(temp(weather.todayMax))+'</b></div></div></div>'+
       '<div class="wx-facts">'+
-      '<div class="wx-fact">🌬 Вітер зараз: <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
-      '<div class="wx-fact gust">💨 Пориви вітру сьогодні: <b>'+esc(val(weather.todayGust," м/с"))+'</b></div>'+
+      '<div class="wx-fact wide windline">🌬 Вітер зараз: <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
+      '<div class="wx-fact wide gust windline">💨 Пориви вітру сьогодні: <b>'+esc(val(weather.todayGust," м/с"))+'</b></div>'+
       '<div class="wx-fact wide">☔ Імовірність опадів сьогодні: <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
       '</div>'+
       (hasTomorrow

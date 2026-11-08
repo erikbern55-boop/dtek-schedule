@@ -48,7 +48,13 @@ try {
       const r=el.getBoundingClientRect()
       return {x:r.x,y:r.y,width:r.width,height:r.height,clipped:el.scrollHeight>el.clientHeight+2}
    })
-   return {items:elements,footer:rect(".footer"),garden:rect(".weather-garden"),
+   const windRows=[...document.querySelectorAll(".wx-fact.windline")].map(el=>{
+     const r=el.getBoundingClientRect(),b=el.querySelector("b").getBoundingClientRect()
+     return {width:r.width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
+      childRight:b.right,rowRight:r.right,label:el.textContent,bold:b.width,
+      noWrap:getComputedStyle(el).whiteSpace==="nowrap"}
+   })
+   return {items:elements,windRows,footer:rect(".footer"),garden:rect(".weather-garden"),
      soil:rect(".weather-soil"),right:rect(".wx-right-stack"),
      astro:rect(".weather-astro"),moon:rect(".weather-moon"),
      weather:rect(".weather-zone"),card:rect(".card"),power:rect(".power-layout"),
@@ -70,6 +76,15 @@ try {
  assert.ok(geometry.card.bottom>=geometry.footer.bottom,
    "footer must remain inside the card")
  assert.ok(geometry.items.every(x=>!x.clipped),"weather cells must not clip text")
+ assert.equal(geometry.windRows.length,2,"Two distinct wind and gust rows")
+ for(const wind of geometry.windRows) {
+  assert.ok(wind.width>350,"Wind information should use full column width")
+  assert.ok(wind.noWrap,"Wind units must not wrap")
+  assert.ok(wind.scrollWidth<=wind.clientWidth+2,"Wind text must not overflow row")
+  assert.ok(wind.childRight<=wind.rowRight+2,"Wind numeric value must remain visible")
+ }
+ assert.match(geometry.windRows[0].label,/Вітер зараз/)
+ assert.match(geometry.windRows[1].label,/Пориви вітру сьогодні/)
  assert.ok(geometry.garden.bottom<=geometry.soil.y+3,"gardener card must be above soil and sun")
  assert.ok(geometry.soil.bottom<=geometry.right.bottom+3,"soil card must remain inside right stack")
  assert.ok(geometry.garden.x>=geometry.right.x-3,"garden card must remain inside right stack")
