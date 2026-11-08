@@ -71,6 +71,11 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(today.tomorrowMin,2)
   assert.equal(today.tomorrowMax,8)
   assert.equal(today.tomorrowDate,"2026-11-08")
+  assert.equal(today.todayDate,"2026-11-07")
+  assert.equal(today.todayMin,-3)
+  assert.equal(today.todayMax,6)
+  assert.equal(today.todayRain,65)
+  assert.equal(today.todayGust,17)
   assert.equal(today.sunrise,"07:02")
   assert.equal(today.sunset,"16:25")
   assert.equal(today.soilTemp,4.5)
@@ -85,6 +90,11 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(tomorrow.tomorrowMin,2)
   assert.equal(tomorrow.tomorrowMax,8)
   assert.equal(tomorrow.tomorrowDate,"2026-11-08")
+  assert.equal(tomorrow.todayDate,"2026-11-07")
+  assert.equal(tomorrow.todayMin,-3)
+  assert.equal(tomorrow.todayMax,6)
+  assert.equal(tomorrow.todayRain,65)
+  assert.equal(tomorrow.todayGust,17)
   assert.equal(tomorrow.sunrise,"07:04")
   assert.equal(tomorrow.soilTemp,6.1)
   assert.equal(tomorrow.soilAt,"12:00")
@@ -205,10 +215,15 @@ test("today and tomorrow cards both show actual current reading and clearly labe
   ]) {
    const html=renderWeatherPanel(weather,day,label)
    assert.match(html,/Температура зараз/)
-   assert.match(html,/Прогноз на завтра · 08\.11/)
+   assert.match(html,/Сьогодні · 07\.11/)
+   assert.match(html,/Завтра · 08\.11/)
+   assert.match(html,/class="wx-now">-1°C<\/div>/)
+   assert.match(html,/Мінімум<b>-3°C<\/b>/)
+   assert.match(html,/Максимум<b>\+6°C<\/b>/)
+   assert.match(html,/Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
+   assert.match(html,/Імовірність опадів сьогодні: <b>65%<\/b>/)
    assert.match(html,/Мінімум<b>\+2°C<\/b>/)
    assert.match(html,/Максимум<b>\+8°C<\/b>/)
-   assert.match(html,/class="wx-now">-1°C<\/div>/)
    assert.doesNotMatch(html,/class="wx-now">\+8°C<\/div>/)
   }
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
@@ -219,10 +234,23 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
   const snap=await loadWeather({now:start,file,requester:async()=>sender()})
   const today=renderWeatherPanel(weatherForDate(snap,"2026-11-07",start),"2026-11-07")
   const tomorrow=renderWeatherPanel(weatherForDate(snap,"2026-11-08",start),"2026-11-08","завтра")
-  assert.match(today,/Прогноз на сьогодні/)
-  assert.match(tomorrow,/Прогноз на завтра/)
-  assert.doesNotMatch(today,/Пориви вітру завтра/)
-  assert.match(tomorrow,/Пориви вітру завтра/)
+  for (const h of [today,tomorrow]) {
+    assert.match(h,/Сьогодні · 07\.11/)
+    assert.match(h,/Завтра · 08\.11/)
+    assert.match(h,/Вітер зараз: <b>4 м\/с<\/b>/)
+    const markers=[
+      "Температура зараз","Сьогодні · 07.11",
+      "Вітер зараз","Пориви вітру сьогодні","Імовірність опадів сьогодні",
+      "Завтра · 08.11",
+    ]
+    let prev=-1
+    for (const marker of markers) {
+      const at=h.indexOf(marker)
+      assert.ok(at>prev,"Incorrect weather order for "+marker)
+      prev=at
+    }
+    assert.equal((h.match(/Імовірність опадів сьогодні/g)||[]).length,1)
+  }
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
 
@@ -231,15 +259,14 @@ test("wind now and daily wind gusts have clear labels and correct units on both 
  const dir=makeDir(),file=path.join(dir,"cache.json")
  try {
   const snap=await loadWeather({now:start,file,requester:async()=>sender()})
-  for(const [day,label,expectedGust] of [
-    ["2026-11-07","сьогодні",17],["2026-11-08","завтра",9],
+  for(const [day,label] of [
+    ["2026-11-07","сьогодні"],["2026-11-08","завтра"],
   ]){
    const w=weatherForDate(snap,day,start)
    const h=renderWeatherPanel(w,day,label)
    assert.match(h,/Вітер зараз: <b>4 м\/с<\/b>/)
-   assert.match(h,new RegExp("Пориви вітру "+(label==="завтра"?"завтра":"сьогодні")+
-    ": <b>"+expectedGust+" м/с"))
-   assert.doesNotMatch(h,/Пориви вітру завтра: <b>4 м\/с/)
+   assert.match(h,/Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
+   assert.doesNotMatch(h,/Пориви вітру завтра: <b>9 м\/с/)
   }
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 })
@@ -258,4 +285,25 @@ test("astrology is visibly marked as entertainment, independent of weather avail
   assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-moon"))
   assert.ok(h.indexOf("weather-moon") < h.indexOf("weather-astro"))
  }
+})
+
+test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather summary is today then tomorrow",async()=>{
+ const dir=makeDir(),file=path.join(dir,"cache.json")
+ try {
+  const snap=await loadWeather({now:start,file,requester:async()=>sender()})
+  const today=renderWeatherPanel(weatherForDate(snap,"2026-11-07",start),"2026-11-07")
+  const tomorrow=renderWeatherPanel(weatherForDate(snap,"2026-11-08",start),"2026-11-08","завтра")
+  assert.match(today,/на 16:00/)
+  assert.match(tomorrow,/на 12:00/)
+  assert.match(tomorrow,/Порада на завтра/)
+  assert.match(today,/Порада на сьогодні/)
+  for(const html of [today,tomorrow]) {
+    assert.match(html,/Сьогодні · 07\.11/)
+    assert.match(html,/Мінімум<b>-3°C<\/b>/)
+    assert.match(html,/Максимум<b>\+6°C<\/b>/)
+    assert.match(html,/Завтра · 08\.11/)
+    assert.match(html,/Мінімум<b>\+2°C<\/b>/)
+    assert.match(html,/Максимум<b>\+8°C<\/b>/)
+  }
+ }finally{fs.rmSync(dir,{recursive:true,force:true})}
 })
