@@ -12,6 +12,7 @@ const schedule=[
 ]
 const weather={
  currentTemp:3,currentNowTemp:3,currentNowCode:2,currentNowWind:4,
+ todayDate:"2026-11-07",todayMin:-1,todayMax:8,todayRain:35,todayGust:11,
  tomorrowDate:"2026-11-08",tomorrowMin:-2,tomorrowMax:5,
  min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
  soilTemp:5.6,soilAt:"16:00",soilDepthCm:6,

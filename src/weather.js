@@ -124,6 +124,14 @@ export function weatherForDate(snapshot, date, now = new Date()) {
   // Its timestamp is separate from the future-day forecast.
   const currentNow = snapshot.data.current
   const iToday = dates.indexOf(todayDate)
+  const todayMin = Number.isFinite(daily.temperature_2m_min?.[iToday])
+    ? daily.temperature_2m_min[iToday] : null
+  const todayMax = Number.isFinite(daily.temperature_2m_max?.[iToday])
+    ? daily.temperature_2m_max[iToday] : null
+  const todayRain = Number.isFinite(daily.precipitation_probability_max?.[iToday])
+    ? daily.precipitation_probability_max[iToday] : null
+  const todayGust = Number.isFinite(daily.wind_gusts_10m_max?.[iToday])
+    ? daily.wind_gusts_10m_max[iToday] : null
   const tomorrowIndex = iToday >= 0 ? iToday + 1 : -1
   const tomorrowDate = tomorrowIndex >= 0 ? dates[tomorrowIndex] ?? null : null
   const tomorrowMin = Number.isFinite(daily.temperature_2m_min?.[tomorrowIndex])
@@ -175,6 +183,7 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentNowWind: Number.isFinite(currentNow?.wind_speed_10m) ? currentNow.wind_speed_10m : null,
     currentNowGust: Number.isFinite(currentNow?.wind_gusts_10m) ? currentNow.wind_gusts_10m : null,
     currentNowAt: currentNow?.time ?? null,
+    todayDate, todayMin, todayMax, todayRain, todayGust,
     tomorrowDate, tomorrowMin, tomorrowMax,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
     code: today && Number.isFinite(current?.weather_code) ? current.weather_code : get("weather_code"),
