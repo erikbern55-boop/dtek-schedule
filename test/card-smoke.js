@@ -55,6 +55,10 @@ try {
       noWrap:getComputedStyle(el).whiteSpace==="nowrap"}
    })
    return {items:elements,windRows,footer:rect(".footer"),garden:rect(".weather-garden"),
+     countdown:rect(".countdown-box"),emergency:rect(".emergency-box"),
+     next:rect(".next"),outages:rect(".outages"),dial:rect(".dial"),
+     countdownText:document.querySelector(".countdown-box")?.textContent,
+     emergencyText:document.querySelector(".emergency-box")?.textContent,
      soil:rect(".weather-soil"),right:rect(".wx-right-stack"),
      astro:rect(".weather-astro"),moon:rect(".weather-moon"),
      weather:rect(".weather-zone"),card:rect(".card"),power:rect(".power-layout"),
@@ -62,6 +66,17 @@ try {
      entertainment:document.querySelector(".wx-astro-disclaimer")?.textContent}
  })
  assert.equal(geometry.items.length,4,"Four major dashboard cells: weather / garden+soil / moon / astro")
+ assert.ok(geometry.countdown && geometry.emergency,"Both approved electricity panels exist")
+ assert.ok(geometry.countdown.y>=geometry.dial.bottom-3,"Countdown follows original dial")
+ assert.ok(geometry.next.y>=geometry.countdown.bottom-3,"Original next-event box remains")
+ assert.ok(geometry.outages.y>=geometry.emergency.bottom-3,"Incident status precedes outages")
+ assert.ok(geometry.countdown.width>=300,"Countdown should use the original left column")
+ assert.ok(geometry.emergency.width>=450,"Incident status should use the right column")
+ assert.match(geometry.countdownText,/Відлік до події/)
+ assert.match(geometry.countdownText,/До планового ввімкнення/)
+ assert.match(geometry.countdownText,/06:00/)
+ assert.match(geometry.emergencyText,/Інформація уточнюється/)
+ assert.match(geometry.emergencyText,/Автоматичного підтвердження аварій/)
  const [a,b,c,d]=geometry.items
  assert.ok(Math.abs(a.y-b.y)<3,"top row must be aligned")
  assert.ok(Math.abs(c.y-d.y)<3,"second row must be aligned")

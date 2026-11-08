@@ -7,12 +7,13 @@ const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
 const MAX_CAPTION = 1024
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-08-wind-full-width-v1"
+export const CARD_RENDER_VERSION = "2026-11-08-countdown-emergency-v1"
 
-export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp }) {
+export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
     lastMessage.update !== update ||
     lastMessage.weatherStamp !== weatherStamp ||
+    lastMessage.countdownTick !== countdownTick ||
     lastMessage.renderVersion !== CARD_RENDER_VERSION
 }
 
@@ -32,6 +33,8 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
     "📡 " + (source === "ДТЕК" ? "ДТЕК" : "ДТЕК (резервні дані)") +
       " · дані " + safe(update || "без часу"),
     "🤖 Перевірено: " + safe(getCurrentTime()),
+    "🚨 Аварії: автоматичної перевірки для СТ «Хімік» немає.",
+    '🔎 <a href="https://www.dtek-krem.com.ua/ua/shutdowns">Перевірити відключення за адресою в ДТЕК</a>',
   ]
   const items = periods.length
     ? periods.map((p) => "🪫 <code>" + safe(p.begin) + " — " + safe(p.end) + "</code>")
@@ -82,7 +85,10 @@ export async function publishCard({ schedule, date, label, update, source, messa
   const same = lastMessage.scheduleText === message.scheduleText
   const priorPhoto = Boolean(lastMessage.message_id) && lastMessage.kind === "photo"
   const weatherStamp = weather ? (weather.stale ? "stale:" : "fresh:") + weather.fetchedAt : "unavailable"
-  const imageRefresh = priorPhoto && same && imageNeedsRefresh(lastMessage, { source, update, weatherStamp })
+  // Refresh ONLY today's graphic each five-minute poll, even if source and
+  // forecast timestamps remain unchanged. Tomorrow has no live countdown.
+  const countdownTick = label === "сьогодні" ? Math.floor(Date.now() / 300_000) : null
+  const imageRefresh = priorPhoto && same && imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick })
 
   // Routine checks update the caption. A changed data timestamp or source
   // replaces the photo in place, without posting a fresh notification.
@@ -111,7 +117,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
         scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-        scheduleDay: date, kind: "photo", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
+        scheduleDay: date, kind: "photo", source, update, weatherStamp, countdownTick, renderVersion: CARD_RENDER_VERSION,
       }, stateFile)
     } catch (error) {
       if (String(error).includes("message is not modified")) {
@@ -137,7 +143,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "photo", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
+      scheduleDay: date, kind: "photo", source, update, weatherStamp, countdownTick, renderVersion: CARD_RENDER_VERSION,
     }, stateFile)
     console.log("🟢 Svitlopuls graphical card with caption published")
   } catch (error) {
@@ -154,7 +160,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
-      scheduleDay: date, kind: "text", source, update, weatherStamp, renderVersion: CARD_RENDER_VERSION,
+      scheduleDay: date, kind: "text", source, update, weatherStamp, countdownTick, renderVersion: CARD_RENDER_VERSION,
     }, stateFile)
     console.log("🟢 Backup text schedule published")
   }

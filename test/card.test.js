@@ -83,3 +83,26 @@ test("visual-version changes force exactly one Telegram image redraw",()=>{
  assert.equal(imageNeedsRefresh(current,{...base,source:"ДТЕК (резервні дані)"}),true)
  assert.equal(imageNeedsRefresh(current,{...base,update:"new data"}),true)
 })
+
+test("emergency messages do NOT claim a verified accident or clear network",()=>{
+ const h=buildCardHtml(details)
+ assert.match(h,/Аварійні відключення/)
+ assert.match(h,/Інформація уточнюється/)
+ assert.match(h,/Автоматичного підтвердження аварій/)
+ assert.doesNotMatch(h,/Аварійних відключень не зафіксовано/)
+ const caption=buildCaption(details)
+ assert.match(caption,/автоматичної перевірки/)
+ assert.match(caption,/www\.dtek-krem\.com\.ua\/ua\/shutdowns/)
+ assert.ok(caption.length<=1024)
+})
+test("five-minute countdown bucket only invalidates photo once per interval",()=>{
+ const base={source:"ДТЕК",update:"08.11.2026 12:00",
+   weatherStamp:"fresh:2026-11-08T10:00:00Z",countdownTick:2234}
+ const current={...base,renderVersion:CARD_RENDER_VERSION}
+ assert.equal(imageNeedsRefresh(current,base),false)
+ assert.equal(imageNeedsRefresh(current,{...base,countdownTick:2235}),true)
+ assert.equal(imageNeedsRefresh({...current,countdownTick:undefined},base),true)
+ // Tomorrow's card has no ticking countdown; null is stable.
+ assert.equal(imageNeedsRefresh({...current,countdownTick:null},
+  {...base,countdownTick:null}),false)
+})
