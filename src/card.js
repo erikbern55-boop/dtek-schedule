@@ -1,5 +1,6 @@
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { renderWeatherPanel, WEATHER_CSS } from "./weather-card.js"
+import { nextPowerEvent } from "./countdown.js"
 
 const GREEN = "#30f176"
 const RED = "#ff5264"
@@ -138,6 +139,26 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
   const remaining = outagePeriods.length > 4
     ? '<div class="more">І ще ' + (outagePeriods.length - 4) + ' відключень — у підписі</div>' : ""
   const status = nearestEvent(schedule, date, now)
+  const event = nextPowerEvent(schedule, date, now)
+  const counter = '<section class="countdown-box">'+
+    '<div class="countdown-head">⏱ Відлік до події</div>'+
+    '<div class="countdown-title">'+escape(event.title)+'</div>'+
+    (event.kind==="countdown"
+      ?'<div class="countdown-value">'+escape(event.remaining)+'</div>'
+      :'<div class="countdown-no-clock">'+
+        (event.kind==="future"&&event.time?escape(event.time):'—')+'</div>')+
+    '<div class="countdown-detail">'+escape(event.detail)+'</div>'+
+    '<div class="countdown-source">За графіком ДТЕК · оновлення кожні 5 хв</div></section>'
+  // DTEK's public service provides per-address emergency information, not a
+  // verified incident feed for this entire gardening association.
+  // Never claim that there are no outages or that an accident is confirmed.
+  const emergency='<section class="emergency-box">'+
+    '<div class="emergency-head">🚨 Аварійні відключення</div>'+
+    '<div class="emergency-tag">⚠ Інформація уточнюється</div>'+
+    '<div class="emergency-detail">Автоматичного підтвердження аварій для СТ «Хімік» немає. '+
+    'Перевіряйте відключення за адресою на сайті ДТЕК.</div>'+
+    '<div class="emergency-time">Перевірено графік: '+escape(clockKyiv(now))+
+    ' · фактична напруга не вимірюється</div></section>'
   const sourceLabel = source === "ДТЕК" ? "ДТЕК · офіційні дані" : "ДТЕК · резервні дані"
   const percentOn = (withPower / 14.4).toFixed(1).replace(".", ",")
   const percentOff = (withoutPower / 14.4).toFixed(1).replace(".", ",")
@@ -204,6 +225,26 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '.power-icon{display:inline-flex;width:27px;height:27px;flex:0 0 27px}',
     '.power-icon svg{display:block;width:27px;height:27px}',
     '.more{font-size:16px;color:#cce0d1}',
+    '.countdown-box{margin-top:8px;padding:10px 10px 9px;border:2px solid #64f779;',
+    'border-radius:17px;background:linear-gradient(145deg,#063822,#092c1e);',
+    'box-shadow:inset 0 0 15px #106a31;min-height:165px;text-align:center}',
+    '.countdown-head{font-size:22px;font-weight:900;color:#e6ffea;',
+    'border-bottom:1px solid #35a568;padding-bottom:6px;margin-bottom:7px}',
+    '.countdown-title{font-size:18px;color:#d8ffdd;font-weight:800;line-height:1.15}',
+    '.countdown-value{font-size:58px;font-weight:900;letter-spacing:1px;',
+    'color:#a9ff85;line-height:1.18;text-shadow:0 0 12px #25bb55}',
+    '.countdown-no-clock{font-size:43px;font-weight:900;color:#a9ff85;',
+    'line-height:1.18;margin:4px 0}',
+    '.countdown-detail{font-size:17px;font-weight:800;color:#ffef9a}',
+    '.countdown-source{font-size:13px;color:#b5d9c2;margin-top:7px}',
+    '.emergency-box{margin-top:8px;padding:10px 12px;border:2px solid #c65b73;',
+    'border-radius:16px;background:linear-gradient(145deg,#361822,#171e1b);',
+    'box-shadow:inset 0 0 12px #4f2431}',
+    '.emergency-head{font-size:23px;font-weight:900;color:#ffe3e8;',
+    'border-bottom:1px solid #914658;padding-bottom:5px;margin-bottom:7px}',
+    '.emergency-tag{font-size:18px;font-weight:800;color:#ffe384;margin:4px 0}',
+    '.emergency-detail{font-size:17px;color:#fff2f4;line-height:1.22}',
+    '.emergency-time{font-size:14px;color:#d4b8c1;margin-top:7px}',
     '.next{margin-top:8px;padding:15px 10px;min-height:88px;',
     'border:2px solid #f8db4e;border-radius:17px;background:#24301a;',
     'box-shadow:inset 0 0 15px #51521d;color:#ffe76e;',
@@ -222,7 +263,7 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '<div class="date">' + dateLabel + ' · ' + escape(formatDate(date)) + ' · ' + escape(weekday(date)) + '</div>' +
     '<div class="sub">Ритм електропостачання · графік на 24 години</div>' +
     '<main class="power-layout"><div class="power-left"><div class="dial">' + buildDial(schedule) + '</div>' +
-    '<div class="next">⚡ ' + escape(status) + '</div></div>' +
+    counter + '<div class="next">⚡ ' + escape(status) + '</div></div>' +
     '<div class="power-right"><div class="power-overview"><div class="metrics-col">' +
     '<div class="metric on"><div class="name">💡 Зі світлом</div><div class="value">' +
     escape(formatDuration(withPower)) + '</div><div class="pct">' + percentOn + '% доби</div></div>' +
@@ -230,7 +271,7 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     escape(formatDuration(withoutPower)) + '</div><div class="pct">' + percentOff + '% доби</div></div>' +
     '</div><div class="periods">' + visiblePeriods + '</div></div>' +
     '<section class="timeline-box"><div class="secttitle">▰ Графік доби · 24 години</div>' +
-    buildTimeline(schedule) + '</section>' +
+    buildTimeline(schedule) + '</section>' + emergency +
     '<section class="outages"><div class="secttitle">◷ Періоди відключень</div>' +
     (outageRows || '<div class="outage-row">Відключень не заплановано</div>') + remaining +
     '</section></div></main>' +
