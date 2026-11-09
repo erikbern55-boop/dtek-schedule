@@ -185,6 +185,7 @@ export const WEATHER_CSS = [
   '.wx-right-stack .wx-sowing{gap:6px;margin-top:8px}',
   '.wx-right-stack .wx-sowing-row{padding:7px 9px;font-size:18px;line-height:1.22}',
   '.wx-right-stack .wx-sowing-row b{font-size:19px;margin-bottom:2px}',
+  '.wx-source-note{margin-top:9px;border-top:1px solid #387e58;padding-top:8px;color:#c4e7ce;font-size:15px;line-height:1.35}',
   '.wx-credit{margin-top:15px;font-size:16px;color:#b7debf;',
   'text-align:center;line-height:1.35}',
 ].join("")
@@ -270,7 +271,8 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-sowing">'+
     '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(adviceIcons(sow.allowed))+'</div>'+
     '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(adviceIcons(sow.avoid))+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем · традиція, не агрономічний доказ</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
+    '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div>'+
     '</div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
@@ -278,9 +280,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-astro-body"><div class="wx-astro-symbol">'+esc(astro.symbol)+'</div>'+
     '<div class="wx-astro-copy"><b>Місяць у '+esc(astro.inSign)+'.</b>'+esc(astro.message)+
     '</div></div>'+
-    '<div class="wx-astro-disclaimer">Астрологічна інтерпретація · розважальний характер</div></section>'
-  const foot='<div class="wx-credit">Прогноз: Open-Meteo · оновлено '+esc(stamp)+
-    ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак)</div>'
+    '<div class="wx-astro-disclaimer">Авторський розважальний текст · не науковий прогноз</div></section>'
+  const foot='<div class="wx-credit">Джерела й методика: погода та ґрунт — <a href="https://open-meteo.com/en/docs">Open-Meteo</a> · оновлено '+esc(stamp)+
+    ' · Місяць — астрономічний розрахунок (Ж. Меєс, на 12:00 Київ) · городні поради — локальні правила · астрологія — для розваги</div>'
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
