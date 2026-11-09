@@ -21,15 +21,18 @@ let day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':
 const landscapeCard=document.getElementById('landscapeCard');
 function renderLandscape(){
   if(!card.complete||!card.naturalWidth)return;
-  const w=card.naturalWidth,h=card.naturalHeight,split=Math.ceil(h/2),bottom=h-split;
-  // Two complete, non-overlapping halves of the approved image; no Telegram changes.
+  const w=card.naturalWidth,h=card.naturalHeight;
+  // The approved card has a natural section boundary between outage information
+  // and weather/gardening panels at approximately 45% of its height.
+  const split=Math.round(h*0.45),bottom=h-split;
+  // Two consecutive sections at the outage/weather boundary; no Telegram changes.
   const ctx=landscapeCard.getContext('2d');
-  landscapeCard.width=w*2;landscapeCard.height=split;
-  ctx.clearRect(0,0,w*2,split);
+  landscapeCard.width=w*2;landscapeCard.height=Math.max(split,bottom);
+  ctx.clearRect(0,0,landscapeCard.width,landscapeCard.height);
   ctx.drawImage(card,0,0,w,split,0,0,w,split);
   if(bottom>0)ctx.drawImage(card,0,split,w,bottom,w,0,w,bottom);
-  // The split image preserves the original pixels and proportions of each half.
-  landscapeCard.style.aspectRatio=(w*2)+' / '+split;
+  // Each section retains its original pixel scale and aspect ratio.
+  landscapeCard.style.aspectRatio=(w*2)+' / '+landscapeCard.height;
 }
 window.addEventListener('resize',renderLandscape);
 function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
