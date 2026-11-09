@@ -27,9 +27,11 @@ jobs:
           node --test test/*.test.js
           node ./test/card-smoke.js
           node ./test/card-v3-smoke.js
+          node ./test/card-approved-smoke.js
       - uses: actions/upload-artifact@v6
         with:
           name: svitlopuls-card-preview
           path: |
             svitlopuls-preview.png
             svitlopuls-v3-preview.png
+            svitlopuls-approved-preview.png
