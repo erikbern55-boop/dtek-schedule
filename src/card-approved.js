@@ -1,0 +1,72 @@
+// Fixed-grid renderer built against the approved 1170x1280 reference image.
+// No existing production generator or Telegram publisher is changed.
+import { nextPowerEvent } from "./countdown.js"
+import { gardenTip, sowingAdvice } from "./garden.js"
+import { lunarForDate } from "./moon.js"
+import { astroForMoon, moonDiscSvg } from "./astro.js"
+
+const e=x=>String(x??"—").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+const number=x=>Number.isFinite(x)?(Math.round(x)>0?"+":"")+Math.round(x)+"°C":"—"
+const clock=x=>new Intl.DateTimeFormat("uk-UA",{timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"}).format(x)
+const dateText=x=>x.split("-").reverse().join(".")
+const weekday=x=>new Intl.DateTimeFormat("uk-UA",{timeZone:"Europe/Kyiv",weekday:"long"}).format(new Date(x+"T12:00:00+02:00"))
+const mins=x=>{const a=/^(\d\d):(\d\d)$/.exec(x||"");return a?Number(a[1])*60+Number(a[2]):0}
+const dur=x=>Math.floor(x/60)+" год "+x%60+" хв"
+const icon=code=>code===0?"☀️":[1,2].includes(code)?"🌤️":code===3?"☁️":[61,63,65,80,81,82].includes(code)?"🌧️":"🌥️"
+const robot='<svg viewBox="0 0 95 106" aria-label="Робот Світлопульсу"><defs><radialGradient id="robot"><stop stop-color="#67faff"/><stop offset="1" stop-color="#036a78"/></radialGradient></defs><path d="M47 18V7" stroke="#40f79c" stroke-width="4"/><circle cx="47" cy="7" r="7" fill="#f33"/><rect x="8" y="18" width="79" height="77" rx="30" fill="url(#robot)" stroke="#51ffaf" stroke-width="3"/><rect x="20" y="34" width="55" height="45" rx="18" fill="#092d37"/><path d="M31 53q7-9 14 0m7 0q7-9 14 0M35 65q12 13 25 0" fill="none" stroke="#66ffed" stroke-width="4" stroke-linecap="round"/><text x="43" y="103" font-size="22" fill="#ffdb33">ϟ</text></svg>'
+const css=`
+*{box-sizing:border-box}html,body{margin:0;width:1170px;background:#000;color:#fff;font-family:Arial,"Noto Sans",sans-serif}
+.sheet{width:1170px;height:1280px;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#00200b 0%,#000 74%);padding:7px 10px 13px;display:grid;grid-template-rows:98px 197px 228px 259px 198px 140px 57px;gap:10px}
+header{display:grid;grid-template-columns:305px 1fr 230px;gap:10px;align-items:center}.identity{display:flex;align-items:center;gap:8px;font-size:19px;line-height:1.3}.identity svg{width:114px;height:102px;flex:none}.identity b{color:#d7ffa7;font-size:24px}
+.brand{text-align:center;white-space:nowrap}.brand strong{font-style:italic;font-size:51px;letter-spacing:-2px;text-shadow:0 0 13px #26ff35}.brand em{color:#36ff20;font-style:italic}.brand small{font-size:15px;display:block;border-top:2px solid #2d8d32;padding-top:5px}
+.tag{border:2px solid #61ff52;border-radius:24px;box-shadow:inset 0 0 14px #0a8c26,0 0 10px #17c52c;padding:12px;font-size:20px;font-weight:800;line-height:1.1}
+.row{display:grid;gap:10px;min-height:0}.power{grid-template-columns:1.4fr .97fr 1fr}.weather{grid-template-columns:2.1fr .92fr 1fr .96fr}.garden-row{grid-template-columns:2.4fr 1fr}.night{grid-template-columns:1fr 1.4fr}
+.panel{position:relative;overflow:hidden;border:3px solid #3cff4d;border-radius:24px;padding:13px;background:radial-gradient(ellipse at 50% 110%,#00451c,#001909 68%,#000f07);box-shadow:inset 0 0 20px #008e25,0 0 9px #24f73a}
+h2{font-size:25px;line-height:1.1;margin:0 0 9px;font-weight:900}h3{font-size:20px;margin:0 0 8px}.sub{font-size:15px;color:#d8eed9}
+.date-dial{display:grid;grid-template-columns:1fr 1fr;align-items:center}.date-dial h2{font-size:25px}.date-dial .date{font-size:31px;font-weight:900}.date-dial .day{font-size:22px;font-weight:800}.dial{width:175px;height:175px;border-radius:50%;margin:auto;position:relative;background:conic-gradient(from 0deg,var(--arcs));border:7px solid #001b08;box-shadow:0 0 0 3px #8eea80}.dial:after{content:"⚡ 24 год";position:absolute;inset:24px;border-radius:50%;background:#00230c;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:900}
+.count{text-align:center}.count h2{border-bottom:1px solid #3ecb55;padding-bottom:9px}.count .event{font-size:19px;font-weight:800}.count .digits{font-size:58px;color:#52ff16;font-weight:900;line-height:1.12}.count .target{font-size:18px;color:#ffe88c;font-weight:800}.count .sub{margin-top:9px}
+.schedule .period{display:flex;justify-content:space-between;align-items:center;border:2px solid #3efa4e;border-radius:25px;padding:11px 10px;margin-top:8px;font-size:17px;font-weight:800;background:linear-gradient(90deg,#005c18,#002a0e)}.schedule .period.off{border-color:#ff616a;background:linear-gradient(90deg,#5a101b,#270b10)}.schedule .period span:last-child{white-space:nowrap;font-size:15px}
+.weather .panel{padding:12px}.weather h2{font-size:22px}.weather .large{font-size:60px;font-weight:900;line-height:1.1}.weather .small{font-size:17px;line-height:1.3}.weather .bigicon{font-size:50px}.weather .metric{border-bottom:1px solid #278e44;padding:4px 0}.weather .temp-range{font-size:30px;font-weight:900;white-space:nowrap}.weather .daylength{font-size:32px;font-weight:900;margin:18px 0}.weather .soiltemp{font-size:55px;font-weight:900;text-align:center;margin:19px 0}
+.garden-content{display:grid;grid-template-columns:190px 1fr 172px;gap:10px;align-items:stretch;height:192px}.garlic-art{border:1px solid #5dba54;border-radius:18px;background:radial-gradient(circle,#67533a,#171e0e);display:flex;align-items:center;justify-content:center}.garlic-art svg{width:170px;height:160px}.advice{font-size:17px;line-height:1.27}.advice b{font-size:21px;color:#e4ffa5}.source-mini{border:2px solid #c0e886;border-radius:18px;padding:9px;font-size:15px;line-height:1.3}.yesno{font-size:17px}.yesno .yes,.yesno .no{border:2px solid #55fb4c;border-radius:17px;padding:9px;margin-top:8px;background:#003b13}.yesno .no{border-color:#ff7070;background:#3b1015}.yesno b{font-size:19px}.yesno p{margin:5px 0 0}
+.moon-content{display:grid;grid-template-columns:155px 1fr;align-items:center;gap:10px}.moon-content svg{width:145px;height:145px}.moon-data{font-size:18px;line-height:1.55}.moon-data b{font-weight:900}
+.astro-content{display:grid;grid-template-columns:110px 1fr 165px;gap:12px;align-items:center;font-size:19px;line-height:1.24}.zodiac{font-size:82px;color:#4cf5cb;border:4px solid #29f8b5;border-radius:50%;height:104px;text-align:center;line-height:93px}.astro-content strong{color:#ffe76b;font-size:23px}.astro-source{border-left:2px solid #d9d3e7;padding-left:13px;font-size:16px}
+.sources{display:grid;grid-template-columns:225px repeat(5,1fr);gap:0;align-items:center}.sources>*{border-right:2px solid #69c488;padding:7px 13px;font-size:17px;line-height:1.3}.sources>*:last-child{border:0}.sources b{font-size:23px}.sources small{display:block;font-size:15px;color:#b8f8ff}
+footer{display:flex;align-items:center;justify-content:space-around;gap:5px;border:3px solid #55f547;border-radius:28px;box-shadow:inset 0 0 15px #129b31,0 0 9px #31f13a;padding:7px 9px;font-size:14px;font-weight:700;white-space:nowrap}footer b{color:#65ff42;font-size:23px}
+`
+const garlic='<svg viewBox="0 0 170 160" aria-label="Ілюстрація озимого часнику"><path d="M78 53Q62 15 72 2M92 53Q110 20 107 4" stroke="#90bb50" stroke-width="8" fill="none"/><path d="M85 48C47 30 23 67 29 111Q38 151 85 144Q133 151 142 111Q148 67 85 48Z" fill="#eee0b8" stroke="#fdf3d7" stroke-width="4"/><path d="M85 49Q61 83 70 140M85 49Q111 85 100 141M47 77Q40 112 60 135M125 76Q132 109 112 134" stroke="#a79975" stroke-width="4" fill="none"/><path d="M40 144Q84 156 129 144" stroke="#7e633d" stroke-width="5"/></svg>'
+export function buildApprovedCardHtml({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}){
+ if(!Array.isArray(schedule)||!date)throw Error("Schedule and date required")
+ const event=nextPowerEvent(schedule,date,now),moon=lunarForDate(date),astro=astroForMoon(moon,date)
+ const tip=gardenTip(date,weather),sow=sowingAdvice(date,weather,moon)
+ const intervals=schedule.filter(p=>p.begin&&p.end)
+ const arcs=intervals.map(p=>{const start=mins(p.begin)/1440*360,end=mins(p.end)/1440*360;return (p.power?"#13d57d":"#ff5b66")+" "+start+"deg "+end+"deg"}).join(",")||"#134522 0deg 360deg"
+ const periods=intervals.map(p=>'<div class="period '+(p.power?"":"off")+'"><span>'+(p.power?"⚡ Світло є":"⊗ Немає світла")+'</span><span>'+e(p.begin)+' – '+e(p.end)+'</span></div>').join("")
+ const nowTemp=weather?.currentNowTemp??weather?.currentTemp
+ const tomorrow=weather?.tomorrowDate?dateText(weather.tomorrowDate).slice(0,5):"—"
+ const rise=weather?.sunrise||"—:—",set=weather?.sunset||"—:—",length=dur((mins(set)-mins(rise)+1440)%1440)
+ const weatherFresh=weather&&!weather.stale
+ const eventTitle=event.kind==="countdown"?event.title:"Наступна подія"
+ const count=event.kind==="countdown"?event.remaining:"—:—"
+ const moonSvg=moonDiscSvg(moon)
+ const html='<div class="sheet">'+
+ '<header><div class="identity">'+robot+'<div><b>СТ «Хімік»</b><br>Боярська ТГ<br>Фастівський район</div></div><div class="brand"><strong>СВІТЛО<em>ПУЛЬС 3.0</em>⌁</strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div><div class="tag">🌿 Все в одному<br>для комфортного<br>життя в СТ</div></header>'+
+ '<div class="row power"><section class="panel date-dial"><div><h2>🗓 '+(label==="завтра"?"Завтра":"Сьогодні")+'</h2><div class="date">'+e(dateText(date))+'</div><div class="day">'+e(weekday(date))+'</div></div><div class="dial" style="--arcs:'+arcs+'"></div></section>'+
+ '<section class="panel count"><h2>⏱ Відлік до події</h2><div class="event">'+e(eventTitle)+'</div><div class="digits">'+e(count)+'</div><div class="target">'+e(event.detail)+'</div><div class="sub">За графіком ДТЕК · час Києва '+e(clock(now))+'</div></section>'+
+ '<section class="panel schedule"><h2>💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2>'+periods+'</section></div>'+
+ '<div class="row weather"><section class="panel"><h2>🌤 Погода — СЬОГОДНІ</h2><div class="small">📍 СТ «Хімік» · '+e(dateText(date).slice(0,5))+'</div><div class="bigicon">'+icon(weather?.currentNowCode??weather?.code)+'</div><div class="large">'+(weatherFresh?e(number(nowTemp)):"—")+'</div><div class="small">Мін/макс: '+e(number(weather?.todayMin))+' / '+e(number(weather?.todayMax))+'</div><div class="metric">🌬 Вітер: '+e(weather?.currentNowWind??weather?.currentWind)+' м/с</div><div class="metric">💧 Опади: '+e(weather?.todayRain)+'%</div><div class="metric">💨 Пориви: '+e(weather?.todayGust)+' м/с</div></section>'+
+ '<section class="panel"><h2>🌤 Завтра, '+e(tomorrow)+'</h2><div class="bigicon">🌤️</div><div class="temp-range">'+e(number(weather?.tomorrowMin))+'…'+e(number(weather?.tomorrowMax))+'</div><p>💧 Опади: за прогнозом</p><p>🌬 Вітер: за прогнозом</p></section>'+
+ '<section class="panel"><h2>☀️ Світловий день</h2><div class="daylength">'+(weatherFresh?e(length):"—")+'</div><div class="metric">🌅 Схід: '+e(rise)+'</div><div class="metric">🌇 Захід: '+e(set)+'</div></section>'+
+ '<section class="panel"><h2>🌱 Температура ґрунту</h2><div class="soiltemp">'+e(number(weather?.soilTemp))+'</div><div class="small">Глибина ≈ 6 см<br>Модельний прогноз '+e(weather?.soilAt||"")+'</div></section></div>'+
+ '<div class="row garden-row"><section class="panel"><h2>🌿 Поради городникам</h2><div class="garden-content"><div class="garlic-art">'+garlic+'</div><div class="advice"><b>Актуально сьогодні:</b><p>✓ '+e(tip)+'</p><p>✓ '+e(sow.allowed)+'</p></div><div class="source-mini">▤ Джерело поради:<br>Сезонні правила Світлопульсу та прогноз Open-Meteo<br><small>Без незалежної агрономічної перевірки</small></div></div></section>'+
+ '<section class="panel yesno"><h2>✔ Що можна / не варто</h2><div class="yes"><b>✓ Можна:</b><p>'+e(sow.allowed)+'</p></div><div class="no"><b>✕ Поки не варто:</b><p>'+e(sow.avoid)+'</p></div></section></div>'+
+ '<div class="row night"><section class="panel"><h2>🌙 Місячний календар</h2><div class="moon-content">'+moonSvg+'<div class="moon-data">Фаза: <b>'+e(moon.phase)+'</b><br>Освітленість: <b>'+e(moon.illumination)+'%</b><br>Місячний день: <b>'+e(moon.lunarDay)+'-й</b><br>Знак Місяця: <b>'+e(moon.zodiac)+'</b></div></div></section>'+
+ '<section class="panel"><h2>✨ Астропрогноз дня</h2><div class="astro-content"><div class="zodiac">'+e(astro.symbol)+'</div><div><strong>Місяць у '+e(astro.inSign)+'</strong><br>'+e(astro.message)+'</div><div class="astro-source">Авторський астропрогноз<br>Розважальний характер</div></div></section></div>'+
+ '<section class="panel sources"><b>▰ Джерела та методика</b><span>⚡ Графіки:<br>ДТЕК<small>dtek.com.ua</small></span><span>☁ Погода:<br>Open-Meteo<small>open-meteo.com</small></span><span>🌿 Поради:<br>Локальні правила<small>за прогнозом</small></span><span>🌙 Місяць:<br>Астрономічний розрахунок<small>тропічний знак</small></span><span>✨ Астропрогноз:<br>Розважальний<small>авторський текст</small></span></section>'+
+ '<footer><span>⟳ Оновлено: '+e(update)+'</span><span><b>⟳</b> Погода: кожні 30 хв</span><span><b>ϟ</b> ДТЕК: кожні 5 хв</span><span>ⓘ Рекомендації: локальні правила</span><span>⬡ СТ «Хімік»</span></footer></div>'
+ return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+'</body></html>'
+}
+export async function renderApprovedCardPng(data){
+ const {chromium}=await import("playwright")
+ const browser=await chromium.launch({headless:true})
+ try{const page=await browser.newPage({viewport:{width:1170,height:1280},deviceScaleFactor:1});await page.setContent(buildApprovedCardHtml(data));return await page.screenshot({type:"png"})}finally{await browser.close()}
+}
