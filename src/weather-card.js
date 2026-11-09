@@ -78,6 +78,16 @@ export const WEATHER_CSS = [
   '.wx-right-stack .wx-sun-label{font-size:16px}',
   '.wx-right-stack .wx-sun-time{font-size:32px;margin:2px 0 4px}',
   '.wx-right-stack .wx-sun-divider{margin:5px 0}',
+  '.wx-right-stack .weather-soil{padding:9px 12px;border-radius:14px}',
+  '.wx-right-stack .weather-soil h3{font-size:17px;margin-bottom:5px;padding-bottom:5px}',
+  '.wx-right-stack .wx-soil-sun{grid-template-columns:1fr 1.35fr;gap:8px;align-items:center}',
+  '.wx-right-stack .wx-soil-icon{display:none}',
+  '.wx-right-stack .wx-soil-number{font-size:28px}',
+  '.wx-right-stack .wx-caption{font-size:11px;line-height:1.15}',
+  '.wx-right-stack .wx-half+.wx-half{padding-left:8px}',
+  '.wx-right-stack .wx-sun-label{font-size:12px}',
+  '.wx-right-stack .wx-sun-time{font-size:23px;margin:0}',
+  '.wx-right-stack .wx-sun-divider{margin:3px 0}',
   '.wx-moon-disc{width:123px;height:123px;display:block;filter:drop-shadow(0 0 9px #4d7f8c)}',
   '.wx-astro{border-color:#9c81ec;background:linear-gradient(135deg,#112d2f,#16112f 95%);',
   'box-shadow:inset 0 0 16px #29204f,0 0 10px #35266c}',
@@ -226,6 +236,6 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+'</div>'+
+      '<div class="wx-right-stack">'+garden+soil+'</div>'+
       moonHtml+astroHtml+'</div>'+foot+'</section>'
 }
