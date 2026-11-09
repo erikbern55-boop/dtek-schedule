@@ -322,3 +322,12 @@ test("current wind and today's gusts are two full-width, readable rows",async()=
   }
  }finally{fs.rmSync(d,{recursive:true,force:true})}
 })
+
+test("garden advice rotates daily without losing the weather-specific warning",()=>{
+ const freezing={min:-2,rain:0,gust:0}
+ const today=gardenTip("2026-11-09",freezing)
+ const tomorrow=gardenTip("2026-11-10",freezing)
+ assert.notEqual(today,tomorrow)
+ assert.match(today,/агроволокном/)
+ assert.match(tomorrow,/агроволокном/)
+})

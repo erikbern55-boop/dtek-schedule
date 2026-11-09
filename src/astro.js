@@ -1,3 +1,9 @@
+// Stable Kyiv calendar-day index: identical across runners and time zones.
+function dayIndex(date) {
+  const ms = Date.parse(date + "T00:00:00Z")
+  return Number.isFinite(ms) ? Math.floor(ms / 86400000) : 0
+}
+
 // Short, original entertainment-only text based on the astronomical
 // (tropical) position of the Moon calculated in moon.js.
 // No astrology site is scraped; no unsupported claims of predicting events.
@@ -28,7 +34,17 @@ const messages = Object.freeze({
   "Риби":"Подаруйте собі трохи тиші, музики чи творчості. Нехай дрібні радощі створюють настрій.",
 })
 
-export function astroForMoon(moon) {
+const dailyNotes = Object.freeze([
+  "Сьогодні варто звернути увагу на добрі дрібниці.",
+  "Знайдіть привід для щирої усмішки.",
+  "Залиште трохи часу для приємної несподіванки.",
+  "Нехай спокійний ритм допоможе зосередитися.",
+  "Маленька добра справа може покращити настрій.",
+  "Приділіть кілька хвилин улюбленому заняттю.",
+  "Підтримайте близьку людину теплим словом.",
+])
+
+export function astroForMoon(moon, date = null) {
   const sign=moon?.zodiac
   if (!Object.hasOwn(messages,sign)) {
     return {sign:"—",inSign:"невідомому знаку",symbol:"✦",message:"Знайдіть хвилину для відпочинку й натхнення."}
@@ -37,7 +53,7 @@ export function astroForMoon(moon) {
     sign,
     symbol:zodiacSymbols[sign],
     inSign:locatives[sign],
-    message:messages[sign],
+    message:messages[sign] + (date ? " " + dailyNotes[((dayIndex(date) % dailyNotes.length) + dailyNotes.length) % dailyNotes.length] : ""),
   }
 }
 
