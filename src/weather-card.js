@@ -1,4 +1,4 @@
-import { gardenTip } from "./garden.js"
+import { gardenTip, sowingAdvice } from "./garden.js"
 import { lunarForDate } from "./moon.js"
 import { astroForMoon, moonDiscSvg } from "./astro.js"
 
@@ -124,6 +124,16 @@ export const WEATHER_CSS = [
   '.wx-garden-copy{font-size:22px;line-height:1.35;min-width:0}',
   '.wx-garden-heading{font-size:22px;color:#edec5d;font-weight:900;',
   'margin:0 0 12px;line-height:1.25}',
+  '.wx-sowing{margin-top:12px;display:flex;flex-direction:column;gap:8px}',
+  '.wx-sowing-row{border:1px solid #397d57;border-radius:12px;padding:9px 11px;',
+  'font-size:17px;line-height:1.32;background:#092d20}',
+  '.wx-sowing-row b{display:block;font-size:18px;margin-bottom:3px}',
+  '.wx-sowing-row.good{border-color:#40d977}',
+  '.wx-sowing-row.good b{color:#b4ffbd}',
+  '.wx-sowing-row.avoid{border-color:#dc6671}',
+  '.wx-sowing-row.avoid b{color:#ffb8bc}',
+  '.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}',
+  '.wx-sowing-row.lunar b{color:#dec7ff}',
   '.wx-credit{margin-top:15px;font-size:16px;color:#b7debf;',
   'text-align:center;line-height:1.35}',
 ].join("")
@@ -194,10 +204,16 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-moon-row"><span>Освітленість:</span><b>'+esc(moon.illumination)+'%</b></div>'+
     '<div class="wx-moon-row"><span>Знак Місяця:</span><b>'+esc(moon.zodiac)+'</b></div></div></section>'
   const tip=gardenTip(date,weather)
+  const sow=sowingAdvice(date,weather,moon)
   const garden='<section class="wx-box weather-garden"><h3>🌿 Календар городника</h3>'+
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
-    esc(tip)+'</div></div></section>'
+    esc(tip)+'</div></div>'+
+    '<div class="wx-sowing">'+
+    '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(sow.allowed)+'</div>'+
+    '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(sow.avoid)+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(sow.lunar)+'</div>'+
+    '</div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
     '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+

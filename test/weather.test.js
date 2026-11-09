@@ -4,7 +4,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { KHIMIK, WEATHER_REFRESH_MS, weatherApiUrl, loadWeather, weatherForDate } from "../src/weather.js"
-import { gardenTip } from "../src/garden.js"
+import { gardenTip, sowingAdvice } from "../src/garden.js"
 import { renderWeatherPanel } from "../src/weather-card.js"
 import { buildCardHtml } from "../src/card.js"
 
@@ -330,4 +330,19 @@ test("garden advice rotates daily without losing the weather-specific warning",(
  assert.notEqual(today,tomorrow)
  assert.match(today,/агроволокном/)
  assert.match(tomorrow,/агроволокном/)
+})
+
+test("sowing guidance is seasonal, changes daily and avoids unsafe outdoor sowing",()=>{
+ const winter=sowingAdvice("2026-12-12",{min:-5,soilTemp:-1,code:71},{phase:"Молодик"})
+ assert.match(winter.allowed,/приміщенні|розсади|теплиці/)
+ assert.match(winter.avoid,/відкритий/)
+ const a=sowingAdvice("2027-04-12",{min:9,soilTemp:12})
+ const b=sowingAdvice("2027-04-13",{min:9,soilTemp:12})
+ assert.notEqual(a.allowed,b.allowed)
+ const frost=sowingAdvice("2027-04-12",{min:-2,soilTemp:2})
+ assert.match(frost.avoid,/холодний/)
+ const panel=renderWeatherPanel({min:-3,soilTemp:2,code:71},"2026-12-12")
+ assert.match(panel,/Можна сіяти \/ саджати/)
+ assert.match(panel,/Поки не варто/)
+ assert.match(panel,/За місячним календарем/)
 })
