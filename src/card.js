@@ -313,6 +313,7 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '.wx-credit{font-size:13px;margin-top:9px}',
     '.footer{margin-top:10px;font-size:17px;padding:9px 4px 0}',
     // Final approved compact layout: weather metrics side by side rather than tall stack.
+    '.metric .value{font-size:26px;letter-spacing:-.6px}',
     '.weather-air{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px 10px;align-content:start}',
     '.weather-air>h3,.weather-air>.wx-warning{grid-column:1/-1;margin:0}',
     '.weather-air>h3{padding-bottom:7px;margin-bottom:0}',
