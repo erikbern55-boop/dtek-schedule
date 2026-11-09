@@ -258,7 +258,7 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
   ].join("")
   const content = '<div class="card"><header class="header"><div class="header-left">' + robotIcon() +
     '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div>' +
-    '<div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b><span class="version">2.2</span></div></div></div>' +
+    '<div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b><span class="version">2.3</span></div></div></div>' +
     '<div class="header-place"><b>📍 СТ «Хімік»</b><div>Фастівський район<br>Київська область</div></div></header>' +
     '<div class="date">' + dateLabel + ' · ' + escape(formatDate(date)) + ' · ' + escape(weekday(date)) + '</div>' +
     '<div class="sub">Ритм електропостачання · графік на 24 години</div>' +
@@ -278,7 +278,7 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     renderWeatherPanel(weather, date, label) +
     '<footer class="footer"><span>📡 ' + escape(sourceLabel) +
     '</span><span>Дані: ' + escape(update) + '</span></footer>' +
-    '<div class="signature">⚡ СВІТЛОПУЛЬС 2.2 · СТ «ХІМІК»</div></div>'
+    '<div class="signature">⚡ СВІТЛОПУЛЬС 2.3 · СТ «ХІМІК»</div></div>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>' + css +
     '</style></head><body>' + content + '</body></html>'
 }
