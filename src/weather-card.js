@@ -7,7 +7,7 @@ const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
 const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
 // Visual markers only; advice remains season- and weather-dependent.
-const cropIcons = text => String(text).replace(/(часник|часнику|часником|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)/giu, word => {
+const cropIcons = text => String(text).replace(/(часником|часнику|часник|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)/giu, word => {
   const icons = {часнику:"🧄",часником:"🧄",часник:"🧄",цибуля:"🧅",морква:"🥕",кріп:"🌿",петрушка:"🌿",редис:"🌱",салат:"🥬",шпинат:"🥬",горох:"🫛",капуста:"🥬",квасоля:"🫘",мікрозелень:"🌱"}
   return (icons[word.toLowerCase()] || "🌱") + " " + word
 })
