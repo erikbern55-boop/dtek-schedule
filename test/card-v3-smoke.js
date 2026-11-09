@@ -34,7 +34,7 @@ try {
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
- assert.ok(Math.abs(layout.air.y-layout.tomorrow.y)<4&&Math.abs(layout.air.y-layout.sun.y)<4&&Math.abs(layout.air.y-layout.soil.y)<4,"four weather panels share first row")
+ assert.ok(Math.abs(layout.air.y-layout.tomorrow.y)<4&&Math.abs(layout.air.y-layout.tomorrow.y)<4&&Math.abs(layout.air.y-layout.sun.y)<4&&Math.abs(layout.air.y-layout.soil.y)<4,"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
  assert.ok(layout.garden.y>=layout.air.b-3,"gardening follows weather")
  assert.ok(Math.abs(layout.moon.y-layout.astro.y)<4,"night panels share third row")
