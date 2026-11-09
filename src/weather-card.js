@@ -6,12 +6,24 @@ const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
   .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
 const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
 const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
-// Visual markers only; advice remains season- and weather-dependent.
-const cropIcons = text => String(text).replace(/\b(часник|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)\b/giu, word => {
-  const icons = {часник:"🧄",цибуля:"🧅",морква:"🥕",кріп:"🌿",петрушка:"🌿",редис:"🌱",салат:"🥬",шпинат:"🥬",горох:"🫛",капуста:"🥬",квасоля:"🫘",мікрозелень:"🌱"}
-  return (icons[word.toLowerCase()] || "🌱") + " " + word
-})
-
+// Contextual icons are derived from today's actual recommendation text.
+// Prioritize specific crops before general weather or gardening actions.
+const adviceIcons = text => {
+  const rules = [
+    [/часник|часнику|часником/iu,"🧄"], [/цибул/iu,"🧅"], [/моркв/iu,"🥕"],
+    [/картопл/iu,"🥔"], [/томат|помідор/iu,"🍅"], [/огір/iu,"🥒"],
+    [/перець/iu,"🫑"], [/капуст|салат|шпинат/iu,"🥬"],
+    [/горох|квасол/iu,"🌱"], [/кріп|петрушк|зелен|мікрозелен|насін|посів|сіяти|розсад/iu,"🌱"],
+    [/замороз|мороз|холод|сніг|укрит|агроволокн|накрий|прикрий/iu,"❄️"],
+    [/дощ|волог|полив|дренаж|шланг/iu,"💧"],
+    [/дерев|гілк|стовбур|саджанц|кущ/iu,"🌳"],
+    [/теплиц/iu,"🏡"], [/ґрунт|грядк|мульч|бур.ян/iu,"🌿"],
+    [/інструмент|інвентар|кріплен|підв.язк/iu,"🛠️"],
+    [/планув|сівозмін|календар/iu,"📋"]
+  ]
+  const found = rules.find(([pattern]) => pattern.test(String(text)))
+  return (found ? found[1] : "🌿") + " " + String(text)
+}
 
 function condition(code) {
   if (code === 0) return ["☀️","Ясно"]
@@ -151,7 +163,7 @@ export const WEATHER_CSS = [
   '.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}',
   '.wx-sowing-row.lunar b{color:#dec7ff}',
   '.wx-grid>.weather-soil{grid-column:1/-1;padding:10px 14px}',
-  '.wx-grid>.weather-soil h3{display:none}',
+  '.wx-grid>.weather-soil h3{display:block;font-size:18px;margin:0 0 5px;padding:0;border:0}',
   '.wx-grid>.weather-soil .wx-soil-sun{display:flex;align-items:center;justify-content:space-around;gap:12px}',
   '.wx-grid>.weather-soil .wx-half{display:flex;align-items:center;gap:9px}',
   '.wx-grid>.weather-soil .wx-half+.wx-half{border-left:1px solid #25794e;padding-left:12px}',
@@ -241,11 +253,11 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   const garden='<section class="wx-box weather-garden"><h3>🌿 Календар городника</h3>'+
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
-    esc(tip)+'</div></div>'+
+    esc(adviceIcons(tip))+'</div></div>'+
     '<div class="wx-sowing">'+
-    '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(cropIcons(sow.allowed))+'</div>'+
-    '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(sow.avoid)+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(sow.lunar)+'</div>'+
+    '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(adviceIcons(sow.allowed))+'</div>'+
+    '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(adviceIcons(sow.avoid))+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
     '</div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+

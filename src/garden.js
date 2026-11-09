@@ -117,7 +117,7 @@ export function sowingAdvice(date, weather, moon = null) {
     : no
   // Lunar folklore is not a scientifically established planting criterion.
   const lunar = moon?.phase === "Молодик"
-    ? "Традиція: на молодик планують роботи; вирішальними є погода й ґрунт."
-    : "Місячна традиція — довідково; строки посіву визначають тепло й сезон."
+    ? "Молодик: за традицією планують грядки, перевіряють насіння та інструмент. Посів — за погодою."
+    : "За традицією можна готувати грядки, перевіряти насіння й планувати посів. Строки визначає погода."
   return { allowed, avoid, lunar }
 }
