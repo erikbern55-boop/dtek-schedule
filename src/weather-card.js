@@ -271,7 +271,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-sowing">'+
     '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(adviceIcons(sow.allowed))+'</div>'+
     '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(adviceIcons(sow.avoid))+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем · традиція, не агрономічний доказ</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
     '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div>'+
     '</div></section>'
   const astro=astroForMoon(moon,date)
@@ -280,9 +280,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-astro-body"><div class="wx-astro-symbol">'+esc(astro.symbol)+'</div>'+
     '<div class="wx-astro-copy"><b>Місяць у '+esc(astro.inSign)+'.</b>'+esc(astro.message)+
     '</div></div>'+
-    '<div class="wx-astro-disclaimer">Авторський розважальний текст · не науковий прогноз</div></section>'
-  const foot='<div class="wx-credit">Джерела й методика: погода та ґрунт — <a href="https://open-meteo.com/en/docs">Open-Meteo</a> · оновлено '+esc(stamp)+
-    ' · Місяць — астрономічний розрахунок (Ж. Меєс, на 12:00 Київ) · городні поради — локальні правила · астрологія — для розваги</div>'
+    '<div class="wx-astro-disclaimer">Астрологічна інтерпретація · розважальний характер · авторський текст, не науковий прогноз</div></section>'
+  const foot='<div class="wx-credit">Прогноз: Open-Meteo · оновлено '+esc(stamp)+
+    ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак) · Джерела: <a href="https://open-meteo.com/en/docs">Open-Meteo</a>; астрономічні розрахунки — Ж. Меєс; городні поради — локальні правила, не перевірені незалежним агрономом; астрологія — для розваги</div>'
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
