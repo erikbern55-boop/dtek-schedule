@@ -419,6 +419,18 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     ".weather-garden .wx-garden-art{font-size:55px!important;min-width:135px!important}",
     ".weather-air .wx-weather-main{display:flex!important;gap:12px!important}",
     ".wx-grid .wx-box h3{font-size:23px!important;line-height:1.15!important;margin:0 0 9px!important}",
+    // Readable, vertically balanced weather cards in the approved landscape grid.
+    ".wx-grid>.weather-sun,.wx-grid>.weather-soil{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;gap:14px!important;min-height:225px!important}",
+    ".wx-grid>.weather-sun h3,.wx-grid>.weather-soil h3{display:block!important;font-size:25px!important;line-height:1.15!important;margin:0!important}",
+    ".wx-grid>.weather-sun .wx-sun-pair{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;font-size:19px!important}",
+    ".wx-grid>.weather-sun .wx-sun-pair b{font-size:26px!important}",
+    ".wx-grid>.weather-soil .wx-soil-pair{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important}",
+    ".wx-grid>.weather-soil .wx-soil-pair strong{font-size:52px!important;line-height:1!important}",
+    ".wx-grid>.weather-soil .wx-soil-pair span{font-size:16px!important;line-height:1.3!important;text-align:center!important}",
+    ".wx-grid>.weather-moon .wx-moon-row,.wx-grid>.weather-astro .wx-astro-copy{font-size:19px!important;line-height:1.3!important}",
+    ".wx-grid>.weather-moon .wx-moon-note,.wx-grid>.weather-astro .wx-astro-disclaimer{font-size:15px!important;line-height:1.25!important}",
+    ".sources{font-size:16px!important;line-height:1.25!important}",
+    ".footer{font-size:15px!important}",
     ".wx-grid .wx-credit{grid-column:1/13!important}",
   ].join("")
   const content = '<div class="card"><header class="header">' +
