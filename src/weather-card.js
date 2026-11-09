@@ -208,7 +208,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div class="wx-facts">'+
       '<div class="wx-fact wide windline">🌬 Вітер зараз: <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
       '<div class="wx-fact wide gust windline">💨 Пориви вітру сьогодні: <b>'+esc(val(weather.todayGust," м/с"))+'</b></div>'+
-      '<div class="wx-fact wide">☔ Опади сьогодні (ймовірність): <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
+      '<div class="wx-fact wide">☔ Імовірність опадів сьогодні: <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
       '</div>'+
       (hasTomorrow
         ?'<div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Завтра · '+esc(tomorrowNumber)+'</div>'+
@@ -243,9 +243,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(tip)+'</div></div>'+
     '<div class="wx-sowing">'+
-    '<div class="wx-sowing-row good"><b>✓ Можна</b>'+esc(cropIcons(sow.allowed))+'</div>'+
-    '<div class="wx-sowing-row avoid"><b>✕ Не варто</b>'+esc(sow.avoid)+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ Місячна традиція</b>'+esc(sow.lunar)+'</div>'+
+    '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(cropIcons(sow.allowed))+'</div>'+
+    '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(sow.avoid)+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(sow.lunar)+'</div>'+
     '</div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
