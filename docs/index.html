@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#041b12">
+<title>Світлопульс 2.3 · Повний екран</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#03150e;color:#ecfff1;font-family:system-ui,Arial,sans-serif}
+body{display:flex;flex-direction:column;min-height:100dvh}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px max(12px,env(safe-area-inset-right));background:#08251a}
+strong{color:#9affb2}nav{display:flex;gap:8px}button{border:1px solid #4bd984;background:#113b29;color:white;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#2c8650}
+main{flex:1;min-height:0;display:grid;place-items:center;padding:8px;overflow:auto}
+img{display:block;max-width:100%;max-height:calc(100dvh - 104px);object-fit:contain}
+#status{font-size:14px;text-align:center;color:#b8d8c4;padding:6px}
+@media(orientation:landscape){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}img{max-height:calc(100dvh - 63px)}#status{padding:2px;font-size:12px}}
+</style></head><body>
+<header><strong>⚡ СВІТЛОПУЛЬС 2.3</strong><nav><button id="today" aria-pressed="true">Сьогодні</button><button id="tomorrow" aria-pressed="false">Завтра</button><button id="full">⛶ На весь екран</button></nav></header>
+<main><img id="card" alt="Актуальна картка Світлопульсу"></main>
+<div id="status" role="status">Поверни телефон горизонтально для ширшого перегляду</div>
+<script>
+const card=document.getElementById('card'),status=document.getElementById('status');
+let day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
+function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
+function load(){card.alt='Картка Світлопульсу: '+(day==='today'?'сьогодні':'завтра');card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);}
+card.addEventListener('error',()=>{status.textContent='Картка ще не опублікована. Перевір налаштування публікації.';});
+card.addEventListener('load',()=>{status.textContent='Поверни телефон горизонтально для ширшого перегляду';});
+document.getElementById('today').onclick=()=>select('today');
+document.getElementById('tomorrow').onclick=()=>select('tomorrow');
+document.getElementById('full').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch{status.textContent='Повноекранний режим недоступний у цьому браузері.'}};
+setInterval(load,300000);select(day);
+</script></body></html>
