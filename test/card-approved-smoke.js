@@ -1,0 +1,24 @@
+import fs from "node:fs"
+import assert from "node:assert/strict"
+import {chromium} from "playwright"
+import {buildApprovedCardHtml,renderApprovedCardPng} from "../src/card-approved.js"
+const schedule=[{begin:"00:00",end:"19:30",power:true},{begin:"19:30",end:"24:00",power:false}]
+const weather={currentNowTemp:7,currentTemp:7,currentNowCode:2,todayMin:3,todayMax:8,todayRain:3,todayGust:6,currentNowWind:1,tomorrowDate:"2026-11-10",tomorrowMin:3,tomorrowMax:8,sunrise:"07:03",sunset:"16:23",soilTemp:4,soilAt:"18:00",fetchedAt:"2026-11-09T16:30:00Z",stale:false}
+const data={schedule,date:"2026-11-09",label:"сьогодні",weather,update:"09.11.2026 18:32",now:new Date("2026-11-09T16:32:00Z")}
+const html=buildApprovedCardHtml(data)
+assert.match(html,/00:58/)
+assert.match(html,/19:30/)
+assert.match(html,/Поради городникам/)
+assert.match(html,/Астропрогноз дня/)
+const png=await renderApprovedCardPng(data)
+fs.writeFileSync("svitlopuls-approved-preview.png",png)
+const browser=await chromium.launch({headless:true})
+try{
+ const page=await browser.newPage({viewport:{width:1170,height:1280}})
+ await page.setContent(html)
+ const v=await page.evaluate(()=>({w:document.documentElement.scrollWidth,h:document.documentElement.scrollHeight,overflow:[...document.querySelectorAll(".panel")].filter(x=>x.scrollHeight>x.clientHeight+5).map(x=>x.querySelector("h2")?.textContent)}))
+ console.log("Approved-layout dimensions",JSON.stringify(v))
+ assert.equal(v.w,1170)
+ assert.equal(v.h,1280)
+ if(v.overflow.length)console.warn("Panels needing visual refinement:",v.overflow)
+}finally{await browser.close()}
