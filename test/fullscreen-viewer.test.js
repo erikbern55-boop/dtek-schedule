@@ -2,13 +2,15 @@ import test from "node:test"
 import assert from "node:assert/strict"
 import fs from "node:fs"
 
-test("fullscreen viewer has orientation responsive layout and two image routes", () => {
+test("public viewer preserves landscape image without navigation controls", () => {
   const html = fs.readFileSync(new URL("../docs/index.html", import.meta.url), "utf8")
-  assert.match(html, /@media\(orientation:landscape\)/)
-  assert.match(html, /requestFullscreen\(\)/)
-  assert.match(html, /day==='today'/)
-  assert.match(html, /day==='tomorrow'/)
-  assert.match(html, /setInterval\(load,300000\)/)
+  assert.match(html, /max-width:1200px/)
+  assert.match(html, /object-fit:contain/)
+  assert.match(html, /get\\('day'\\)/)
+  assert.match(html, /tomorrow/)
+  assert.match(html, /today/)
+  assert.match(html, /setInterval\\(refresh,300000\\)/)
+  assert.doesNotMatch(html, /<button\\b|<nav\\b|requestFullscreen\\(/)
 })
 test("published cards use artifact worktree and Telegram viewer button", () => {
   const media = fs.readFileSync(new URL("../src/media.js", import.meta.url), "utf8")
