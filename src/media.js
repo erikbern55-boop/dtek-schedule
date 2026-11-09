@@ -7,7 +7,7 @@ const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
 const MAX_CAPTION = 1024
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-09-approved-landscape-v7"
+export const CARD_RENDER_VERSION = "2026-11-09-approved-landscape-v8-dynamic-garden"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
@@ -105,7 +105,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         }))
         form.set("chart", new Blob([png], { type: "image/png" }), "svitlopuls.png")
         result = await callTelegram("editMessageMedia", form)
-        console.log("🟢 Refreshed existing card's source/time information")
+        console.log("🟢 Telegram editMessageMedia confirmed: message_id=" + result.message_id + ", photo=" + Boolean(result.photo?.length) + ", renderVersion=" + CARD_RENDER_VERSION)
       } else {
         result = await callTelegram("editMessageCaption", {
           chat_id: TELEGRAM_CHAT_ID, message_id: lastMessage.message_id,
