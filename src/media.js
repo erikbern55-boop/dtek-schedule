@@ -6,6 +6,13 @@ import { renderCardPng } from "./card.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
+const VIEWER_URL = "https://erikbern55-boop.github.io/dtek-schedule/"
+function viewerKeyboard(label) {
+  return { inline_keyboard: [[{
+    text: "⛶ Відкрити на весь екран",
+    url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today"),
+  }]] }
+
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
 export const CARD_RENDER_VERSION = "2026-11-09-approved-landscape-v12-daylight-regex-fix"
@@ -115,13 +122,14 @@ export async function publishCard({ schedule, date, label, update, source, messa
         form.set("media", JSON.stringify({
           type: "photo", media: "attach://chart", caption, parse_mode: "HTML",
         }))
+        form.set("reply_markup", JSON.stringify(viewerKeyboard(label)))
         form.set("chart", new Blob([png], { type: "image/png" }), "svitlopuls.png")
         result = await callTelegram("editMessageMedia", form)
         console.log("🟢 Telegram editMessageMedia confirmed: message_id=" + result.message_id + ", photo=" + Boolean(result.photo?.length) + ", renderVersion=" + CARD_RENDER_VERSION)
       } else {
         result = await callTelegram("editMessageCaption", {
           chat_id: TELEGRAM_CHAT_ID, message_id: lastMessage.message_id,
-          caption, parse_mode: "HTML",
+          caption, parse_mode: "HTML", reply_markup: viewerKeyboard(label),
         })
         console.log("🟢 Updated the existing card caption")
       }
@@ -146,6 +154,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         saveViewerSnapshot(png, label)
     const form = new FormData()
     form.set("chat_id", String(TELEGRAM_CHAT_ID))
+    form.set("reply_markup", JSON.stringify(viewerKeyboard(label)))
     form.set("photo", new Blob([png], { type: "image/png" }), "svitlopuls.png")
     form.set("caption", caption)
     form.set("parse_mode", "HTML")
