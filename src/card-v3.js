@@ -38,8 +38,9 @@ const css = [
   ".v3-weather .weather-air{grid-column:1/7;grid-row:1}",
   ".v3-weather .weather-sun{grid-column:7/10;grid-row:1}",
   ".v3-weather .weather-soil{grid-column:10/13;grid-row:1}",
-  ".v3-weather .weather-garden{grid-column:1/9;grid-row:2}",
-  ".v3-weather .wx-sowing-panel{grid-column:9/13;grid-row:2}",
+  ".v3-weather .wx-right-stack{display:contents}",
+  ".v3-weather .weather-garden{grid-column:1/13;grid-row:2}",
+  
   ".v3-weather .weather-moon{grid-column:1/6;grid-row:3}",
   ".v3-weather .weather-astro{grid-column:6/13;grid-row:3}",
   ".v3-weather .wx-box{min-width:0;padding:16px}",
@@ -62,8 +63,9 @@ const css = [
   ".v3-weather .weather-air{grid-column:1/7;grid-row:1}",
   ".v3-weather .weather-sun{grid-column:7/10;grid-row:1}",
   ".v3-weather .weather-soil{grid-column:10/13;grid-row:1}",
-  ".v3-weather .weather-garden{grid-column:1/9;grid-row:2}",
-  ".v3-weather .wx-sowing-panel{grid-column:9/13;grid-row:2}",
+  ".v3-weather .wx-right-stack{display:contents}",
+  ".v3-weather .weather-garden{grid-column:1/13;grid-row:2}",
+  
   ".v3-weather .weather-moon{grid-column:1/6;grid-row:3}",
   ".v3-weather .weather-astro{grid-column:6/13;grid-row:3}",
   ".v3-weather .wx-box{border:3px solid #4dfd63;border-radius:24px;background:radial-gradient(ellipse,#0b4b2b,#02190f 85%);padding:16px;min-width:0}",
