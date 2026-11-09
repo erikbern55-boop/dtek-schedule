@@ -236,7 +236,19 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '</section>'
     :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
-  const sun='<section class="wx-box weather-sun"><h3>☀️ Сонячний день</h3>'+
+  const daylightMinutes = (() => {
+    const parse = value => {
+      const m = /^(\\d{1,2}):(\\d{2})$/.exec(String(value ?? "").trim())
+      if (!m) return null
+      const h = Number(m[1]), min = Number(m[2])
+      return h < 24 && min < 60 ? h * 60 + min : null
+    }
+    const rise = parse(weather?.sunrise), set = parse(weather?.sunset)
+    return rise === null || set === null ? null : (set - rise + 1440) % 1440
+  })()
+  const daylightLabel = daylightMinutes === null ? "" :
+    " · "+Math.floor(daylightMinutes / 60)+" год "+(daylightMinutes % 60)+" хв"
+  const sun='<section class="wx-box weather-sun"><h3>☀️ Світловий день'+daylightLabel+'</h3>'+
     '<div class="wx-sun-pair"><span>🌅 Схід <b>'+esc(weather?.sunrise||"—:—")+'</b></span>'+
     '<span>🌇 Захід <b>'+esc(weather?.sunset||"—:—")+'</b></span></div></section>'
   const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
