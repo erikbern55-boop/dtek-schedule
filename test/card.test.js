@@ -108,6 +108,7 @@ test("five-minute countdown bucket only invalidates photo once per interval",()=
 })
 
 
+// CI rerun: verify approved standalone viewer after GitHub Actions infrastructure error.
 test("public viewer has no legacy navigation or fullscreen controls", async () => {
   const { readFileSync } = await import("node:fs")
   const page = readFileSync(new URL("../docs/index.html", import.meta.url), "utf8")
