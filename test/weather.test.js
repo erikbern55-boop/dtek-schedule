@@ -177,7 +177,7 @@ test("tomorrow's card uses its own moon date and the forecast soil at noon",()=>
  assert.notEqual(a,b)
 })
 
-test("weather and garden layout uses two columns with separate sun and soil panels",()=>{
+test("approved landscape has seven separate weather, garden and astronomy panels",()=>{
  const weather={
   currentTemp:2,min:0,max:4,currentWind:2,rain:10,code:2,
   soilTemp:4,soilAt:"17:00",sunrise:"06:59",sunset:"16:26",
@@ -185,21 +185,21 @@ test("weather and garden layout uses two columns with separate sun and soil pane
  }
  const html=renderWeatherPanel(weather,"2026-11-07")
  assert.match(html,/class="wx-grid"/)
- assert.equal((html.match(/class="wx-box/g)||[]).length,6)
+ assert.equal((html.match(/class="wx-box/g)||[]).length,7)
  assert.match(html,/class="wx-box weather-air"/)
  assert.match(html,/class="wx-box weather-sun"/)
   assert.match(html,/class="wx-box weather-soil"/)
  assert.match(html,/class="wx-box weather-moon"/)
  assert.match(html,/class="wx-box weather-garden"/)
  assert.match(html,/class="wx-box wx-astro weather-astro"/)
- assert.match(html,/class="wx-right-stack"/)
+ assert.match(html,/class="wx-box wx-sowing-panel"/)
  assert.match(html,/Для настрою та натхнення/)
  assert.match(html,/розважальний характер/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
    update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
- assert.match(card,/grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/)
+ assert.match(card,/grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/)
  assert.match(card,/СВІТЛО/)
- assert.match(card,/2\.1/)
+ assert.match(card,/3\.0/)
  assert.match(card,/class="power-layout"/)
  assert.match(card,/class="wx-grid"/)
  assert.match(card,/Дані: 07\.11\.2026 12:00/)
