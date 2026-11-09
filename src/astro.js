@@ -35,13 +35,13 @@ const messages = Object.freeze({
 })
 
 const dailyNotes = Object.freeze([
-  "Сьогодні варто звернути увагу на добрі дрібниці.",
-  "Знайдіть привід для щирої усмішки.",
-  "Залиште трохи часу для приємної несподіванки.",
-  "Нехай спокійний ритм допоможе зосередитися.",
-  "Маленька добра справа може покращити настрій.",
-  "Приділіть кілька хвилин улюбленому заняттю.",
-  "Підтримайте близьку людину теплим словом.",
+  "Спробуйте сьогодні змінити звичний маршрут і помітити щось цікаве.",
+  "Присвятіть трохи часу розмові, яку давно відкладали.",
+  "Оберіть одну невелику справу та доведіть її до завершення.",
+  "Знайдіть час для творчості, музики або улюбленої книжки.",
+  "Подбайте про затишок навколо себе та приємний відпочинок.",
+  "Спробуйте новий підхід до звичного завдання.",
+  "Зробіть добрий жест для людини поруч і залиште час для себе."
 ])
 
 export function astroForMoon(moon, date = null) {
@@ -53,7 +53,7 @@ export function astroForMoon(moon, date = null) {
     sign,
     symbol:zodiacSymbols[sign],
     inSign:locatives[sign],
-    message:messages[sign] + (date ? " " + dailyNotes[((dayIndex(date) % dailyNotes.length) + dailyNotes.length) % dailyNotes.length] : ""),
+    message: date ? dailyNotes[(dayIndex(date) + Object.keys(messages).indexOf(sign)) % dailyNotes.length] : messages[sign],
   }
 }
 
