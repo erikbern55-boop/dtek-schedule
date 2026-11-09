@@ -52,7 +52,7 @@ export function gardenTip(date, weather) {
   const wet = Number.isFinite(weather?.rain) && weather.rain >= 65
   const windy = Number.isFinite(weather?.gust) && weather.gust >= 15
   if (cold && (month >= 3 && month <= 5 || month >= 9 && month <= 11)) {
-    return "Прикрийте чутливі рослини агроволокном. Перевірте теплицю та захистіть молоді саджанці від нічного холоду."
+    return dayIndex(date) % 2 === 0 ? "Прикрийте чутливі рослини агроволокном і перевірте захист молодих саджанців перед морозною ніччю." : "Перевірте теплицю та накрийте чутливі посадки агроволокном, якщо очікується нічний мороз."
   }
   if (windy) return "Закріпіть покривні матеріали й легкі конструкції. Перевірте гілки дерев і кріплення теплиці."
   const season = month <= 2 || month === 12 ? "winter" : month <= 5 ? "spring" : month <= 8 ? "summer" : "autumn"
