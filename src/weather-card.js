@@ -6,6 +6,12 @@ const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
   .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
 const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
 const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
+// Visual markers only; advice remains season- and weather-dependent.
+const cropIcons = text => String(text).replace(/\b(часник|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)\b/giu, word => {
+  const icons = {часник:"🧄",цибуля:"🧅",морква:"🥕",кріп:"🌿",петрушка:"🌿",редис:"🌱",салат:"🥬",шпинат:"🥬",горох:"🫛",капуста:"🥬",квасоля:"🫘",мікрозелень:"🌱"}
+  return (icons[word.toLowerCase()] || "🌱") + " " + word
+})
+
 
 function condition(code) {
   if (code === 0) return ["☀️","Ясно"]
@@ -237,7 +243,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(tip)+'</div></div>'+
     '<div class="wx-sowing">'+
-    '<div class="wx-sowing-row good"><b>✓ Можна</b>'+esc(sow.allowed)+'</div>'+
+    '<div class="wx-sowing-row good"><b>✓ Можна</b>'+esc(cropIcons(sow.allowed))+'</div>'+
     '<div class="wx-sowing-row avoid"><b>✕ Не варто</b>'+esc(sow.avoid)+'</div>'+
     '<div class="wx-sowing-row lunar"><b>☾ Місячна традиція</b>'+esc(sow.lunar)+'</div>'+
     '</div></section>'
