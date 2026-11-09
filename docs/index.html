@@ -1,33 +1,26 @@
 <!doctype html>
-<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#041b12">
-<title>Світлопульс 2.3 · Повний екран</title>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020e08">
+<title>Світлопульс 3.0 · СТ «Хімік»</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#03150e;color:#ecfff1;font-family:system-ui,Arial,sans-serif}
-body{display:flex;flex-direction:column;min-height:100dvh}
-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px max(12px,env(safe-area-inset-right));background:#08251a}
-strong{color:#9affb2}nav{display:flex;gap:8px}button{border:1px solid #4bd984;background:#113b29;color:white;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#2c8650}
-main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden;width:100%}
-img{display:block;max-width:100%;max-height:calc(100dvh - 104px);object-fit:contain}
-#status{font-size:14px;text-align:center;color:#b8d8c4;padding:6px}
-@media(orientation:landscape){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}#status{padding:2px;font-size:12px}}
-body.immersive{height:100dvh;min-height:100dvh;overflow:hidden}body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.85;padding:5px 8px}body.immersive main{height:100dvh;min-height:0;flex:1;padding:0;overflow:hidden}body.immersive #card{display:none}body.immersive #live{display:block;width:100%;height:100%;border:0;background:#03150e}#live{display:none}
-:fullscreen,:fullscreen body{background:#03150e}
-</style></head><body>
-<header><strong>⚡ СВІТЛОПУЛЬС 2.3</strong><nav><button id="today" aria-pressed="true">Сьогодні</button><button id="tomorrow" aria-pressed="false">Завтра</button><button id="full">⛶ На весь екран</button></nav></header>
-<main><img id="card" alt="Актуальна картка Світлопульсу"><iframe id="live" title="Адаптивна повноекранна картка Світлопульсу"></iframe></main>
-<div id="status" role="status">Натисни «На весь екран» для збільшення картки</div>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#020e08}
+body{display:flex;justify-content:center;align-items:flex-start}
+main{width:100%;max-width:1200px;margin:0 auto}
+img{display:block;width:100%;height:auto;object-fit:contain}
+</style>
+</head>
+<body>
+<main><img id="card" alt="Світлопульс 3.0: графік електропостачання, погода та календар"></main>
 <script>
-const card=document.getElementById('card'),status=document.getElementById('status'),live=document.getElementById('live');
-let day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
-function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
-function load(){card.alt='Картка Світлопульсу: '+(day==='today'?'сьогодні':'завтра');card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);live.src='./'+day+'.html?t='+Math.floor(Date.now()/300000);}
-card.addEventListener('error',()=>{status.textContent='Картка ще не опублікована. Перевір налаштування публікації.';});
-card.addEventListener('load',()=>{status.textContent='Картка оновлена';});
-document.getElementById('today').onclick=()=>select('today');
-document.getElementById('tomorrow').onclick=()=>select('tomorrow');
-const fullButton=document.getElementById('full');
-function setImmersive(on){document.body.classList.toggle('immersive',on);fullButton.textContent=on?'✕ Вийти':'⛶ На весь екран';if(on)load();}
-fullButton.onclick=async()=>{if(document.body.classList.contains('immersive')){setImmersive(false);if(document.fullscreenElement)try{await document.exitFullscreen()}catch{}return;}setImmersive(true);try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}catch{/* Telegram and mobile browsers may reject fullscreen; immersive CSS still works. */}};
-document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('immersive'))setImmersive(false);});
-setInterval(load,300000);select(day);
-</script></body></html>
+const day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
+const card=document.getElementById('card');
+function refresh(){card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);}
+refresh();
+setInterval(refresh,300000);
+</script>
+</body>
+</html>
