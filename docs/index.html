@@ -6,12 +6,12 @@
 body{display:flex;flex-direction:column;min-height:100dvh}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px max(12px,env(safe-area-inset-right));background:#08251a}
 strong{color:#9affb2}nav{display:flex;gap:8px}button{border:1px solid #4bd984;background:#113b29;color:white;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#2c8650}
-main{flex:1;min-height:0;display:grid;place-items:center;padding:8px;overflow:hidden;width:100%}
-#landscapeCard{display:none;max-width:100%;max-height:100%;object-fit:contain}
+main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden;width:100%}
+#landscapeCard{display:none;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
 img{display:block;max-width:100%;max-height:calc(100dvh - 104px);object-fit:contain}
 #status{font-size:14px;text-align:center;color:#b8d8c4;padding:6px}
-@media(orientation:landscape){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}#card{display:none}#landscapeCard{display:block;max-height:calc(100dvh - 63px)}#status{padding:2px;font-size:12px}}
-body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.7;padding:5px 8px}body.immersive main{height:100dvh;flex:1;padding:0}body.immersive #landscapeCard{max-height:100dvh}body.immersive #card{max-height:100dvh}
+@media(orientation:landscape), (min-aspect-ratio: 1/1){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}#card{display:none}#landscapeCard{display:block;width:100%;height:calc(100dvh - 63px);max-height:calc(100dvh - 63px)}#status{padding:2px;font-size:12px}}
+body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.7;padding:5px 8px}body.immersive main{height:100dvh;flex:1;padding:0}body.immersive #landscapeCard{width:100%;height:100dvh;max-height:100dvh}body.immersive #card{max-height:100dvh}
 :fullscreen,:fullscreen body{background:#03150e}
 </style></head><body>
 <header><strong>⚡ СВІТЛОПУЛЬС 2.3</strong><nav><button id="today" aria-pressed="true">Сьогодні</button><button id="tomorrow" aria-pressed="false">Завтра</button><button id="full">⛶ На весь екран</button></nav></header>
