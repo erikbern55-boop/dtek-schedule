@@ -132,7 +132,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   const moon=lunarForDate(date)
   const [symbol,desc]=condition(weather?.currentNowCode ?? weather?.code)
   const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA", {
-    timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"
+    timeZone:"Europe/Kyiv",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"
   }).format(new Date(weather.fetchedAt)):"—"
   const safeWeather=weather&&!weather.stale
   const warning=!weather
@@ -198,7 +198,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(tip)+'</div></div></section>'
-  const astro=astroForMoon(moon)
+  const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
     '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+
     '<div class="wx-astro-body"><div class="wx-astro-symbol">'+esc(astro.symbol)+'</div>'+
