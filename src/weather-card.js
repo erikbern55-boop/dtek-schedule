@@ -144,6 +144,23 @@ export const WEATHER_CSS = [
   '.wx-sowing-row.avoid b{color:#ffb8bc}',
   '.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}',
   '.wx-sowing-row.lunar b{color:#dec7ff}',
+  '.wx-grid>.weather-soil{grid-column:1/-1;padding:10px 14px}',
+  '.wx-grid>.weather-soil h3{display:none}',
+  '.wx-grid>.weather-soil .wx-soil-sun{display:flex;align-items:center;justify-content:space-around;gap:12px}',
+  '.wx-grid>.weather-soil .wx-half{display:flex;align-items:center;gap:9px}',
+  '.wx-grid>.weather-soil .wx-half+.wx-half{border-left:1px solid #25794e;padding-left:12px}',
+  '.wx-grid>.weather-soil .wx-soil-icon{display:none}',
+  '.wx-grid>.weather-soil .wx-soil-number{font-size:25px}',
+  '.wx-grid>.weather-soil .wx-caption{font-size:12px;max-width:115px}',
+  '.wx-grid>.weather-soil .wx-sun-label{font-size:13px}',
+  '.wx-grid>.weather-soil .wx-sun-time{font-size:23px;margin:0}',
+  '.wx-grid>.weather-soil .wx-sun-divider{margin:2px 0}',
+  '.wx-right-stack .wx-garden-art{display:none}',
+  '.wx-right-stack .wx-garden-copy{font-size:19px}',
+  '.wx-right-stack .wx-garden-heading{font-size:19px;margin-bottom:5px}',
+  '.wx-right-stack .wx-sowing{gap:6px;margin-top:8px}',
+  '.wx-right-stack .wx-sowing-row{padding:7px 9px;font-size:18px;line-height:1.22}',
+  '.wx-right-stack .wx-sowing-row b{font-size:19px;margin-bottom:2px}',
   '.wx-credit{margin-top:15px;font-size:16px;color:#b7debf;',
   'text-align:center;line-height:1.35}',
 ].join("")
@@ -174,7 +191,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   // current conditions -> TODAY min/max and wind/precip -> TOMORROW min/max.
   // The rest of the card (garden, soil, moon, schedule) remains date-specific.
   const forecast=weather
-    ?'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
+    ?'<section class="wx-box weather-air"><h3>🌤 Погода — СЬОГОДНІ · '+esc(todayNumber)+'</h3>'+warning+
       '<div class="wx-weather-main"><div class="wx-symbol">'+esc(symbol)+'</div>'+
       '<div><div class="wx-now-label">🌡 Температура зараз</div>'+
       '<div class="wx-now">'+esc(temp(air))+'</div><div class="wx-cond">'+esc(desc)+'</div></div></div>'+
@@ -185,7 +202,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div class="wx-facts">'+
       '<div class="wx-fact wide windline">🌬 Вітер зараз: <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
       '<div class="wx-fact wide gust windline">💨 Пориви вітру сьогодні: <b>'+esc(val(weather.todayGust," м/с"))+'</b></div>'+
-      '<div class="wx-fact wide">☔ Імовірність опадів сьогодні: <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
+      '<div class="wx-fact wide">☔ Опади сьогодні (ймовірність): <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
       '</div>'+
       (hasTomorrow
         ?'<div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Завтра · '+esc(tomorrowNumber)+'</div>'+
@@ -220,9 +237,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(tip)+'</div></div>'+
     '<div class="wx-sowing">'+
-    '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(sow.allowed)+'</div>'+
-    '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(sow.avoid)+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(sow.lunar)+'</div>'+
+    '<div class="wx-sowing-row good"><b>✓ Можна</b>'+esc(sow.allowed)+'</div>'+
+    '<div class="wx-sowing-row avoid"><b>✕ Не варто</b>'+esc(sow.avoid)+'</div>'+
+    '<div class="wx-sowing-row lunar"><b>☾ Місячна традиція</b>'+esc(sow.lunar)+'</div>'+
     '</div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
@@ -236,6 +253,6 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+soil+'</div>'+
+      '<div class="wx-right-stack">'+garden+'</div>'+soil+
       moonHtml+astroHtml+'</div>'+foot+'</section>'
 }
