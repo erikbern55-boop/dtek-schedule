@@ -113,7 +113,7 @@ test("public viewer has no legacy navigation or fullscreen controls", async () =
   const { readFileSync } = await import("node:fs")
   const page = readFileSync(new URL("../docs/index.html", import.meta.url), "utf8")
   assert.match(page, /Світлопульс 3\.0/)
-  assert.match(page, /day==='tomorrow'\?'tomorrow':'today'/)
+  assert.match(page, /get\('day'\)===\s*'tomorrow'/)
   assert.doesNotMatch(page, /<button\b|<nav\b|СВІТЛОПУЛЬС 2\.3/)
   assert.match(page, /<img id="card"/)
 })
