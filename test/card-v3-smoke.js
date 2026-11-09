@@ -29,13 +29,13 @@ try {
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),sun:box(".weather-sun"),soil:box(".weather-soil"),
-   garden:box(".weather-garden"),sowing:box(".wx-sowing-panel"),moon:box(".weather-moon"),astro:box(".weather-astro"),
+   garden:box(".weather-garden"),moon:box(".weather-moon"),astro:box(".weather-astro"),
    sources:box(".v3-sources"),footer:box(".v3-footer"),body:box(".v3")}
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(Math.abs(layout.air.y-layout.sun.y)<4&&Math.abs(layout.air.y-layout.soil.y)<4,"weather panels share first row")
- assert.ok(Math.abs(layout.garden.y-layout.sowing.y)<4,"gardening panels share second row")
+ assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
  assert.ok(layout.garden.y>=layout.air.b-3,"gardening follows weather")
  assert.ok(Math.abs(layout.moon.y-layout.astro.y)<4,"night panels share third row")
  assert.ok(layout.moon.y>=layout.garden.b-3,"moon follows gardening")
