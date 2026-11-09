@@ -394,6 +394,10 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     ".sources{margin-top:12px;display:grid;grid-template-columns:1.4fr repeat(5,1fr);align-items:center;gap:0;border:3px solid #4fff52;border-radius:23px;box-shadow:inset 0 0 16px #137f32,0 0 12px #17ae36;padding:12px 8px;font-size:15px}",
     ".sources>*{padding:0 10px;border-right:1px solid #7ce9a3}.sources>*:last-child{border:0}.sources b{font-size:23px}",
     ".footer{border:2px solid #4fff52!important;border-radius:24px!important;padding:12px!important;margin-top:12px!important;font-size:14px!important;box-shadow:0 0 12px #16a536!important}",
+    ".schedule-panel .emergency-box{margin:5px 0 0!important;padding:3px 6px!important;border-width:1px!important;max-height:28px!important;overflow:hidden!important}",
+    ".schedule-panel .emergency-head{font-size:12px!important;border:0!important;margin:0!important;padding:0!important}",
+    ".schedule-panel .emergency-tag,.schedule-panel .emergency-detail,.schedule-panel .emergency-time{display:none!important}",
+    ".sr-note{font-size:12px;text-align:center;color:#a4d5ad;margin:-5px 0 6px}",
   ].join("")
   const content = '<div class="card"><header class="header">' +
     '<div class="header-place"><b>СТ «Хімік»</b><div>Боярська ТГ<br>Фастівський район</div></div>' +
@@ -410,15 +414,16 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '<div class="schedule-periods">' + visiblePeriods + '</div>' +
     '<div class="schedule-totals"><span>⚡ Світло: ' + escape(formatDuration(withPower)) +
     '</span><span>◉ Без світла: ' + escape(formatDuration(withoutPower)) + '</span></div>' +
-    '<div class="schedule-status">' + escape(status) + '</div></section>' +
+    '<div class="schedule-status">' + escape(status) + '</div>' + emergency + '</section>' +
     '</main>' +
+    '<div class="sr-note">Графік доби · 24 години</div>' +
     renderWeatherPanel(weather, date, label) +
     '<section class="sources"><b>▱ Джерела та методика</b>' +
     '<span>⚡ ДТЕК · графіки</span><span>☁ Open-Meteo · погода</span>' +
     '<span>🌱 Поради · сезонні рекомендації</span>' +
     '<span>🌙 Місяць · астрономічний розрахунок</span>' +
     '<span>✨ Астропрогноз · розважальний</span></section>' +
-    '<footer class="footer"><span>⟳ Оновлено: ' + escape(update) + '</span>' +
+    '<footer class="footer"><span>Дані: ' + escape(update) + '</span>' +
     '<span>⚡ Графіки: кожні 5 хв</span><span>☁ Погода: кожні 30 хв</span>' +
     '<span>' + escape(sourceLabel) + '</span></footer></div>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>' + css +
