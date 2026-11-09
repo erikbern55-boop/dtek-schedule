@@ -65,7 +65,7 @@ try {
      source:document.querySelector(".footer")?.textContent,
      entertainment:document.querySelector(".wx-astro-disclaimer")?.textContent}
  })
- assert.equal(geometry.items.length,4,"Four major dashboard cells: weather / garden+soil / moon / astro")
+ assert.equal(geometry.items.length,5,"Five dashboard cells: weather / garden / soil strip / moon / astro")
  assert.ok(geometry.countdown && geometry.emergency,"Both approved electricity panels exist")
  assert.ok(geometry.countdown.y>=geometry.dial.bottom-3,"Countdown follows original dial")
  assert.ok(geometry.next.y>=geometry.countdown.bottom-3,"Original next-event box remains")
@@ -77,10 +77,11 @@ try {
  assert.match(geometry.countdownText,/06:00/)
  assert.match(geometry.emergencyText,/Інформація уточнюється/)
  assert.match(geometry.emergencyText,/Автоматичного підтвердження аварій/)
- const [a,b,c,d]=geometry.items
+ const [a,b,soil,c,d]=geometry.items
  assert.ok(Math.abs(a.y-b.y)<3,"top row must be aligned")
- assert.ok(Math.abs(c.y-d.y)<3,"second row must be aligned")
- assert.ok(c.y>a.y+a.height-3,"row two must start below row one")
+ assert.ok(Math.abs(c.y-d.y)<3,"lower row must be aligned")
+ assert.ok(soil.y>=a.y+a.height-3,"soil strip must follow top row")
+ assert.ok(c.y>=soil.y+soil.height-3,"moon row must follow soil strip")
  assert.ok(b.x>a.x+a.width-3,"two columns must not overlap")
  assert.ok(a.width>350&&b.width>350&&c.width>350&&d.width>350,
    "each weather panel must be wide enough for readable text")
@@ -101,9 +102,9 @@ try {
  assert.match(geometry.windRows[0].label,/Вітер зараз/)
  assert.match(geometry.windRows[1].label,/Пориви вітру сьогодні/)
  assert.ok(geometry.garden.bottom<=geometry.soil.y+3,"gardener card must be above soil and sun")
- assert.ok(geometry.soil.bottom<=geometry.right.bottom+3,"soil card must remain inside right stack")
+ assert.ok(geometry.soil.x<=geometry.weather.x+20,"soil strip must span the dashboard width")
  assert.ok(geometry.garden.x>=geometry.right.x-3,"garden card must remain inside right stack")
- assert.ok(geometry.astro.y>=geometry.right.bottom-3,"astrology must be in lower-right")
+ assert.ok(geometry.astro.y>=geometry.soil.bottom-3,"astrology must follow soil strip")
  assert.ok(Math.abs(geometry.astro.y-geometry.moon.y)<3,"moon and astrology aligned")
  assert.match(geometry.entertainment,/розважальний характер/)
  assert.match(geometry.source,/ДТЕК/)
