@@ -1,4 +1,4 @@
-// Fixed-grid renderer built against the approved 1170x1280 reference image.
+// Fixed-grid renderer built against the approved 1404x1536 reference image (scaled legacy grid pending pixel-exact overlay).
 // No existing production generator or Telegram publisher is changed.
 import { nextPowerEvent } from "./countdown.js"
 import { gardenTip, sowingAdvice } from "./garden.js"
@@ -65,10 +65,10 @@ export function buildApprovedCardHtml({schedule,date,label="сьогодні",so
  '<section class="panel"><h2>✨ Астропрогноз дня</h2><div class="astro-content"><div class="zodiac">'+e(astro.symbol)+'</div><div><strong>Місяць у '+e(astro.inSign)+'</strong><br>'+e(astro.message)+'</div><div class="astro-source">Авторський астропрогноз<br>Розважальний характер</div></div></section></div>'+
  '<section class="panel sources"><b>▰ Джерела та методика</b><span>⚡ Графіки:<br>ДТЕК<small>dtek.com.ua</small></span><span>☁ Погода:<br>Open-Meteo<small>open-meteo.com</small></span><span>🌿 Поради:<br>Локальні правила<small>за прогнозом</small></span><span>🌙 Місяць:<br>Астрономічний розрахунок<small>тропічний знак</small></span><span>✨ Астропрогноз:<br>Розважальний<small>авторський текст</small></span></section>'+
  '<footer><span>⟳ Оновлено: '+e(update)+'</span><span><b>⟳</b> Погода: кожні 30 хв</span><span><b>ϟ</b> ДТЕК: кожні 5 хв</span><span>ⓘ Рекомендації: локальні правила</span><span>⬡ СТ «Хімік»</span></footer></div>'
- return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+'</body></html>'
+ return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+dialStyle+'html,body{width:1404px;height:1536px}.sheet{transform:scale(1.2);transform-origin:top left}</style></head><body>'+html+'</body></html>'
 }
 export async function renderApprovedCardPng(data){
  const {chromium}=await import("playwright")
  const browser=await chromium.launch({headless:true})
- try{const page=await browser.newPage({viewport:{width:1170,height:1280},deviceScaleFactor:1});await page.setContent(buildApprovedCardHtml(data));return await page.screenshot({type:"png"})}finally{await browser.close()}
+ try{const page=await browser.newPage({viewport:{width:1404,height:1536},deviceScaleFactor:1});await page.setContent(buildApprovedCardHtml(data));return await page.screenshot({type:"png"})}finally{await browser.close()}
 }
