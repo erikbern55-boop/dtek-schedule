@@ -268,12 +268,12 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(adviceIcons(tip))+'</div></div>'+
+    '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div></section>'
+  const sowingHtml='<section class="wx-box wx-sowing-panel"><h3>✓ Що можна / не варто</h3>'+
     '<div class="wx-sowing">'+
     '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(adviceIcons(sow.allowed))+'</div>'+
     '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(adviceIcons(sow.avoid))+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
-    '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div>'+
-    '</div></section>'
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div></div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
     '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+
@@ -286,6 +286,6 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+'</div>'+sun+soil+
+      garden+sowingHtml+sun+soil+
       moonHtml+astroHtml+'</div>'+foot+'</section>'
 }
