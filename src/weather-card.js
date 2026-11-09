@@ -7,8 +7,8 @@ const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
 const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
 // Visual markers only; advice remains season- and weather-dependent.
-const cropIcons = text => String(text).replace(/\b(часник|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)\b/giu, word => {
-  const icons = {часник:"🧄",цибуля:"🧅",морква:"🥕",кріп:"🌿",петрушка:"🌿",редис:"🌱",салат:"🥬",шпинат:"🥬",горох:"🫛",капуста:"🥬",квасоля:"🫘",мікрозелень:"🌱"}
+const cropIcons = text => String(text).replace(/(часник|часнику|часником|цибуля|морква|кріп|петрушка|редис|салат|шпинат|горох|капуста|квасоля|мікрозелень)/giu, word => {
+  const icons = {часнику:"🧄",часником:"🧄",часник:"🧄",цибуля:"🧅",морква:"🥕",кріп:"🌿",петрушка:"🌿",редис:"🌱",салат:"🥬",шпинат:"🥬",горох:"🫛",капуста:"🥬",квасоля:"🫘",мікрозелень:"🌱"}
   return (icons[word.toLowerCase()] || "🌱") + " " + word
 })
 
@@ -151,7 +151,7 @@ export const WEATHER_CSS = [
   '.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}',
   '.wx-sowing-row.lunar b{color:#dec7ff}',
   '.wx-grid>.weather-soil{grid-column:1/-1;padding:10px 14px}',
-  '.wx-grid>.weather-soil h3{display:none}',
+  '.wx-grid>.weather-soil h3{display:block;font-size:18px;margin:0 0 5px;padding:0;border:0}',
   '.wx-grid>.weather-soil .wx-soil-sun{display:flex;align-items:center;justify-content:space-around;gap:12px}',
   '.wx-grid>.weather-soil .wx-half{display:flex;align-items:center;gap:9px}',
   '.wx-grid>.weather-soil .wx-half+.wx-half{border-left:1px solid #25794e;padding-left:12px}',
