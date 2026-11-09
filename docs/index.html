@@ -7,66 +7,27 @@ body{display:flex;flex-direction:column;min-height:100dvh}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px max(12px,env(safe-area-inset-right));background:#08251a}
 strong{color:#9affb2}nav{display:flex;gap:8px}button{border:1px solid #4bd984;background:#113b29;color:white;border-radius:10px;padding:9px 12px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#2c8650}
 main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden;width:100%}
-#landscapeCard{display:none;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
 img{display:block;max-width:100%;max-height:calc(100dvh - 104px);object-fit:contain}
 #status{font-size:14px;text-align:center;color:#b8d8c4;padding:6px}
 @media(orientation:landscape){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}#status{padding:2px;font-size:12px}}
-body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.7;padding:5px 8px}body.immersive main{height:100dvh;flex:1;padding:0}body.immersive #landscapeCard{width:100%;height:100%;max-height:none;aspect-ratio:auto!important}body.immersive #card{max-height:100dvh}
-@media(orientation:landscape){body.immersive #card{display:none}body.immersive #landscapeCard{display:block}}
-@media(orientation:portrait){body.immersive #landscapeCard{display:none}body.immersive #card{display:block}}
+body.immersive{height:100dvh;min-height:100dvh;overflow:hidden}body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.85;padding:5px 8px}body.immersive main{height:100dvh;min-height:0;flex:1;padding:0;overflow:hidden}body.immersive #card{display:block;width:auto;height:auto;max-width:100vw;max-height:100dvh;object-fit:contain}
 :fullscreen,:fullscreen body{background:#03150e}
 </style></head><body>
 <header><strong>⚡ СВІТЛОПУЛЬС 2.3</strong><nav><button id="today" aria-pressed="true">Сьогодні</button><button id="tomorrow" aria-pressed="false">Завтра</button><button id="full">⛶ На весь екран</button></nav></header>
-<main><img id="card" alt="Актуальна картка Світлопульсу"><canvas id="landscapeCard" role="img" aria-label="Картка Світлопульсу, розташована у двох колонках для горизонтального екрана"></canvas></main>
-<div id="status" role="status">Поверни телефон горизонтально для ширшого перегляду</div>
+<main><img id="card" alt="Актуальна картка Світлопульсу"></main>
+<div id="status" role="status">Натисни «На весь екран» для збільшення картки</div>
 <script>
 const card=document.getElementById('card'),status=document.getElementById('status');
 let day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
-const landscapeCard=document.getElementById('landscapeCard');
-function renderLandscape(){
-  if(!card.complete||!card.naturalWidth)return;
-  // Separate horizontal layout is used ONLY after pressing Fullscreen in landscape.
-  // The portrait/default viewer and the Telegram photo remain pixel-for-pixel unchanged.
-  if(!document.body.classList.contains('immersive')||matchMedia('(orientation:portrait)').matches)return;
-  const sourceW=card.naturalWidth,sourceH=card.naturalHeight;
-  const bounds=landscapeCard.getBoundingClientRect();
-  const targetW=Math.max(1,Math.round(bounds.width)),targetH=Math.max(1,Math.round(bounds.height));
-  if(targetW<10||targetH<10)return;
-  const ratio=Math.min(window.devicePixelRatio||1,2);
-  landscapeCard.width=Math.round(targetW*ratio);
-  landscapeCard.height=Math.round(targetH*ratio);
-  const ctx=landscapeCard.getContext('2d');
-  ctx.setTransform(ratio,0,0,ratio,0,0);
-  ctx.fillStyle='#03150e';ctx.fillRect(0,0,targetW,targetH);
-  // Source sections: electricity summary above, weather and garden below.
-  // Each is independently fitted to a horizontal column (no stretched text).
-  // Divide exactly before the weather panels; never include their top edge in the electricity half.
-  const split=Math.round(sourceH*0.465),gutter=Math.max(8,Math.round(targetW*0.008));
-  const upperH=split,lowerH=sourceH-split;
-  const availableW=targetW-3*gutter,availableH=targetH-2*gutter;
-  // Allocate column widths in proportion to section heights so both sections
-  // render at the same vertical scale and finish on the same baseline.
-  const upperW=availableW*upperH/sourceH,lowerW=availableW-upperW;
-  // Fit each section into its own proportional column without stretching or clipping.
-  function fitSection(sy,sh,x,width){
-    const factor=Math.min(width/sourceW,availableH/sh);
-    const drawW=sourceW*factor,drawH=sh*factor;
-    const dx=x+(width-drawW)/2,dy=gutter+(availableH-drawH)/2;
-    ctx.drawImage(card,0,sy,sourceW,sh,dx,dy,drawW,drawH);
-  }
-  fitSection(0,upperH,gutter,upperW);
-  fitSection(split,lowerH,2*gutter+upperW,lowerW);
-}
-window.addEventListener('resize',renderLandscape);window.addEventListener('orientationchange',()=>setTimeout(renderLandscape,250));
 function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
 function load(){card.alt='Картка Світлопульсу: '+(day==='today'?'сьогодні':'завтра');card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);}
 card.addEventListener('error',()=>{status.textContent='Картка ще не опублікована. Перевір налаштування публікації.';});
-card.addEventListener('load',()=>{renderLandscape();status.textContent='У горизонтальному режимі картка показана у двох колонках';});
+card.addEventListener('load',()=>{status.textContent='Картка оновлена';});
 document.getElementById('today').onclick=()=>select('today');
 document.getElementById('tomorrow').onclick=()=>select('tomorrow');
 const fullButton=document.getElementById('full');
-function setImmersive(on){document.body.classList.toggle('immersive',on);fullButton.textContent=on?'✕ Вийти':'⛶ На весь екран';requestAnimationFrame(()=>requestAnimationFrame(renderLandscape));}
+function setImmersive(on){document.body.classList.toggle('immersive',on);fullButton.textContent=on?'✕ Вийти':'⛶ На весь екран';}
 fullButton.onclick=async()=>{if(document.body.classList.contains('immersive')){setImmersive(false);if(document.fullscreenElement)try{await document.exitFullscreen()}catch{}return;}setImmersive(true);try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}catch{/* Telegram and mobile browsers may reject fullscreen; immersive CSS still works. */}};
-document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('immersive')){requestAnimationFrame(renderLandscape);}});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('immersive'))setImmersive(false);});
 setInterval(load,300000);select(day);
 </script></body></html>
