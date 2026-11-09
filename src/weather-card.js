@@ -238,7 +238,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
   const daylightMinutes = (() => {
     const parse = value => {
-      const m = /^(\\d{1,2}):(\\d{2})$/.exec(String(value ?? "").trim())
+      const m = /^(\d{1,2}):(\d{2})$/.exec(String(value ?? "").trim())
       if (!m) return null
       const h = Number(m[1]), min = Number(m[2])
       return h < 24 && min < 60 ? h * 60 + min : null
