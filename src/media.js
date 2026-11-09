@@ -12,6 +12,7 @@ function viewerKeyboard(label) {
     text: "⛶ Відкрити на весь екран",
     url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today"),
   }]] }
+}
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
