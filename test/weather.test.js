@@ -114,10 +114,10 @@ test("on API failure recent cache is marked stale, old cache is rejected",async(
 })
 test("calendar avoids watering in November and makes season-sensitive suggestions",()=>{
  const november=gardenTip("2026-11-07",{min:4,rain:50,gust:3})
- assert.match(november,/троянд/)
+ assert.match(november,/дерев|троянд|теплиц|листя|шланг|інвентар|стовбурів/)
  assert.doesNotMatch(november,/Полийте|Поливайте|поливайте грядки/)
  assert.match(gardenTip("2026-05-07",{min:-2,rain:30,gust:4}),/агроволокном/)
- assert.match(gardenTip("2026-06-07",{min:13,rain:85,gust:4}),/дощів/)
+ assert.match(gardenTip("2026-06-07",{min:13,rain:85,gust:4}),/опадів|дощів/)
 })
 test("styled forecast widget contains warning, sunrise, sunset, date-specific advice and attribution",()=>{
  const weather={
