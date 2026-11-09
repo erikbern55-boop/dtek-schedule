@@ -345,30 +345,109 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '.wx-box h3,.wx-right-stack .wx-box h3{font-size:24px;margin-bottom:7px;padding-bottom:6px}',
     '.weather-zone{padding:10px}.wx-credit{margin-top:5px;font-size:12px}',
     '.signature{display:none}',
+    // Final approved landscape composition (2026-11-09).
+    "html,body{width:1200px!important;background:#010b06!important}",
+    ".card{width:1180px!important;margin:10px!important;padding:12px!important;border:0!important;background:#010b06!important;box-shadow:none!important}",
+    ".header{height:102px!important;border:0!important;gap:12px!important}",
+    ".header-place{order:1;width:240px!important;border:0!important;padding:0 0 0 8px!important;font-size:21px!important}",
+    ".header-place b{font-size:27px!important;color:#d6ffaf!important}",
+    ".header-left{order:2;flex:1;justify-content:center;gap:7px!important}",
+    ".header-left .robot{height:74px!important;width:74px!important}",
+    ".brand{font-size:53px!important;line-height:1.05!important;text-shadow:0 0 15px #35f63e!important}",
+    ".smallbrand{font-size:14px!important;letter-spacing:0!important;font-weight:500!important;color:#e8f4eb!important}",
+    ".header-tag{order:3;width:224px;border:2px solid #6fff55;border-radius:24px;text-align:center;padding:10px 5px;font-size:20px;font-weight:800;line-height:1.1;box-shadow:inset 0 0 14px #159337,0 0 10px #0b8535}",
+    ".power-layout{display:grid!important;grid-template-columns:1.36fr .94fr .97fr!important;gap:12px!important;margin:0 0 12px!important}",
+    ".power-layout>.day-panel{grid-column:1!important;grid-row:1!important}",
+    ".power-layout>.countdown-box{grid-column:2!important;grid-row:1!important}",
+    ".power-layout>.schedule-panel{grid-column:3!important;grid-row:1!important}",
+    ".day-panel,.schedule-panel,.countdown-box{height:206px!important;min-height:0!important;margin:0!important;border:3px solid #4fff52!important;border-radius:23px!important;background:radial-gradient(circle at 50% 40%,#0a4d2b,#02170f 80%)!important;box-shadow:inset 0 0 16px #137f32,0 0 12px #17ae36!important;overflow:hidden}",
+    ".day-panel{display:flex;align-items:center;justify-content:space-around;padding:8px 12px}",
+    ".day-text{text-align:center;min-width:170px}.day-text h2{font-size:26px;margin:0 0 9px}.day-text strong{font-size:32px;white-space:nowrap}.day-text p{font-size:24px;font-weight:800;margin:6px 0}",
+    ".day-panel .dial{width:210px!important;height:210px!important;flex:0 0 210px}",
+    ".countdown-box{display:flex!important;flex-direction:column;align-items:center;justify-content:center;padding:12px!important}",
+    ".countdown-head{font-size:27px!important}.countdown-title{font-size:21px!important}",
+    ".countdown-value{font-size:65px!important}.countdown-detail{font-size:18px!important}.countdown-source{font-size:12px!important}",
+    ".schedule-panel{padding:10px!important}.schedule-panel h2{font-size:25px;margin:0 0 8px;text-align:center}",
+    ".schedule-periods{display:flex;flex-direction:column;gap:5px;max-height:103px;overflow:hidden}",
+    ".schedule-periods .period{min-height:30px!important;font-size:15px!important;border:1px solid #44f570!important;border-radius:20px!important;padding:4px 9px!important;background:#07552b!important}",
+    ".schedule-periods .period.off{background:#47171c!important;border-color:#ff5b69!important}",
+    ".schedule-periods .period-kind{font-size:12px!important}",
+    ".schedule-totals{display:flex;gap:8px;justify-content:space-between;font-size:12px;margin-top:7px;color:#d9f5dc}",
+    ".schedule-status{font-size:12px;color:#e8e2b0;margin-top:4px;text-align:center}",
+    ".weather-zone{margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important}",
+    ".weather-title{display:none!important}",
+    ".wx-grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important;margin:0!important;align-items:stretch}",
+    ".wx-grid>.weather-air{grid-column:1/7!important;grid-row:1!important}",
+    ".wx-grid>.weather-sun{grid-column:7/10!important;grid-row:1!important}",
+    ".wx-grid>.weather-soil{grid-column:10/13!important;grid-row:1!important}",
+    ".wx-grid>.wx-right-stack{display:contents!important}",
+    ".wx-grid>.weather-garden{grid-column:1/9!important;grid-row:2!important}",
+    ".wx-grid>.wx-sowing-panel{grid-column:9/13!important;grid-row:2!important}",
+    ".wx-grid>.weather-moon{grid-column:1/6!important;grid-row:3!important}",
+    ".wx-grid>.weather-astro{grid-column:6/13!important;grid-row:3!important}",
+    ".wx-grid .wx-box{border:3px solid #4dff54!important;border-radius:23px!important;background:radial-gradient(circle at 45% 65%,#0b502b,#02150c 85%)!important;box-shadow:inset 0 0 17px #117e32,0 0 10px #109132!important;padding:12px!important}",
+    ".wx-box h3{font-size:26px!important;color:white!important}",
+    ".weather-air{min-height:225px!important}",
+    ".weather-air .wx-now{font-size:62px!important}",
+    ".weather-air .wx-weather-main{margin:0!important}",
+    ".wx-garden-copy{font-size:20px!important}",
+    ".wx-moon-main,.wx-astro-main{min-height:110px}",
+    ".wx-grid>.weather-moon,.wx-grid>.weather-astro{min-height:168px}",
+    ".wx-credit{font-size:12px!important}",
+    ".sources{margin-top:12px;display:grid;grid-template-columns:1.4fr repeat(5,1fr);align-items:center;gap:0;border:3px solid #4fff52;border-radius:23px;box-shadow:inset 0 0 16px #137f32,0 0 12px #17ae36;padding:12px 8px;font-size:15px}",
+    ".sources>*{padding:0 10px;border-right:1px solid #7ce9a3}.sources>*:last-child{border:0}.sources b{font-size:23px}",
+    ".footer{border:2px solid #4fff52!important;border-radius:24px!important;padding:12px!important;margin-top:12px!important;font-size:14px!important;box-shadow:0 0 12px #16a536!important}",
+    ".schedule-panel .emergency-box{margin:5px 0 0!important;padding:3px 6px!important;border-width:1px!important;max-height:28px!important;overflow:hidden!important}",
+    ".schedule-panel .emergency-head{font-size:12px!important;border:0!important;margin:0!important;padding:0!important}",
+    ".schedule-panel .emergency-tag,.schedule-panel .emergency-detail,.schedule-panel .emergency-time{display:none!important}",
+    ".sr-note{font-size:12px;text-align:center;color:#a4d5ad;margin:-5px 0 6px}",
+    ".wx-grid>.weather-air{grid-column:1/6!important;grid-row:1!important}",
+    ".wx-grid>.weather-sun{grid-column:6/10!important;grid-row:1!important}",
+    ".wx-grid>.weather-soil{grid-column:10/13!important;grid-row:1!important}",
+    ".wx-grid>.weather-garden{grid-column:1/9!important;grid-row:2!important}",
+    ".wx-grid>.wx-sowing-panel{grid-column:9/13!important;grid-row:2!important}",
+    ".wx-grid>.weather-moon{grid-column:1/6!important;grid-row:3!important}",
+    ".wx-grid>.weather-astro{grid-column:6/13!important;grid-row:3!important}",
+    ".wx-grid>.wx-box{min-width:0!important;box-sizing:border-box!important}",
+    ".wx-grid>.weather-garden,.wx-grid>.wx-sowing-panel{min-height:275px!important}",
+    ".wx-grid>.weather-moon,.wx-grid>.weather-astro{min-height:180px!important}",
+    ".wx-sowing-panel .wx-sowing{display:flex!important;flex-direction:column!important;gap:7px!important}",
+    ".wx-sowing-panel .wx-sowing-row{padding:8px!important;border:1px solid #52ff60!important;border-radius:13px!important;font-size:15px!important;line-height:1.25!important}",
+    ".wx-sowing-panel .wx-sowing-row.avoid{border-color:#ff666e!important}",
+    ".weather-garden .wx-garden-body{display:flex!important;gap:15px!important}",
+    ".weather-garden .wx-garden-copy{flex:1!important;font-size:17px!important;line-height:1.25!important}",
+    ".weather-garden .wx-garden-art{font-size:55px!important;min-width:135px!important}",
+    ".weather-air .wx-weather-main{display:flex!important;gap:12px!important}",
+    ".wx-grid .wx-box h3{font-size:23px!important;line-height:1.15!important;margin:0 0 9px!important}",
+    ".wx-grid .wx-credit{grid-column:1/13!important}",
   ].join("")
-  const content = '<div class="card"><header class="header"><div class="header-left">' + robotIcon() +
-    '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div>' +
-    '<div class="brand">ϟ СВІТЛО<b>ПУЛЬС</b><span class="version">3.0</span></div></div></div>' +
-    '<div class="header-place"><b>📍 СТ «Хімік»</b><div>Фастівський район<br>Київська область</div></div></header>' +
-    '<div class="date">' + dateLabel + ' · ' + escape(formatDate(date)) + ' · ' + escape(weekday(date)) + '</div>' +
-    '<div class="sub">Ритм електропостачання · графік на 24 години</div>' +
-    '<main class="power-layout"><div class="power-left"><div class="dial">' + buildDial(schedule) + '</div>' +
-    counter + '<div class="next">⚡ ' + escape(status) + '</div></div>' +
-    '<div class="power-right"><div class="power-overview"><div class="metrics-col">' +
-    '<div class="metric on"><div class="name">💡 Зі світлом</div><div class="value">' +
-    escape(formatDuration(withPower)) + '</div><div class="pct">' + percentOn + '% доби</div></div>' +
-    '<div class="metric off"><div class="name">◉ Без світла</div><div class="value">' +
-    escape(formatDuration(withoutPower)) + '</div><div class="pct">' + percentOff + '% доби</div></div>' +
-    '</div><div class="periods">' + visiblePeriods + '</div></div>' +
-    '<section class="timeline-box"><div class="secttitle">▰ Графік доби · 24 години</div>' +
-    buildTimeline(schedule) + '</section>' + emergency +
-    '<section class="outages"><div class="secttitle">◷ Періоди відключень</div>' +
-    (outageRows || '<div class="outage-row">Відключень не заплановано</div>') + remaining +
-    '</section></div></main>' +
+  const content = '<div class="card"><header class="header">' +
+    '<div class="header-place"><b>СТ «Хімік»</b><div>Боярська ТГ<br>Фастівський район</div></div>' +
+    '<div class="header-left">' + robotIcon() +
+    '<div><div class="brand">СВІТЛО<b>ПУЛЬС</b> 3.0</div>' +
+    '<div class="smallbrand">Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</div></div></div>' +
+    '<div class="header-tag">🌿 Все в одному<br>для комфортного<br>життя в СТ</div></header>' +
+    '<main class="power-layout">' +
+    '<section class="day-panel"><div class="day-text"><h2>📅 ' + dateLabel + '</h2>' +
+    '<strong>' + escape(formatDate(date)) + '</strong><p>' + escape(weekday(date)) + '</p></div>' +
+    '<div class="dial">' + buildDial(schedule) + '</div></section>' +
+    counter +
+    '<section class="schedule-panel"><h2>💡 Графік ' + (label === "завтра" ? "завтра" : "сьогодні") + '</h2>' +
+    '<div class="schedule-periods">' + visiblePeriods + '</div>' +
+    '<div class="schedule-totals"><span>⚡ Світло: ' + escape(formatDuration(withPower)) +
+    '</span><span>◉ Без світла: ' + escape(formatDuration(withoutPower)) + '</span></div>' +
+    '<div class="schedule-status">' + escape(status) + '</div>' + emergency + '</section>' +
+    '</main>' +
+    '<div class="sr-note">Графік доби · 24 години</div>' +
     renderWeatherPanel(weather, date, label) +
-    '<footer class="footer"><span>📡 ' + escape(sourceLabel) +
-    '</span><span>Дані: ' + escape(update) + '</span></footer>' +
-    '<div class="signature">⚡ СВІТЛОПУЛЬС 3.0 · СТ «ХІМІК»</div></div>'
+    '<section class="sources"><b>▱ Джерела та методика</b>' +
+    '<span>⚡ ДТЕК · графіки</span><span>☁ Open-Meteo · погода</span>' +
+    '<span>🌱 Поради · сезонні рекомендації</span>' +
+    '<span>🌙 Місяць · астрономічний розрахунок</span>' +
+    '<span>✨ Астропрогноз · розважальний</span></section>' +
+    '<footer class="footer"><span>Дані: ' + escape(update) + '</span>' +
+    '<span>⚡ Графіки: кожні 5 хв</span><span>☁ Погода: кожні 30 хв</span>' +
+    '<span>' + escape(sourceLabel) + '</span></footer></div>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>' + css +
     '</style></head><body>' + content + '</body></html>'
 }
