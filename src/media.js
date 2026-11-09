@@ -1,3 +1,4 @@
+import fs from "node:fs"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
@@ -60,6 +61,16 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   return caption
 }
 
+function saveViewerSnapshot(png, label) {
+  // Public viewer receives only rendered graphics, never Telegram credentials.
+  try {
+    fs.mkdirSync("artifacts/web", { recursive: true })
+    fs.writeFileSync("artifacts/web/" + (label === "завтра" ? "tomorrow" : "today") + ".png", png)
+  } catch (error) {
+    console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
+  }
+}
+
 async function callTelegram(method, body) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) throw Error("Telegram credentials are missing")
   const response = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/" + method, {
@@ -97,6 +108,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
       let result
       if (imageRefresh) {
         const png = await renderCardPng({ schedule, date, label, update, source, weather })
+        saveViewerSnapshot(png, label)
         const form = new FormData()
         form.set("chat_id", String(TELEGRAM_CHAT_ID))
         form.set("message_id", String(lastMessage.message_id))
@@ -131,6 +143,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
 
   try {
     const png = await renderCardPng({ schedule, date, label, update, source, weather })
+        saveViewerSnapshot(png, label)
     const form = new FormData()
     form.set("chat_id", String(TELEGRAM_CHAT_ID))
     form.set("photo", new Blob([png], { type: "image/png" }), "svitlopuls.png")
