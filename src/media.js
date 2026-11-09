@@ -75,19 +75,31 @@ function saveViewerSnapshot(png, label, details) {
     fs.mkdirSync("artifacts/web", { recursive: true })
     const basename = label === "завтра" ? "tomorrow" : "today"
     fs.writeFileSync("artifacts/web/" + basename + ".png", png)
-    // Publish real HTML elements and text, never stretch the Telegram bitmap.
-    const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
-      'html,body{width:100%;min-height:100%;overflow:auto!important;background:#03150e!important}' +
-      'body{margin:0!important;padding:8px!important;display:flex!important;align-items:stretch!important;justify-content:center!important}' +
-      '.card{width:100%!important;max-width:none!important;min-height:calc(100dvh - 16px)!important;height:auto!important;margin:0!important;display:flex!important;flex-direction:column!important;gap:clamp(6px,1.3vh,16px)!important}' +
-      '.card .weather-zone{flex:1 1 auto!important;display:flex!important;flex-direction:column!important}' +
-      '.card .wx-grid{flex:1 1 auto!important;grid-auto-rows:minmax(min-content,1fr)!important}' +
-      '.card .wx-box{height:100%!important}.card .power-layout{flex:1 1 auto!important}' +
-      '.card .footer{margin-top:auto!important}' +
-      '@media(max-width:650px){body{padding:4px!important}.card{min-height:calc(100dvh - 8px)!important}}' +
-      '</style>'
-    const html = buildCardHtml(details).replace("</head>",responsiveCss+"</head>")
+    // The approved design is one immutable landscape composition. The public
+    // standalone page must not reflow its columns or add navigation buttons.
+    // Use the exact same PNG that is sent to Telegram, preserving proportions.
+    const html = '<!doctype html><html lang="uk"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<title>Світлопульс 3.0 — СТ «Хімік»</title>' +
+      '<style>html,body{margin:0;min-height:100%;background:#020e08}' +
+      'body{display:flex;justify-content:center;align-items:flex-start}' +
+      'img{display:block;width:100%;max-width:1200px;height:auto;object-fit:contain}' +
+      '</style></head><body><img src="' + basename + '.png" alt="Світлопульс 3.0: графік, погода, поради та календар"></body></html>'
     fs.writeFileSync("artifacts/web/" + basename + ".html", html)
+    // The GitHub Pages root must be a clean, control-free viewer too.
+    // Both ?day=today and ?day=tomorrow select the same PNG as Telegram.
+    const rootHtml = '<!doctype html><html lang="uk"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<title>Світлопульс 3.0 — СТ «Хімік»</title>' +
+      '<style>html,body{margin:0;min-height:100%;background:#020e08}' +
+      'body{display:flex;justify-content:center;align-items:flex-start}' +
+      'img{display:block;width:100%;max-width:1200px;height:auto;object-fit:contain}' +
+      '</style></head><body>' +
+      '<img id="svitlopuls-card" src="web/today.png" alt="Світлопульс 3.0 — графік, погода та календар">' +
+      '<script>const day=new URLSearchParams(location.search).get("day");' +
+      'if(day==="tomorrow")document.getElementById("svitlopuls-card").src="web/tomorrow.png";' +
+      '</script></body></html>'
+    fs.writeFileSync("artifacts/index.html", rootHtml)
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
   }

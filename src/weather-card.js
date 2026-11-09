@@ -268,12 +268,12 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-garden-body"><div class="wx-garden-art">🌱<br>🪴</div>'+
     '<div class="wx-garden-copy"><div class="wx-garden-heading">Порада '+(label==="завтра"?"на завтра":"на сьогодні")+':</div>'+
     esc(adviceIcons(tip))+'</div></div>'+
+    '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div></section>'
+  const sowingHtml='<section class="wx-box wx-sowing-panel"><h3>✓ Що можна / не варто</h3>'+
     '<div class="wx-sowing">'+
     '<div class="wx-sowing-row good"><b>✓ Можна сіяти / саджати</b>'+esc(adviceIcons(sow.allowed))+'</div>'+
     '<div class="wx-sowing-row avoid"><b>✕ Поки не варто</b>'+esc(adviceIcons(sow.avoid))+'</div>'+
-    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div>'+
-    '<div class="wx-source-note">📚 Походження порад: власні сезонні правила Світлопульсу, адаптовані за прогнозом Open-Meteo. Незалежна агрономічна перевірка цих текстів ще триває.</div>'+
-    '</div></section>'
+    '<div class="wx-sowing-row lunar"><b>☾ За місячним календарем</b>'+esc(adviceIcons(sow.lunar))+'</div></div></section>'
   const astro=astroForMoon(moon,date)
   const astroHtml='<section class="wx-box wx-astro weather-astro"><h3>✨ Астропрогноз дня</h3>'+
     '<div class="wx-astro-tag">🌟 Для настрою та натхнення</div>'+
@@ -285,7 +285,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак) · Джерела: <a href="https://open-meteo.com/en/docs">Open-Meteo</a>; астрономічні розрахунки — Ж. Меєс; городні поради — локальні правила, не перевірені незалежним агрономом; астрологія — для розваги</div>'
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
-    '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+'</div>'+sun+soil+
-      moonHtml+astroHtml+'</div>'+foot+'</section>'
+    '<div class="wx-grid wx-approved-layout">'+
+      '<div class="wx-row wx-row-weather">'+forecast+sun+soil+'</div>'+
+      '<div class="wx-row wx-row-garden">'+garden+sowingHtml+'</div>'+
+      '<div class="wx-row wx-row-night">'+moonHtml+astroHtml+'</div>'+
+      '</div>'+foot+'</section>'
 }

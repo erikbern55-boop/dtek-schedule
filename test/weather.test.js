@@ -177,31 +177,31 @@ test("tomorrow's card uses its own moon date and the forecast soil at noon",()=>
  assert.notEqual(a,b)
 })
 
-test("weather and garden layout uses two columns with separate sun and soil panels",()=>{
+test("approved landscape has seven separate weather, garden and astronomy panels",()=>{
  const weather={
   currentTemp:2,min:0,max:4,currentWind:2,rain:10,code:2,
   soilTemp:4,soilAt:"17:00",sunrise:"06:59",sunset:"16:26",
   warnings:["Можливі заморозки"],fetchedAt:start.toISOString(),stale:false
  }
  const html=renderWeatherPanel(weather,"2026-11-07")
- assert.match(html,/class="wx-grid"/)
- assert.equal((html.match(/class="wx-box/g)||[]).length,6)
+ assert.match(html,/class="wx-grid wx-approved-layout"/)
+ assert.equal((html.match(/class="wx-box/g)||[]).length,7)
  assert.match(html,/class="wx-box weather-air"/)
  assert.match(html,/class="wx-box weather-sun"/)
   assert.match(html,/class="wx-box weather-soil"/)
  assert.match(html,/class="wx-box weather-moon"/)
  assert.match(html,/class="wx-box weather-garden"/)
  assert.match(html,/class="wx-box wx-astro weather-astro"/)
- assert.match(html,/class="wx-right-stack"/)
+ assert.match(html,/class="wx-box wx-sowing-panel"/)
  assert.match(html,/Для настрою та натхнення/)
  assert.match(html,/розважальний характер/)
  const card=buildCardHtml({schedule,date:"2026-11-07",label:"сьогодні",
    update:"07.11.2026 12:00",source:"ДТЕК",weather,now:start})
- assert.match(card,/grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/)
+ assert.match(card,/grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/)
  assert.match(card,/СВІТЛО/)
- assert.match(card,/2\.1/)
+ assert.match(card,/3\.0/)
  assert.match(card,/class="power-layout"/)
- assert.match(card,/class="wx-grid"/)
+ assert.match(card,/class="wx-grid wx-approved-layout"/)
  assert.match(card,/Дані: 07\.11\.2026 12:00/)
 })
 
@@ -281,9 +281,16 @@ test("astrology is visibly marked as entertainment, independent of weather avail
   assert.match(h,/Для настрою та натхнення/)
   assert.match(h,/Астрологічна інтерпретація · розважальний характер/)
   assert.match(h,/wx-moon-disc/)
-  assert.ok(h.indexOf("weather-garden") < h.indexOf("weather-soil"),
-    "gardener calendar must precede soil and sun")
-  assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-moon"))
+  assert.ok(h.indexOf("weather-air") < h.indexOf("weather-sun"),
+    "weather summary must precede daylight")
+  assert.ok(h.indexOf("weather-sun") < h.indexOf("weather-soil"),
+    "daylight must precede soil in the weather row")
+  assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-garden"),
+    "weather row must precede gardener row")
+  assert.ok(h.indexOf("weather-garden") < h.indexOf("wx-sowing-panel"),
+    "gardener advice must precede planting guidance")
+  assert.ok(h.indexOf("wx-sowing-panel") < h.indexOf("weather-moon"),
+    "garden row must precede moon and astrology")
   assert.ok(h.indexOf("weather-moon") < h.indexOf("weather-astro"))
  }
 })
