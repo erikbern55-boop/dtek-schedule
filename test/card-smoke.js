@@ -59,13 +59,13 @@ try {
      next:rect(".next"),outages:rect(".outages"),dial:rect(".dial"),
      countdownText:document.querySelector(".countdown-box")?.textContent,
      emergencyText:document.querySelector(".emergency-box")?.textContent,
-     soil:rect(".weather-soil"),right:rect(".wx-right-stack"),
+     soil:rect(".weather-soil"),sun:rect(".weather-sun"),right:rect(".wx-right-stack"),
      astro:rect(".weather-astro"),moon:rect(".weather-moon"),
      weather:rect(".weather-zone"),card:rect(".card"),power:rect(".power-layout"),
      source:document.querySelector(".footer")?.textContent,
      entertainment:document.querySelector(".wx-astro-disclaimer")?.textContent}
  })
- assert.equal(geometry.items.length,5,"Five dashboard cells: weather / garden / soil strip / moon / astro")
+ assert.equal(geometry.items.length,6,"Six dashboard cells: weather / garden / sun / soil / moon / astro")
  assert.ok(geometry.countdown && geometry.emergency,"Both approved electricity panels exist")
  assert.ok(geometry.countdown.y>=geometry.dial.bottom-3,"countdown must follow dial in second row")
  assert.ok(geometry.next.y>=geometry.dial.bottom-3,"status tile must follow top row")
@@ -77,11 +77,13 @@ try {
  assert.match(geometry.countdownText,/06:00/)
  assert.match(geometry.emergencyText,/Інформація уточнюється/)
  assert.match(geometry.emergencyText,/Автоматичного підтвердження аварій/)
- const [a,b,soil,c,d]=geometry.items
+ const [a,b,sun,soil,c,d]=geometry.items
  assert.ok(Math.abs(a.y-b.y)<3,"weather and garden must align")
  assert.ok(Math.abs(c.y-d.y)<3,"moon and astro must align")
- assert.ok(soil.y>=a.y+a.height-3,"soil strip follows weather")
- assert.ok(c.y>=soil.y+soil.height-3,"moon follows soil")
+ assert.ok(sun.y>=a.y+a.height-3,"sun times follow weather")
+  assert.ok(soil.y>=b.y+b.height-3,"soil temperature follows garden")
+  assert.ok(Math.abs(sun.y-soil.y)<3,"sun and soil panels share a row")
+ assert.ok(c.y>=Math.max(sun.y+sun.height,soil.y+soil.height)-3,"moon follows sun and soil")
  assert.ok(b.x>a.x+a.width-3,"two weather columns do not overlap")
  assert.ok(a.width>450&&b.width>450&&c.width>450&&d.width>450,"readable weather panels")
  assert.ok(geometry.weather.y>=geometry.power.y+geometry.power.height-3,"weather below power")
@@ -96,7 +98,8 @@ try {
  assert.match(geometry.windRows[0].label,/Вітер зараз/)
  assert.match(geometry.windRows[1].label,/Пориви вітру сьогодні/)
  assert.ok(geometry.garden.bottom<=geometry.soil.y+3)
- assert.ok(geometry.soil.x<=geometry.weather.x+20)
+ assert.ok(geometry.soil.x>=geometry.garden.x-3,"soil belongs in right column")
+  assert.ok(geometry.sun.x<geometry.soil.x,"sun belongs in left column")
  assert.ok(geometry.astro.y>=geometry.soil.bottom-3)
  assert.match(geometry.entertainment,/розважальний характер/)
  assert.match(geometry.source,/ДТЕК/)
