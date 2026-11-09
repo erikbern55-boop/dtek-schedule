@@ -285,7 +285,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     ' · ґрунт — модельна температура на 6 см · Місяць — на 12:00 (тропічний знак) · Джерела: <a href="https://open-meteo.com/en/docs">Open-Meteo</a>; астрономічні розрахунки — Ж. Меєс; городні поради — локальні правила, не перевірені незалежним агрономом; астрологія — для розваги</div>'
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
-    '<div class="wx-grid">'+forecast+
-      garden+sowingHtml+sun+soil+
-      moonHtml+astroHtml+'</div>'+foot+'</section>'
+    '<div class="wx-grid wx-approved-layout">'+
+      '<div class="wx-row wx-row-weather">'+forecast+sun+soil+'</div>'+
+      '<div class="wx-row wx-row-garden">'+garden+sowingHtml+'</div>'+
+      '<div class="wx-row wx-row-night">'+moonHtml+astroHtml+'</div>'+
+      '</div>'+foot+'</section>'
 }
