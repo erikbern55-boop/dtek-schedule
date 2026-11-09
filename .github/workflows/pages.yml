@@ -33,13 +33,14 @@ jobs:
         with:
           ref: artifacts
           path: snapshots
+          fetch-depth: 1
       - name: Prepare public site
         run: |
           mkdir -p site
           cp source/docs/index.html site/index.html
-          test -f snapshots/web/today.png
+          test -s snapshots/web/today.png
           cp snapshots/web/today.png site/today.png
-          if [ -f snapshots/web/tomorrow.png ]; then cp snapshots/web/tomorrow.png site/tomorrow.png; fi
+          if [ -s snapshots/web/tomorrow.png ]; then cp snapshots/web/tomorrow.png site/tomorrow.png; fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
