@@ -7,7 +7,7 @@ const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
 const MAX_CAPTION = 1024
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-09-daily-garden-astro-weatherstamp-v2"
+export const CARD_RENDER_VERSION = "2026-11-09-brand-2-2-v3"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
