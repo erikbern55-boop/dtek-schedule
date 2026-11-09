@@ -162,7 +162,13 @@ export const WEATHER_CSS = [
   '.wx-sowing-row.avoid b{color:#ffb8bc}',
   '.wx-sowing-row.lunar{border-color:#8f78db;background:#1b1935}',
   '.wx-sowing-row.lunar b{color:#dec7ff}',
-  '.wx-grid>.weather-soil{grid-column:1/-1;padding:10px 14px}',
+  '.wx-grid>.weather-sun,.wx-grid>.weather-soil{grid-column:auto;padding:8px 13px;min-height:62px}',
+  '.wx-grid>.weather-sun h3,.wx-grid>.weather-soil h3{display:inline;font-size:15px;margin:0 7px 0 0;padding:0;border:0}',
+  '.wx-sun-pair{display:inline-flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px}',
+  '.wx-sun-pair span{white-space:nowrap}.wx-sun-pair b{font-size:18px;color:#fff;margin-left:4px}',
+  '.wx-soil-pair{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}',
+  '.wx-soil-pair strong{font-size:22px;color:#fff}.wx-soil-pair span{font-size:11px;color:#d8f4dd}',
+  '.wx-grid>.weather-soil{grid-column:auto;padding:10px 14px}',
   '.wx-grid>.weather-soil h3{display:block;font-size:18px;margin:0 0 5px;padding:0;border:0}',
   '.wx-grid>.weather-soil .wx-soil-sun{display:flex;align-items:center;justify-content:space-around;gap:12px}',
   '.wx-grid>.weather-soil .wx-half{display:flex;align-items:center;gap:9px}',
@@ -230,17 +236,12 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '</section>'
     :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
+  const sun='<section class="wx-box weather-sun"><h3>🌅 Схід і захід сонця</h3>'+
+    '<div class="wx-sun-pair"><span>🌅 Схід сонця <b>'+esc(weather?.sunrise||"—:—")+'</b></span>'+
+    '<span>🌇 Захід сонця <b>'+esc(weather?.sunset||"—:—")+'</b></span></div></section>'
   const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
-    '<div class="wx-soil-sun"><div class="wx-half">'+
-    '<div class="wx-soil-icon">🌱🌡️</div>'+
-    '<div class="wx-soil-number">'+esc(temp(weather?.soilTemp))+'</div>'+
-    '<div class="wx-caption">Глибина ≈6 см<br>Прогноз моделі'+
-      (weather?.soilAt?'<br>на '+esc(weather.soilAt):'')+'</div></div>'+
-    '<div class="wx-half"><div class="wx-sun-label">🌅 Схід сонця</div>'+
-    '<div class="wx-sun-time">'+esc(weather?.sunrise||"—:—")+'</div>'+
-    '<div class="wx-sun-divider"></div>'+
-    '<div class="wx-sun-label">🌇 Захід сонця</div>'+
-    '<div class="wx-sun-time">'+esc(weather?.sunset||"—:—")+'</div></div></div></section>'
+    '<div class="wx-soil-pair"><strong>'+esc(temp(weather?.soilTemp))+'</strong>'+
+    '<span>Глибина ≈6 см · Прогноз моделі'+(weather?.soilAt?' · на '+esc(weather.soilAt):'')+'</span></div></section>'
   const moonHtml='<section class="wx-box weather-moon"><h3>🌙 Місячний календар</h3>'+
     '<div class="wx-moon-main"><div class="wx-moon-icon">'+moonDiscSvg(moon)+'</div>'+
     '<div><div class="wx-moon-number">'+esc(moon.lunarDay)+'-й день</div>'+
@@ -271,6 +272,6 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+'</div>'+soil+
+      '<div class="wx-right-stack">'+garden+'</div>'+sun+soil+
       moonHtml+astroHtml+'</div>'+foot+'</section>'
 }

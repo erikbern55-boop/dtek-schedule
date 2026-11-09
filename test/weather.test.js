@@ -177,7 +177,7 @@ test("tomorrow's card uses its own moon date and the forecast soil at noon",()=>
  assert.notEqual(a,b)
 })
 
-test("weather and garden layout uses exactly two wide columns and four panels",()=>{
+test("weather and garden layout uses two columns with separate sun and soil panels",()=>{
  const weather={
   currentTemp:2,min:0,max:4,currentWind:2,rain:10,code:2,
   soilTemp:4,soilAt:"17:00",sunrise:"06:59",sunset:"16:26",
@@ -185,9 +185,10 @@ test("weather and garden layout uses exactly two wide columns and four panels",(
  }
  const html=renderWeatherPanel(weather,"2026-11-07")
  assert.match(html,/class="wx-grid"/)
- assert.equal((html.match(/class="wx-box/g)||[]).length,5)
+ assert.equal((html.match(/class="wx-box/g)||[]).length,6)
  assert.match(html,/class="wx-box weather-air"/)
- assert.match(html,/class="wx-box weather-soil"/)
+ assert.match(html,/class="wx-box weather-sun"/)
+  assert.match(html,/class="wx-box weather-soil"/)
  assert.match(html,/class="wx-box weather-moon"/)
  assert.match(html,/class="wx-box weather-garden"/)
  assert.match(html,/class="wx-box wx-astro weather-astro"/)
