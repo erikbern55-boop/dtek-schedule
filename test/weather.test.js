@@ -184,7 +184,7 @@ test("approved landscape has seven separate weather, garden and astronomy panels
   warnings:["Можливі заморозки"],fetchedAt:start.toISOString(),stale:false
  }
  const html=renderWeatherPanel(weather,"2026-11-07")
- assert.match(html,/class="wx-grid"/)
+ assert.match(html,/class="wx-grid wx-approved-layout"/)
  assert.equal((html.match(/class="wx-box/g)||[]).length,7)
  assert.match(html,/class="wx-box weather-air"/)
  assert.match(html,/class="wx-box weather-sun"/)
@@ -201,7 +201,7 @@ test("approved landscape has seven separate weather, garden and astronomy panels
  assert.match(card,/СВІТЛО/)
  assert.match(card,/3\.0/)
  assert.match(card,/class="power-layout"/)
- assert.match(card,/class="wx-grid"/)
+ assert.match(card,/class="wx-grid wx-approved-layout"/)
  assert.match(card,/Дані: 07\.11\.2026 12:00/)
 })
 
@@ -281,9 +281,16 @@ test("astrology is visibly marked as entertainment, independent of weather avail
   assert.match(h,/Для настрою та натхнення/)
   assert.match(h,/Астрологічна інтерпретація · розважальний характер/)
   assert.match(h,/wx-moon-disc/)
-  assert.ok(h.indexOf("weather-garden") < h.indexOf("weather-soil"),
-    "gardener calendar must precede soil and sun")
-  assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-moon"))
+  assert.ok(h.indexOf("weather-air") < h.indexOf("weather-sun"),
+    "weather summary must precede daylight")
+  assert.ok(h.indexOf("weather-sun") < h.indexOf("weather-soil"),
+    "daylight must precede soil in the weather row")
+  assert.ok(h.indexOf("weather-soil") < h.indexOf("weather-garden"),
+    "weather row must precede gardener row")
+  assert.ok(h.indexOf("weather-garden") < h.indexOf("wx-sowing-panel"),
+    "gardener advice must precede planting guidance")
+  assert.ok(h.indexOf("wx-sowing-panel") < h.indexOf("weather-moon"),
+    "garden row must precede moon and astrology")
   assert.ok(h.indexOf("weather-moon") < h.indexOf("weather-astro"))
  }
 })
