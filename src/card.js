@@ -432,6 +432,23 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     ".sources{font-size:16px!important;line-height:1.25!important}",
     ".footer{font-size:15px!important}",
     ".wx-grid .wx-credit{grid-column:1/13!important}",
+    // Structural rows replace CSS-only rearrangement of unrelated card sections.
+    ".wx-approved-layout{display:flex!important;flex-direction:column!important;gap:12px!important}",
+    ".wx-approved-layout>.wx-row{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important;align-items:stretch!important}",
+    ".wx-approved-layout>.wx-row>.wx-box{box-sizing:border-box!important;min-width:0!important;grid-row:1!important}",
+    ".wx-approved-layout>.wx-row-weather>.weather-air{grid-column:1/7!important}",
+    ".wx-approved-layout>.wx-row-weather>.weather-sun{grid-column:7/10!important}",
+    ".wx-approved-layout>.wx-row-weather>.weather-soil{grid-column:10/13!important}",
+    ".wx-approved-layout>.wx-row-garden>.weather-garden{grid-column:1/9!important}",
+    ".wx-approved-layout>.wx-row-garden>.wx-sowing-panel{grid-column:9/13!important}",
+    ".wx-approved-layout>.wx-row-night>.weather-moon{grid-column:1/6!important}",
+    ".wx-approved-layout>.wx-row-night>.weather-astro{grid-column:6/13!important}",
+    ".wx-approved-layout>.wx-row-weather>.wx-box{min-height:225px!important}",
+    ".wx-approved-layout>.wx-row-garden>.wx-box{min-height:275px!important}",
+    ".wx-approved-layout>.wx-row-night>.wx-box{min-height:180px!important}",
+    ".wx-approved-layout>.wx-row-weather>.weather-sun,.wx-approved-layout>.wx-row-weather>.weather-soil{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;gap:14px!important}",
+    ".wx-approved-layout>.wx-row-weather>.weather-sun h3,.wx-approved-layout>.wx-row-weather>.weather-soil h3{display:block!important;font-size:25px!important;margin:0!important}",
+    ".wx-approved-layout>.wx-row-weather .wx-sun-pair,.wx-approved-layout>.wx-row-weather .wx-soil-pair{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important}",
   ].join("")
   const content = '<div class="card"><header class="header">' +
     '<div class="header-place"><b>СТ «Хімік»</b><div>Боярська ТГ<br>Фастівський район</div></div>' +
