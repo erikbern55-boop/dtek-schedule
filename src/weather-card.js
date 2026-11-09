@@ -226,6 +226,6 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
   return '<section class="weather-zone"><div class="weather-title"><strong>🌿 Погода та садиба</strong>'+
     '<span>СТ «Хімік» · Фастівський район</span></div>'+
     '<div class="wx-grid">'+forecast+
-      '<div class="wx-right-stack">'+garden+soil+'</div>'+
+      '<div class="wx-right-stack">'+garden+'</div>'+
       moonHtml+astroHtml+'</div>'+foot+'</section>'
 }
