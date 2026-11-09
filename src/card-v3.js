@@ -106,6 +106,23 @@ const css = [
   ".v3-weather .weather-tomorrow .wx-forecast-values{display:flex;flex-direction:column;gap:15px}",
   ".v3-weather .wx-box h3{font-size:22px;margin:0 0 9px}",
   ".v3-weather .wx-box{padding:12px}",
+  ".v3-weather .wx-grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}",
+  ".v3-weather .weather-air{grid-column:1/5!important;grid-row:1!important}",
+  ".v3-weather .weather-tomorrow{grid-column:5/8!important;grid-row:1!important}",
+  ".v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}",
+  ".v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}",
+  ".v3-weather .wx-right-stack{grid-column:1/13!important;grid-row:2!important;display:block!important}",
+  ".v3-weather .weather-garden{grid-column:auto!important;grid-row:auto!important;width:100%!important;min-height:210px!important}",
+  ".v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}",
+  ".v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}",
+  ".v3-weather .wx-box{min-height:0!important;overflow:visible!important}",
+  ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:230px!important}",
+  ".v3-weather .wx-sowing{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}",
+  ".v3-weather .wx-sowing-row.lunar,.v3-weather .wx-source-note{grid-column:1/3!important}",
+  ".v3-weather .wx-box h3{font-size:21px!important}",
+  ".v3-weather .wx-fact{font-size:15px!important}",
+  ".v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:center!important}",
+  ".v3-weather .weather-moon,.v3-weather .weather-astro{min-height:185px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
