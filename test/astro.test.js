@@ -43,3 +43,9 @@ test("locative Ukrainian zodiac is grammatically correct",()=>{
  assert.equal(astroForMoon({zodiac:"Скорпіон"}).inSign,"Скорпіоні")
  assert.equal(astroForMoon({zodiac:"Терези"}).inSign,"Терезах")
 })
+
+test("daily entertainment text changes across consecutive dates within the same sign",()=>{
+ const moon={zodiac:"Телець"}
+ assert.notEqual(astroForMoon(moon,"2026-11-09").message,astroForMoon(moon,"2026-11-10").message)
+ assert.equal(astroForMoon(moon,"2026-11-09").message,astroForMoon(moon,"2026-11-09").message)
+})
