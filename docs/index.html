@@ -40,16 +40,22 @@ function renderLandscape(){
   ctx.fillStyle='#03150e';ctx.fillRect(0,0,targetW,targetH);
   // Source sections: electricity summary above, weather and garden below.
   // Each is independently fitted to a horizontal column (no stretched text).
-  const split=Math.round(sourceH*0.45),gutter=Math.max(8,Math.round(targetW*0.008));
-  const columnW=(targetW-3*gutter)/2,availableH=targetH-2*gutter;
-  function fitSection(sy,sh,x){
-    const scale=Math.min(columnW/sourceW,availableH/sh);
-    const drawW=sourceW*scale,drawH=sh*scale;
-    const dx=x+(columnW-drawW)/2,dy=(targetH-drawH)/2;
+  // Divide exactly before the weather panels; never include their top edge in the electricity half.
+  const split=Math.round(sourceH*0.465),gutter=Math.max(8,Math.round(targetW*0.008));
+  const upperH=split,lowerH=sourceH-split;
+  const availableW=targetW-3*gutter,availableH=targetH-2*gutter;
+  // Allocate column widths in proportion to section heights so both sections
+  // render at the same vertical scale and finish on the same baseline.
+  const upperW=availableW*upperH/sourceH,lowerW=availableW-upperW;
+  // Fit each section into its own proportional column without stretching or clipping.
+  function fitSection(sy,sh,x,width){
+    const factor=Math.min(width/sourceW,availableH/sh);
+    const drawW=sourceW*factor,drawH=sh*factor;
+    const dx=x+(width-drawW)/2,dy=gutter+(availableH-drawH)/2;
     ctx.drawImage(card,0,sy,sourceW,sh,dx,dy,drawW,drawH);
   }
-  fitSection(0,split,gutter);
-  fitSection(split,sourceH-split,2*gutter+columnW);
+  fitSection(0,upperH,gutter,upperW);
+  fitSection(split,lowerH,2*gutter+upperW,lowerW);
 }
 window.addEventListener('resize',renderLandscape);window.addEventListener('orientationchange',()=>setTimeout(renderLandscape,250));
 function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
