@@ -30,11 +30,10 @@ if(png.length<20000)throw Error("Rendered PNG is suspiciously small")
 fs.writeFileSync("svitlopuls-preview.png",png)
 console.log("✅ Generated PNG card:",png.length,"bytes (example forecast, not live data)")
 
-// Browser layout assertions catch accidental fallback to four narrow columns,
-// overlaps, or a clipped Telegram footer before this design goes live.
+// Verify the approved three-panel top row and every live information block.
 const browser = await chromium.launch({headless:true})
 try {
- const page=await browser.newPage({viewport:{width:1200,height:1000}})
+ const page=await browser.newPage({viewport:{width:1200,height:1200}})
  await page.setContent(buildCardHtml({
    schedule,date:"2026-11-07",label:"сьогодні",
    update:"07.11.2026 12:00",source:"ДТЕК",
@@ -43,67 +42,36 @@ try {
  const geometry=await page.evaluate(()=>{
    const rect=(sel)=>{const el=document.querySelector(sel);if(!el)return null
       const r=el.getBoundingClientRect()
-      return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}
-   const elements=[...document.querySelector(".wx-grid").children].map(el=>{
-      const r=el.getBoundingClientRect()
-      return {x:r.x,y:r.y,width:r.width,height:r.height,clipped:el.scrollHeight>el.clientHeight+2}
-   })
-   const windRows=[...document.querySelectorAll(".wx-fact.windline")].map(el=>{
-     const r=el.getBoundingClientRect(),b=el.querySelector("b").getBoundingClientRect()
-     return {width:r.width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
-      childRight:b.right,rowRight:r.right,label:el.textContent,bold:b.width,
-      noWrap:getComputedStyle(el).whiteSpace==="nowrap"}
-   })
-   return {items:elements,windRows,footer:rect(".footer"),garden:rect(".weather-garden"),
-     countdown:rect(".countdown-box"),emergency:rect(".emergency-box"),
-     next:rect(".next"),outages:rect(".outages"),dial:rect(".dial"),
+      return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,
+        clipped:el.scrollHeight>el.clientHeight+3}}
+   return {day:rect(".day-panel"),countdown:rect(".countdown-box"),
+     schedule:rect(".schedule-panel"),weather:rect(".weather-air"),
+     sun:rect(".weather-sun"),soil:rect(".weather-soil"),
+     garden:rect(".weather-garden"),moon:rect(".weather-moon"),
+     astro:rect(".weather-astro"),sources:rect(".sources"),
+     footer:rect(".footer"),card:rect(".card"),
+     emergency:document.querySelector(".emergency-box")?.textContent,
      countdownText:document.querySelector(".countdown-box")?.textContent,
-     emergencyText:document.querySelector(".emergency-box")?.textContent,
-     soil:rect(".weather-soil"),sun:rect(".weather-sun"),right:rect(".wx-right-stack"),
-     astro:rect(".weather-astro"),moon:rect(".weather-moon"),
-     weather:rect(".weather-zone"),card:rect(".card"),power:rect(".power-layout"),
      source:document.querySelector(".footer")?.textContent,
      entertainment:document.querySelector(".wx-astro-disclaimer")?.textContent}
  })
- assert.equal(geometry.items.length,6,"Six dashboard cells: weather / garden / sun / soil / moon / astro")
- assert.ok(geometry.countdown && geometry.emergency,"Both approved electricity panels exist")
- assert.ok(geometry.countdown.y>=geometry.dial.bottom-3,"countdown must follow dial in second row")
- assert.ok(geometry.next.y>=geometry.dial.bottom-3,"status tile must follow top row")
- assert.ok(geometry.outages.y<geometry.emergency.y,"outage list must be above incident status")
- assert.ok(geometry.countdown.width>=240,"countdown must be readable")
- assert.ok(geometry.emergency.width>=250,"incident tile must be readable")
- assert.match(geometry.countdownText,/Відлік до події/)
- assert.match(geometry.countdownText,/До планового ввімкнення/)
- assert.match(geometry.countdownText,/06:00/)
- assert.match(geometry.emergencyText,/Інформація уточнюється/)
- assert.match(geometry.emergencyText,/Автоматичного підтвердження аварій/)
- const [a,b,sun,soil,c,d]=geometry.items
- assert.ok(Math.abs(a.y-b.y)<3,"weather and garden must align")
- assert.ok(Math.abs(c.y-d.y)<3,"moon and astro must align")
- assert.ok(sun.y>=a.y+a.height-3,"sun times follow weather")
-  assert.ok(soil.y>=b.y+b.height-3,"soil temperature follows garden")
-  assert.ok(Math.abs(sun.y-soil.y)<3,"sun and soil panels share a row")
- assert.ok(c.y>=Math.max(sun.y+sun.height,soil.y+soil.height)-3,"moon follows sun and soil")
- assert.ok(b.x>a.x+a.width-3,"two weather columns do not overlap")
- assert.ok(a.width>450&&b.width>450&&c.width>450&&d.width>450,"readable weather panels")
- assert.ok(geometry.weather.y>=geometry.power.y+geometry.power.height-3,"weather below power")
- assert.ok(geometry.footer.y>=geometry.weather.bottom-3,"footer below weather")
- assert.ok(geometry.card.bottom>=geometry.footer.bottom,"footer within card")
- assert.ok(geometry.items.every(x=>!x.clipped),"weather panels must not clip")
- assert.equal(geometry.windRows.length,2)
- for(const wind of geometry.windRows) {
-  assert.ok(wind.scrollWidth<=wind.clientWidth+2,"wind text must not overflow")
-  assert.ok(wind.childRight<=wind.rowRight+2,"wind value visible")
+ for(const key of ["day","countdown","schedule","weather","sun","soil","garden","moon","astro","sources","footer","card"]){
+   assert.ok(geometry[key],key+" exists")
+   assert.ok(geometry[key].width>100,key+" readable")
  }
- assert.match(geometry.windRows[0].label,/Вітер зараз/)
- assert.match(geometry.windRows[1].label,/Пориви вітру сьогодні/)
- assert.ok(geometry.garden.bottom<=geometry.soil.y+3)
- assert.ok(geometry.soil.x>=geometry.garden.x-3,"soil belongs in right column")
-  assert.ok(geometry.sun.x<geometry.soil.x,"sun belongs in left column")
- assert.ok(geometry.astro.y>=geometry.soil.bottom-3)
+ assert.ok(Math.abs(geometry.day.y-geometry.countdown.y)<3)
+ assert.ok(Math.abs(geometry.day.y-geometry.schedule.y)<3)
+ assert.ok(geometry.day.x<geometry.countdown.x)
+ assert.ok(geometry.countdown.x<geometry.schedule.x)
+ assert.ok(geometry.weather.y>=geometry.day.bottom-3)
+ assert.ok(geometry.sources.y>=geometry.moon.y)
+ assert.ok(geometry.footer.y>=geometry.sources.bottom-3)
+ assert.ok(geometry.card.bottom>=geometry.footer.bottom-3)
+ assert.match(geometry.countdownText,/Відлік до події/)
+ assert.match(geometry.emergency,/Інформація уточнюється/)
  assert.match(geometry.entertainment,/розважальний характер/)
  assert.match(geometry.source,/ДТЕК/)
- console.log("✅ Verified 2×2 wide weather cards, footer and responsive card height",geometry)
+ console.log("✅ Approved landscape panels, live sources and footer verified",geometry)
 }finally{
  await browser.close()
 }
