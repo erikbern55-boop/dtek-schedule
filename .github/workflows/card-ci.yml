@@ -26,7 +26,10 @@ jobs:
           node --check ./src/schedule.js
           node --test
           node ./test/card-smoke.js
+          node ./test/card-v3-smoke.js
       - uses: actions/upload-artifact@v6
         with:
           name: svitlopuls-card-preview
-          path: svitlopuls-preview.png
+          path: |
+            svitlopuls-preview.png
+            svitlopuls-v3-preview.png
