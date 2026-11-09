@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
-import { renderCardPng } from "./card.js"
+import { renderCardPng, buildCardHtml } from "./card.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
@@ -69,11 +69,25 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   return caption
 }
 
-function saveViewerSnapshot(png, label) {
+function saveViewerSnapshot(png, label, details) {
   // Public viewer receives only rendered graphics, never Telegram credentials.
   try {
     fs.mkdirSync("artifacts/web", { recursive: true })
-    fs.writeFileSync("artifacts/web/" + (label === "завтра" ? "tomorrow" : "today") + ".png", png)
+    const basename = label === "завтра" ? "tomorrow" : "today"
+    fs.writeFileSync("artifacts/web/" + basename + ".png", png)
+    // Publish real HTML elements and text, never stretch the Telegram bitmap.
+    const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
+      'html,body{width:100%;min-height:100%;overflow:auto!important;background:#03150e!important}' +
+      'body{margin:0!important;padding:8px!important;display:flex!important;align-items:stretch!important;justify-content:center!important}' +
+      '.card{width:100%!important;max-width:none!important;min-height:calc(100dvh - 16px)!important;height:auto!important;margin:0!important;display:flex!important;flex-direction:column!important;gap:clamp(6px,1.3vh,16px)!important}' +
+      '.card .weather-zone{flex:1 1 auto!important;display:flex!important;flex-direction:column!important}' +
+      '.card .wx-grid{flex:1 1 auto!important;grid-auto-rows:minmax(min-content,1fr)!important}' +
+      '.card .wx-box{height:100%!important}.card .power-layout{flex:1 1 auto!important}' +
+      '.card .footer{margin-top:auto!important}' +
+      '@media(max-width:650px){body{padding:4px!important}.card{min-height:calc(100dvh - 8px)!important}}' +
+      '</style>'
+    const html = buildCardHtml(details).replace("</head>",responsiveCss+"</head>")
+    fs.writeFileSync("artifacts/web/" + basename + ".html", html)
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
   }
@@ -116,7 +130,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
       let result
       if (imageRefresh) {
         const png = await renderCardPng({ schedule, date, label, update, source, weather })
-        saveViewerSnapshot(png, label)
+        saveViewerSnapshot(png, label, { schedule, date, label, update, source, weather })
         const form = new FormData()
         form.set("chat_id", String(TELEGRAM_CHAT_ID))
         form.set("message_id", String(lastMessage.message_id))
@@ -152,7 +166,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
 
   try {
     const png = await renderCardPng({ schedule, date, label, update, source, weather })
-        saveViewerSnapshot(png, label)
+        saveViewerSnapshot(png, label, { schedule, date, label, update, source, weather })
     const form = new FormData()
     form.set("chat_id", String(TELEGRAM_CHAT_ID))
     form.set("reply_markup", JSON.stringify(viewerKeyboard(label)))
