@@ -236,9 +236,9 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '</section>'
     :'<section class="wx-box weather-air"><h3>🌤 Погода в СТ «Хімік»</h3>'+warning+
       '<div class="wx-now">—</div><div class="wx-caption">Немає достовірних метеоданих.</div></section>'
-  const sun='<section class="wx-box weather-sun"><h3>🌅 Схід і захід сонця</h3>'+
-    '<div class="wx-sun-pair"><span>🌅 Схід сонця <b>'+esc(weather?.sunrise||"—:—")+'</b></span>'+
-    '<span>🌇 Захід сонця <b>'+esc(weather?.sunset||"—:—")+'</b></span></div></section>'
+  const sun='<section class="wx-box weather-sun"><h3>☀️ Сонячний день</h3>'+
+    '<div class="wx-sun-pair"><span>🌅 Схід <b>'+esc(weather?.sunrise||"—:—")+'</b></span>'+
+    '<span>🌇 Захід <b>'+esc(weather?.sunset||"—:—")+'</b></span></div></section>'
   const soil='<section class="wx-box weather-soil"><h3>🌱 Температура ґрунту</h3>'+
     '<div class="wx-soil-pair"><strong>'+esc(temp(weather?.soilTemp))+'</strong>'+
     '<span>Глибина ≈6 см · Прогноз моделі'+(weather?.soilAt?' · на '+esc(weather.soilAt):'')+'</span></div></section>'
