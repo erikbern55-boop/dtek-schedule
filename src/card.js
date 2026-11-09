@@ -4,7 +4,7 @@ import { nextPowerEvent } from "./countdown.js"
 
 const GREEN = "#30f176"
 const RED = "#ff5264"
-const SIZE = 920
+const SIZE = 1200
 const escape = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
   .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;")
 
@@ -255,6 +255,64 @@ export function buildCardHtml({ schedule, date, label, update, source, weather =
     '.signature{text-align:center;font-size:21px;font-style:italic;color:#90ed9a;',
     'letter-spacing:3px;padding-top:10px;text-shadow:0 0 9px #116d38}',
     WEATHER_CSS,
+    // Approved wide-screen composition: 4 power columns above 2 weather columns.
+    'html,body{width:1200px}',
+    '.card{width:1180px;padding:18px;margin:10px;border-radius:27px}',
+    '.header{height:85px}.robot{width:70px;height:70px}',
+    '.brand{font-size:53px}.smallbrand{font-size:18px}.header-place{width:300px;font-size:20px}',
+    '.header-place b{font-size:23px}.date{margin:10px 0 8px;padding:7px;font-size:28px}',
+    '.sub{display:none}',
+    '.power-layout{display:grid;grid-template-columns:280px 180px minmax(0,1fr) 290px;gap:10px;align-items:stretch}',
+    '.power-left,.power-right{display:contents}',
+    '.dial{grid-column:1;grid-row:1;width:265px;height:265px;align-self:center}',
+    '.power-overview{grid-column:2/4;grid-row:1;display:grid;grid-template-columns:180px minmax(0,1fr);gap:10px}',
+    '.metrics-col{gap:8px}.metric{min-height:114px;padding:8px 5px}',
+    '.metric .name{font-size:20px}.metric .value{font-size:32px}.metric .pct{font-size:16px}',
+    '.periods{justify-content:center;gap:6px}.period{font-size:19px;min-height:40px}',
+    '.period-kind{font-size:15px}',
+    '.outages{grid-column:4;grid-row:1;margin:0;padding:10px 8px}',
+    '.outages .secttitle{font-size:21px}.outage-row{min-height:50px;padding:3px 5px;gap:4px}',
+    '.outage-row strong{font-size:18px}.outage-row em{font-size:14px}',
+    '.countdown-box{grid-column:1;grid-row:2;margin:0;min-height:140px;padding:7px}',
+    '.countdown-head{font-size:22px}.countdown-title{font-size:17px}',
+    '.countdown-value{font-size:49px}.countdown-detail{font-size:15px}.countdown-source{font-size:11px}',
+    '.next{grid-column:2;grid-row:2;margin:0;min-height:140px;font-size:20px;padding:7px}',
+    '.timeline-box{grid-column:3;grid-row:2;margin:0;padding:13px 9px}',
+    '.timeline-box .secttitle{font-size:20px}.timeline{height:30px}.timeline span{height:30px}',
+    '.emergency-box{grid-column:4;grid-row:2;margin:0;padding:9px 8px}',
+    '.emergency-head{font-size:20px}.emergency-tag{font-size:16px}',
+    '.emergency-detail{font-size:14px}.emergency-time{font-size:12px}',
+    '.weather-zone{margin-top:12px;padding:12px 13px;border-radius:22px}',
+    '.weather-title{display:none}.wx-grid{gap:11px;margin-top:0}',
+    '.wx-box{padding:12px 13px;border-radius:17px}.wx-box h3{font-size:27px}',
+    '.wx-right-stack .wx-box h3{font-size:27px}',
+    '.wx-weather-main{gap:10px}.wx-symbol{font-size:80px}.wx-now{font-size:66px}',
+    '.wx-now-label{font-size:20px}.wx-cond{font-size:21px}',
+    '.wx-warning{font-size:17px;margin-bottom:6px;padding:6px}',
+    '.wx-today-box{display:inline-block;width:49%;margin:7px 1% 0 0;vertical-align:top}',
+    '.wx-forecast-box{display:inline-block;width:49%;margin:7px 0 0;vertical-align:top}',
+    '.wx-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:6px 0}',
+    '.wx-fact.wide{grid-column:auto}.wx-fact.windline{display:block;white-space:normal;font-size:15px;min-height:0}',
+    '.wx-fact.windline b{display:block;font-size:21px}',
+    '.wx-fact{font-size:15px;padding:5px}.wx-fact b{font-size:20px}',
+    '.wx-forecast-values b{font-size:28px}',
+    '.wx-right-stack .wx-garden-art{display:none}',
+    '.wx-right-stack .wx-garden-copy{font-size:22px}',
+    '.wx-right-stack .wx-garden-heading{font-size:21px}',
+    '.wx-right-stack .wx-sowing-row{font-size:21px;line-height:1.24;padding:10px}',
+    '.wx-right-stack .wx-sowing-row b{font-size:22px}',
+    '.wx-grid>.weather-soil{padding:9px 13px}',
+    '.wx-grid>.weather-soil .wx-soil-number{font-size:28px}',
+    '.wx-grid>.weather-soil .wx-caption{font-size:14px;max-width:none}',
+    '.wx-grid>.weather-soil .wx-sun-label{font-size:17px}',
+    '.wx-grid>.weather-soil .wx-sun-time{font-size:28px}',
+    '.wx-moon-main{margin:0;gap:12px}.wx-moon-disc{width:110px;height:110px}',
+    '.wx-moon-number{font-size:43px}.wx-moon-row{font-size:18px;padding:4px}',
+    '.wx-astro-body{gap:10px}.wx-astro-copy{font-size:21px}',
+    '.wx-astro-disclaimer{margin-top:8px;padding-top:5px;font-size:14px}',
+    '.wx-credit{font-size:13px;margin-top:9px}',
+    '.footer{margin-top:10px;font-size:17px;padding:9px 4px 0}',
+    '.signature{display:none}',
   ].join("")
   const content = '<div class="card"><header class="header"><div class="header-left">' + robotIcon() +
     '<div><div class="smallbrand">СТ «ХІМІК» · ЕЛЕКТРОПОСТАЧАННЯ</div>' +
