@@ -1,6 +1,7 @@
 // Independent Svitlopuls 3 renderer. No production switch until visual approval.
 import { calculateDailyTotals, formatDuration } from "./summary.js"
-import { buildDial, buildTimeline, nearestEvent } from "./card.js"
+import { buildDial, buildTimeline } from "./card.js"
+import { nextPowerEvent } from "./countdown.js"
 import { renderWeatherPanel, WEATHER_CSS } from "./weather-card.js"
 
 const esc = value => String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
@@ -59,6 +60,34 @@ const css = [
   ".v3-sources span{border-left:1px solid #58b979;padding-left:9px}",
   ".v3-footer{margin-top:14px;display:flex;justify-content:space-between;font-size:16px;padding:12px 18px}",
   WEATHER_CSS,
+  ".v3-weather .wx-grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}",
+  ".v3-weather .weather-air{grid-column:1/5!important;grid-row:1!important}",
+  ".v3-weather .weather-tomorrow{grid-column:5/8!important;grid-row:1!important}",
+  ".v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}",
+  ".v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}",
+  ".v3-weather .wx-right-stack{grid-column:1/13!important;grid-row:2!important;display:block!important}",
+  ".v3-weather .weather-garden{width:100%!important;min-height:210px!important}",
+  ".v3-weather .wx-garden-body{display:flex!important;align-items:center!important;gap:20px!important}",
+  ".v3-weather .wx-garden-art{font-size:64px!important;min-width:110px!important}",
+  ".v3-weather .wx-sowing{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}",
+  ".v3-weather .wx-sowing-row.lunar,.v3-weather .wx-source-note{grid-column:1/3!important}",
+  ".v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}",
+  ".v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}",
+  ".v3-weather .wx-box{min-height:0!important;overflow:visible!important}",
+  ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:230px!important}",
+  ".v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:center!important}",
+  ".v3-weather .weather-air .wx-now{font-size:46px!important}",
+  ".v3-weather .wx-box h3{font-size:21px!important}",
+  ".v3-weather .wx-fact{font-size:15px!important}",
+  ".v3-weather .wx-credit{font-size:13px!important}",
+  ".v3-head{grid-template-columns:245px 1fr 210px!important;min-height:135px!important}",
+  ".v3-brand strong{font-size:54px!important}",
+  ".v3-place:before{content:'🤖';font-size:52px;float:left;margin-right:8px}",
+  ".v3-power>.v3-panel{height:295px!important}",
+  ".v3-dial{height:220px!important}",
+  ".v3-count .v3-clock{font-size:65px!important}",
+  ".v3-periods{max-height:145px!important}",
+  ".v3-weather .weather-moon,.v3-weather .weather-astro{min-height:185px!important}",
   // Keep the new renderer's layout rules after shared weather styles.
   ".v3-weather .wx-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}",
   ".v3-weather .weather-air{grid-column:1/6;grid-row:1}",
@@ -83,14 +112,15 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   if (!Array.isArray(schedule) || !date) throw Error("Schedule and date required")
   const {withPower,withoutPower}=calculateDailyTotals(schedule)
   const periods=schedule.map(p=>'<div class="v3-period'+(p.power?'':' off')+'"><span>'+ (p.power?'⚡ Світло':'🔴 Без світла') +'</span><b>'+esc(p.begin)+' — '+esc(p.end)+'</b></div>').join("")
-  const next=nearestEvent(schedule,date,now)
+  const event=nextPowerEvent(schedule,date,now)
+  const countdown=event.kind==="countdown" ? event.remaining : "—:—"
   const html='<article class="v3">'+
     '<header class="v3-head"><div class="v3-place"><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div>'+
     '<div class="v3-brand"><strong>⚡ СВІТЛОПУЛЬС 3.0</strong><small>Електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
     '<section class="v3-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
-    '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ До наступної зміни</h2><div class="v3-clock">'+esc(kyivTime(now))+'</div><div class="v3-next">'+esc(next)+'</div></section>'+
+    '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ До наступної зміни</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(event.title+' · '+event.detail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+renderWeatherPanel(weather,date,label,"v3")+'</div>'+
     '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ ДТЕК · графіки</span><span>☁ Open-Meteo · погода</span><span>🌱 Поради · локальні правила</span><span>🌙 Місяць · розрахунок</span><span>✨ Астрологія · розвага</span></section>'+
