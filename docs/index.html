@@ -10,23 +10,23 @@ main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
 img{display:block;max-width:100%;max-height:calc(100dvh - 104px);object-fit:contain}
 #status{font-size:14px;text-align:center;color:#b8d8c4;padding:6px}
 @media(orientation:landscape){header{padding-block:3px}button{padding:5px 9px}main{padding:2px}#status{padding:2px;font-size:12px}}
-body.immersive{height:100dvh;min-height:100dvh;overflow:hidden}body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.85;padding:5px 8px}body.immersive main{height:100dvh;min-height:0;flex:1;padding:0;overflow:hidden}body.immersive #card{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill}
+body.immersive{height:100dvh;min-height:100dvh;overflow:hidden}body.immersive header{position:fixed;top:0;right:0;z-index:10;background:transparent;padding:4px}body.immersive header strong,body.immersive header #today,body.immersive header #tomorrow,body.immersive #status{display:none}body.immersive #full{font-size:13px;opacity:.85;padding:5px 8px}body.immersive main{height:100dvh;min-height:0;flex:1;padding:0;overflow:hidden}body.immersive #card{display:none}body.immersive #live{display:block;width:100%;height:100%;border:0;background:#03150e}#live{display:none}
 :fullscreen,:fullscreen body{background:#03150e}
 </style></head><body>
 <header><strong>⚡ СВІТЛОПУЛЬС 2.3</strong><nav><button id="today" aria-pressed="true">Сьогодні</button><button id="tomorrow" aria-pressed="false">Завтра</button><button id="full">⛶ На весь екран</button></nav></header>
-<main><img id="card" alt="Актуальна картка Світлопульсу"></main>
+<main><img id="card" alt="Актуальна картка Світлопульсу"><iframe id="live" title="Адаптивна повноекранна картка Світлопульсу"></iframe></main>
 <div id="status" role="status">Натисни «На весь екран» для збільшення картки</div>
 <script>
-const card=document.getElementById('card'),status=document.getElementById('status');
+const card=document.getElementById('card'),status=document.getElementById('status'),live=document.getElementById('live');
 let day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
 function select(next){day=next;document.getElementById('today').setAttribute('aria-pressed',String(day==='today'));document.getElementById('tomorrow').setAttribute('aria-pressed',String(day==='tomorrow'));load();}
-function load(){card.alt='Картка Світлопульсу: '+(day==='today'?'сьогодні':'завтра');card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);}
+function load(){card.alt='Картка Світлопульсу: '+(day==='today'?'сьогодні':'завтра');card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);live.src='./'+day+'.html?t='+Math.floor(Date.now()/300000);}
 card.addEventListener('error',()=>{status.textContent='Картка ще не опублікована. Перевір налаштування публікації.';});
 card.addEventListener('load',()=>{status.textContent='Картка оновлена';});
 document.getElementById('today').onclick=()=>select('today');
 document.getElementById('tomorrow').onclick=()=>select('tomorrow');
 const fullButton=document.getElementById('full');
-function setImmersive(on){document.body.classList.toggle('immersive',on);fullButton.textContent=on?'✕ Вийти':'⛶ На весь екран';}
+function setImmersive(on){document.body.classList.toggle('immersive',on);fullButton.textContent=on?'✕ Вийти':'⛶ На весь екран';if(on)load();}
 fullButton.onclick=async()=>{if(document.body.classList.contains('immersive')){setImmersive(false);if(document.fullscreenElement)try{await document.exitFullscreen()}catch{}return;}setImmersive(true);try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}catch{/* Telegram and mobile browsers may reject fullscreen; immersive CSS still works. */}};
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('immersive'))setImmersive(false);});
 setInterval(load,300000);select(day);
