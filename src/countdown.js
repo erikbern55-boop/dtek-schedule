@@ -34,10 +34,19 @@ export function nextPowerEvent(schedule,date,now=new Date()) {
   const current=schedule.find(p=>minute(p.begin)<=nowMinute&&nowMinute<minute(p.end))
   if(!current)return{kind:"unknown",title:"Графік уточнюється",detail:"Немає поточного періоду"}
   const next=changes.find(c=>c.at>nowMinute)
-  if(!next)return{
-    kind:"end",title:"Подій більше немає сьогодні",
-    detail:"Зараз за графіком "+(current.power?"зі світлом":"без світла"),
-    currentPower:current.power,
+  if(!next){
+    // Midnight is a day boundary, not a verified switch. Never claim
+    // that electricity turns on/off without the following day's schedule.
+    const remaining=1440-nowMinute
+    return {
+      kind:"countdown",
+      title:"До завершення добового графіка",
+      detail:"Наступну зміну перевіряй у графіку на завтра",
+      currentPower:current.power,
+      time:"24:00",
+      minutesRemaining:remaining,
+      remaining:pad(Math.floor(remaining/60))+":"+pad(remaining%60),
+    }
   }
   const remaining=next.at-nowMinute
   return{
