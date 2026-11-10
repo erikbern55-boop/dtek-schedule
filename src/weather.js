@@ -134,6 +134,8 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     ? daily.wind_gusts_10m_max[iToday] : null
   const tomorrowIndex = iToday >= 0 ? iToday + 1 : -1
   const tomorrowDate = tomorrowIndex >= 0 ? dates[tomorrowIndex] ?? null : null
+  const tomorrowCode = Number.isFinite(daily.weather_code?.[tomorrowIndex])
+    ? daily.weather_code[tomorrowIndex] : null
   const tomorrowMin = Number.isFinite(daily.temperature_2m_min?.[tomorrowIndex])
     ? daily.temperature_2m_min[tomorrowIndex] : null
   const tomorrowMax = Number.isFinite(daily.temperature_2m_max?.[tomorrowIndex])
@@ -188,7 +190,7 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentNowGust: Number.isFinite(currentNow?.wind_gusts_10m) ? currentNow.wind_gusts_10m : null,
     currentNowAt: currentNow?.time ?? null,
     todayDate, todayMin, todayMax, todayRain, todayGust,
-    tomorrowDate, tomorrowMin, tomorrowMax, tomorrowRain, tomorrowGust,
+    tomorrowDate, tomorrowCode, tomorrowMin, tomorrowMax, tomorrowRain, tomorrowGust,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
     code: today && Number.isFinite(current?.weather_code) ? current.weather_code : get("weather_code"),
     min, max, rain, gust, soilTemp, soilAt, soilDepthCm: 6,
