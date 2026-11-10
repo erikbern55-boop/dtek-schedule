@@ -18,9 +18,24 @@ img{display:block;width:100%;height:auto;object-fit:contain}
 <script>
 const day=new URLSearchParams(location.search).get('day')==='tomorrow'?'tomorrow':'today';
 const card=document.getElementById('card');
-function refresh(){card.src='./'+day+'.png?t='+Math.floor(Date.now()/300000);}
+let previousObjectUrl=null;
+let requestNumber=0;
+async function refresh(){
+  const request=++requestNumber;
+  try{
+    const response=await fetch('./'+day+'.png?refresh='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const url=URL.createObjectURL(await response.blob());
+    if(request!==requestNumber){URL.revokeObjectURL(url);return;}
+    const old=previousObjectUrl;
+    previousObjectUrl=url;
+    card.onload=()=>{if(old)URL.revokeObjectURL(old);};
+    card.src=url;
+  }catch(error){console.warn('Fullscreen card refresh failed',error);}
+}
 refresh();
-setInterval(refresh,300000);
+setInterval(refresh,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 </script>
 </body>
 </html>
