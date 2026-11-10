@@ -54,7 +54,13 @@ export function buildApprovedCardHtml({schedule,date,label="сьогодні",so
  const metric=(value,suffix="")=>weatherFresh&&Number.isFinite(value)?e(Math.round(value))+suffix:"—"
  const eventTitle=event.kind==="countdown"?event.title:"Наступна подія"
  const count=event.kind==="countdown"?event.remaining:"—:—"
- const moonSvg=moonDiscSvg(moon)
+ // Texture is clipped to the illuminated shape; phase geometry still comes from moonDiscSvg.
+ const moonSvg=moonDiscSvg(moon).replace(
+   /(<path d="[^"]+" fill="#f2f7f2"\/>)/,
+   '$1<defs><filter id="approved-lunar-texture" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".075" numOctaves="4" seed="12" result="noise"/><feColorMatrix in="noise" type="saturate" values="0" result="gray"/><feComponentTransfer in="gray"><feFuncA type="linear" slope=".3"/></feComponentTransfer></filter><clipPath id="approved-lunar-lit"><path d="' +
+   (moonDiscSvg(moon).match(/<path d="([^"]+)" fill="#f2f7f2"/)?.[1]||'') +
+   '"/></clipPath></defs><circle cx="70" cy="70" r="54" fill="#b8b9a9" opacity=".55" filter="url(#approved-lunar-texture)" clip-path="url(#approved-lunar-lit)"/><g fill="#6d716c" opacity=".3" clip-path="url(#approved-lunar-lit)"><circle cx="51" cy="44" r="12"/><circle cx="83" cy="71" r="16"/><circle cx="46" cy="91" r="9"/><circle cx="94" cy="39" r="8"/><circle cx="66" cy="105" r="7"/></g>'
+ )
  const html='<div class="sheet">'+
  '<header><div class="identity">'+robot+'<div><b>СТ «Хімік»</b><br>Боярська ТГ<br>Фастівський район</div></div><div class="brand"><strong>СВІТЛО<em>ПУЛЬС 3.0</em>⌁</strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div><div class="tag">🌿 Все в одному<br>для комфортного<br>життя в СТ</div></header>'+
  '<div class="row power"><section class="panel date-dial"><div><h2>🗓 '+(label==="завтра"?"Завтра":"Сьогодні")+'</h2><div class="date">'+e(dateText(date))+'</div><div class="day">'+e(weekday(date))+'</div></div><div class="dial" style="--arcs:'+arcs+'">'+dialLabels+'</div></section>'+
