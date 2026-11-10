@@ -39,10 +39,11 @@ test("boundary switches to next event and countdown never becomes negative",()=>
  assert.equal(at.time,"22:30")
 })
 
-test("last period has no event until midnight; no invented tomorrow",()=>{
+test("last period counts down to midnight without inventing tomorrow switch",()=>{
  const e=nextPowerEvent(schedule,date,new Date("2026-11-08T21:00:00Z"))
- assert.equal(e.kind,"end")
- assert.match(e.title,/Подій більше немає сьогодні/)
+ assert.equal(e.kind,"countdown")
+ assert.equal(e.remaining,"01:00")
+ assert.match(e.title,/завершення добового графіка/)
 })
 
 test("tomorrow card does not show a ticking timer for today's time",()=>{
@@ -57,7 +58,8 @@ test("tomorrow card does not show a ticking timer for today's time",()=>{
 test("no transitions are handled without promises about actual grid status",()=>{
  const continuous=[{begin:"00:00",end:"24:00",power:true}]
  const today=nextPowerEvent(continuous,date,new Date("2026-11-08T10:00:00Z"))
- assert.equal(today.kind,"end")
+ assert.equal(today.kind,"countdown")
+ assert.equal(today.remaining,"14:00")
  const tomorrow=nextPowerEvent(continuous,date,new Date("2026-11-07T18:00:00Z"))
  assert.equal(tomorrow.kind,"future")
  assert.match(tomorrow.title,/не заплановані/)
