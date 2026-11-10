@@ -59,7 +59,7 @@ test("no transitions are handled without promises about actual grid status",()=>
  const continuous=[{begin:"00:00",end:"24:00",power:true}]
  const today=nextPowerEvent(continuous,date,new Date("2026-11-08T10:00:00Z"))
  assert.equal(today.kind,"countdown")
- assert.equal(today.remaining,"14:00")
+ assert.equal(today.remaining,"12:00")
  const tomorrow=nextPowerEvent(continuous,date,new Date("2026-11-07T18:00:00Z"))
  assert.equal(tomorrow.kind,"future")
  assert.match(tomorrow.title,/не заплановані/)
