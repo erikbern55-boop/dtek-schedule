@@ -265,6 +265,10 @@ const css = [
   ".v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:auto!important;margin-bottom:auto!important}",
   ".v3-weather .weather-sun .wx-sun-pair{gap:10px!important}",
   ".v3-weather .weather-soil .wx-soil-pair{gap:9px!important}",
+
+  // Balance tomorrow's min/max readings vertically in the same tall weather row.
+  ".v3-weather .weather-tomorrow .wx-forecast-box{margin-top:auto!important;margin-bottom:auto!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{gap:12px!important}",
   ".v3-weather .weather-garden .wx-garden-art{overflow:hidden!important;border-radius:16px!important}",
   ".v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:14px!important}",
 ].join("\n")
