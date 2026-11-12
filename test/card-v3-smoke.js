@@ -46,6 +46,9 @@ const browser=await chromium.launch({headless:true})
 try {
  const page=await browser.newPage({viewport:{width:1404,height:900}})
  await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+ assert.equal(await page.locator(".v3-weekday").textContent(),"субота","weekday follows card date")
+ assert.equal(await page.locator(".v3-brand-white").textContent(),"СВІТЛО","approved white brand segment")
+ assert.equal(await page.locator(".v3-brand-green").textContent(),"ПУЛЬС 3.0","approved neon-green brand segment")
  const viewerPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true})
  await viewerPage.setContent(fullScreenHtml,{waitUntil:"load"})
  const viewerCheck=await viewerPage.evaluate(()=>{
