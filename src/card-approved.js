@@ -59,7 +59,7 @@ export function buildApprovedCardHtml({schedule,date,label="сьогодні",so
  const periods=intervals.map(p=>'<div class="period '+(p.power?"":"off")+'"><span>'+(p.power?"⚡ Світло є":"⊗ Немає світла")+'</span><span>'+e(p.begin)+' – '+e(p.end)+'</span></div>').join("")
  const nowTemp=weather?.currentNowTemp??weather?.currentTemp
  const tomorrow=weather?.tomorrowDate?dateText(weather.tomorrowDate).slice(0,5):"—"
- const rise=weather?.sunrise||"—:—",set=weather?.sunset||"—:—",hasDaylight=/^([01]\\d|2[0-3]):[0-5]\\d$/.test(rise)&&/^([01]\\d|2[0-3]):[0-5]\\d$/.test(set),length=hasDaylight?dur((mins(set)-mins(rise)+1440)%1440):"—"
+ const rise=weather?.sunrise||"—:—",set=weather?.sunset||"—:—",hasDaylight=/^([01]\d|2[0-3]):[0-5]\d$/.test(rise)&&/^([01]\d|2[0-3]):[0-5]\d$/.test(set),length=hasDaylight?dur((mins(set)-mins(rise)+1440)%1440):"—"
  const weatherFresh=weather&&!weather.stale
  const metric=(value,suffix="")=>weatherFresh&&Number.isFinite(value)?e(Math.round(value))+suffix:"—"
  const eventTitle=event.kind==="countdown"?event.title:"Наступна подія"
