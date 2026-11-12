@@ -256,6 +256,8 @@ const css = [
   ".v3-head .v3-pulse-mark svg{display:block!important;width:68px!important;height:42px!important;filter:drop-shadow(0 0 5px #2ae84e)}",
   ".v3-head{min-height:124px!important}",
   ".v3-head .v3-robot{max-height:112px!important;align-self:center!important}",
+  ".v3-head .v3-robot{overflow:visible!important}",
+  ".v3-head .v3-brand strong{max-width:100%!important}",
 
   // Keep the first weather row compact without hiding live readings.
   ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:172px!important}",
