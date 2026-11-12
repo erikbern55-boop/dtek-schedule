@@ -74,3 +74,11 @@ test("V3 neon wordmark includes an actual vector pulse rather than a placeholder
   assert.match(html,/M2 25H22L31 13L43 38L55 5L66 25H98/)
   assert.doesNotMatch(html,/<span class="v3-pulse-mark"[^>]*>⌁<\/span>/)
 })
+
+
+test("V3 gardening artwork uses a real garlic photograph with descriptive alternative text",()=>{
+  const html=buildCardV3Html(details)
+  assert.match(html,/<div class="wx-garden-art"><img src="https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/Garlic_bulbs\.jpg\?width=330"/)
+  assert.match(html,/alt="Фотографія головок часнику"/)
+  assert.doesNotMatch(html,/<div class="wx-garden-art"><svg/)
+})
