@@ -13,6 +13,8 @@ assert.match(html,/Астропрогноз дня/)
 assert.match(html,/approved-lunar-texture/)
 assert.match(html,/approved-lunar-lit/)
 assert.match(html,/Опади: 3 мм/)
+assert.match(html,/<a href="https:\/\/www\.dtek-krem\.com\.ua\/ua\/shutdowns"[^>]*target="_blank"[^>]*>⚡ Графіки:/)
+assert.match(html,/<a href="https:\/\/open-meteo\.com\/"[^>]*rel="noopener noreferrer"[^>]*>☁ Погода:/)
 // The approved visual composition must remain data-driven, not a static reference image.
 const alternate=buildApprovedCardHtml({...data,date:"2026-11-10",weather:{...weather,currentNowTemp:12,todayRain:8,soilTemp:6},update:"10.11.2026 18:32"})
 assert.match(alternate,/Опади: 8 мм/)
