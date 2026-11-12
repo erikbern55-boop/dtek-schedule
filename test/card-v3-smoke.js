@@ -73,6 +73,17 @@ try {
  }
  assert.ok(sourceLinks.some(x=>x.href.includes("dtek-krem.com.ua")),"DTEK source link exists")
  console.log("V3 source links OK",sourceLinks.map(x=>x.href))
+ // Check visible header text remains inside the approved 1404px canvas.
+ const header=await page.evaluate(()=>{
+  const root=document.querySelector(".v3")
+  const nodes=[...document.querySelectorAll(".v3-head,.v3-place,.v3-brand,.v3-brand strong,.v3-tag,.v3-date-panel")]
+  const base=root.getBoundingClientRect()
+  return nodes.map(node=>{const r=node.getBoundingClientRect();return {name:node.className,left:r.left-base.left,right:r.right-base.left,top:r.top-base.top,bottom:r.bottom-base.top,scrollWidth:node.scrollWidth,clientWidth:node.clientWidth}})
+ })
+ for(const item of header){
+  assert.ok(item.left>=-2&&item.right<=1406,"header "+item.name+" must remain inside card canvas: "+JSON.stringify(item))
+  assert.ok(item.scrollWidth<=item.clientWidth+3,"header "+item.name+" text must not clip horizontally: "+JSON.stringify(item))
+ }
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
