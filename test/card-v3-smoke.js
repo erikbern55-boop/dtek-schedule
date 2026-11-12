@@ -49,6 +49,18 @@ try {
  assert.equal(await page.locator(".v3-weekday").textContent(),"субота","weekday follows card date")
  assert.equal(await page.locator(".v3-brand-white").textContent(),"СВІТЛО","approved white brand segment")
  assert.equal(await page.locator(".v3-brand-green").textContent(),"ПУЛЬС 3.0","approved neon-green brand segment")
+
+ const headerGeometry=await page.evaluate(()=>{
+  const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}}
+  return {header:rect(".v3-head"),robot:rect(".v3-robot"),brand:rect(".v3-brand"),tag:rect(".v3-tag")}
+ })
+ assert.ok(headerGeometry.robot.height>=110,"approved mascot must remain prominent")
+ assert.ok(headerGeometry.robot.top>=headerGeometry.header.top-2&&headerGeometry.robot.bottom<=headerGeometry.header.bottom+2,
+  "enlarged robot must fit inside header: "+JSON.stringify(headerGeometry))
+ assert.ok(headerGeometry.robot.right<=headerGeometry.brand.left+2,
+  "robot must not overlap wordmark: "+JSON.stringify(headerGeometry))
+ assert.ok(headerGeometry.brand.right<=headerGeometry.tag.left+2,
+  "wordmark must not overlap header tagline: "+JSON.stringify(headerGeometry))
  const viewerPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true})
  await viewerPage.setContent(fullScreenHtml,{waitUntil:"load"})
  const viewerCheck=await viewerPage.evaluate(()=>{
