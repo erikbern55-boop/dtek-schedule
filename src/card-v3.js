@@ -196,6 +196,11 @@ const css = [
   ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{box-shadow:inset 0 0 14px #0d7837,0 0 10px #158c35!important}",
   // Trim the remaining four pixels from outer margins; never crop the screenshot.
   ".v3{padding-top:8px!important;padding-bottom:6px!important}",
+  // Visual-only refinement; keep the approved canvas dimensions and data flow.
+  ".v3-robot{filter:drop-shadow(0 0 7px #6dfb91) drop-shadow(0 0 16px #217f52)!important}",
+  ".v3-brand strong{font-weight:900!important;letter-spacing:-1.5px!important;text-shadow:0 0 5px #9fff8e,0 0 19px #2ad958!important}",
+  ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#5cf86a!important;box-shadow:inset 0 0 12px #0a6c35,0 0 8px #168f3b,0 0 2px #b7ffb9!important}",
+  ".v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
