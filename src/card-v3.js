@@ -183,6 +183,7 @@ const css = [
   ".v3-weather .wx-grid{gap:7px!important}",
   ".v3-sources{margin-top:6px!important;padding:7px!important}",
   ".v3-footer{margin-top:6px!important;padding:7px!important}",
+  ".v3-sources,.v3-footer{margin-top:1px!important}",
   // Restore the garden illustration hidden by legacy right-stack CSS.
   ".v3-weather .wx-garden-art{display:block!important;flex:0 0 110px!important;min-width:110px!important;width:110px!important;height:105px!important;min-height:105px!important;padding:0!important;margin-right:10px!important;background:transparent!important}",
   ".v3-weather .wx-garden-art svg{display:block!important;width:110px!important;height:105px!important}",
