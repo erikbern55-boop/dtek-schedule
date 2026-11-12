@@ -13,6 +13,8 @@ assert.match(html,/Астропрогноз дня/)
 assert.match(html,/approved-lunar-texture/)
 assert.match(html,/approved-lunar-lit/)
 assert.match(html,/Опади: 3 мм/)
+// Valid sunrise/sunset must produce a real day length, not a missing-data dash.
+assert.match(html,/Світловий день<\/h2><div class="daylength">9 год 20 хв<\/div>/)
 assert.match(html,/<a href="https:\/\/www\.dtek-krem\.com\.ua\/ua\/shutdowns"[^>]*target="_blank"[^>]*>⚡ Графіки:/)
 assert.match(html,/<a href="https:\/\/open-meteo\.com\/"[^>]*rel="noopener noreferrer"[^>]*>☁ Погода:/)
 // The approved visual composition must remain data-driven, not a static reference image.
