@@ -194,6 +194,8 @@ const css = [
   ".v3-brand small{font-size:16px!important}",
   ".v3-tag{border:2px solid #67fa58;border-radius:20px;padding:9px 6px;font-size:17px!important;background:#05210f}",
   ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{box-shadow:inset 0 0 14px #0d7837,0 0 10px #158c35!important}",
+  // Trim the remaining four pixels from outer margins; never crop the screenshot.
+  ".v3{padding-top:8px!important;padding-bottom:6px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
