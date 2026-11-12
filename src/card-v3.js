@@ -237,6 +237,13 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art{margin:0!important;flex:0 0 110px!important}",
   ".v3-weather .weather-garden .wx-garden-copy{margin:0!important;line-height:1.2!important}",
   ".v3-weather .weather-sowing .wx-sowing-row{margin:0!important}",
+
+  // The garden panel shares a row with a taller sowing panel: use its space intentionally.
+  ".v3-weather .weather-garden{display:flex!important;flex-direction:column!important}",
+  ".v3-weather .weather-garden .wx-garden-body{flex:1!important;align-items:center!important;padding:8px 12px!important;gap:20px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex:0 0 160px!important;min-width:160px!important;width:160px!important;height:155px!important;min-height:155px!important}",
+  ".v3-weather .weather-garden .wx-garden-art svg{width:160px!important;height:155px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:20px!important;line-height:1.28!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
