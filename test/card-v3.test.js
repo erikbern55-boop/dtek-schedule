@@ -11,7 +11,8 @@ const details={schedule,date:"2026-11-10",label:"завтра",source:"ДТЕК"
 
 test("new V3 renderer is independent and includes all real schedule periods",()=>{
   const html=buildCardV3Html(details)
-  assert.match(html,/СВІТЛОПУЛЬС 3\.0/)
+  assert.match(html,/<span class="v3-brand-white">СВІТЛО<\/span>/)
+  assert.match(html,/<span class="v3-brand-green">ПУЛЬС 3\.0<\/span>/)
   assert.match(html,/06:00 — 13:30/)
   assert.match(html,/13:30 — 24:00/)
   assert.match(html,/10\.11\.2026/)
