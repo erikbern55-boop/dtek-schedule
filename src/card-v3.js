@@ -174,6 +174,14 @@ const css = [
   ".v3-weather .wx-moon-row{font-size:17px!important;padding:3px!important}",
   ".v3-weather .wx-astro-disclaimer{margin-top:6px!important;padding-top:4px!important;font-size:12px!important}",
   ".v3-weather .wx-credit{font-size:11px!important;margin-top:5px!important;line-height:1.15!important}",
+  // Final vertical rhythm: reduce spacing without clipping data panels.
+  ".v3-head{min-height:104px!important}",
+  ".v3-row{margin-top:6px!important}",
+  ".v3-power>.v3-panel{height:234px!important}",
+  ".v3-weather .weather-zone{margin-top:7px!important;padding:8px!important}",
+  ".v3-weather .wx-grid{gap:7px!important}",
+  ".v3-sources{margin-top:6px!important;padding:7px!important}",
+  ".v3-footer{margin-top:6px!important;padding:7px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
