@@ -201,6 +201,7 @@ const css = [
   ".v3-brand strong{font-weight:900!important;letter-spacing:-1.5px!important;text-shadow:0 0 5px #9fff8e,0 0 19px #2ad958!important}",
   ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#5cf86a!important;box-shadow:inset 0 0 12px #0a6c35,0 0 8px #168f3b,0 0 2px #b7ffb9!important}",
   ".v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}",
+  ".v3-sources a{color:#80dcff!important;text-decoration:underline!important;text-underline-offset:3px!important}",
   // Independent garden and sowing panels for the approved V3 layout.
   ".v3-weather .weather-garden{grid-column:1/8!important;grid-row:2!important;display:block!important;min-height:0!important}",
   ".v3-weather .weather-sowing{grid-column:8/13!important;grid-row:2!important;min-height:0!important}",
@@ -246,7 +247,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
-    '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ ДТЕК · графіки</span><span>☁ Open-Meteo · погода</span><span>🌱 Поради · локальні правила</span><span>🌙 Місяць · розрахунок</span><span>✨ Астрологія · розвага</span></section>'+
+    '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ <a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · графіки</a></span><span>☁ <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo · погода</a></span><span>🌱 <a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a> · <a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span>🌙 <a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span>✨ <a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
     '<footer class="v3-footer"><span>Дані: '+esc(update)+'</span><span>Графіки · 5 хв</span><span>Погода · 30 хв</span><span>Джерело: '+esc(source)+'</span></footer></article>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+'</body></html>'
 }
