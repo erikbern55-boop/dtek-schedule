@@ -128,6 +128,27 @@ try {
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
 
+ // Persist full block geometry so every iteration can be compared with the approved 1404px reference.
+ const referenceGeometry=await page.evaluate(()=>{
+  const root=document.querySelector(".v3").getBoundingClientRect()
+  const selectors={header:".v3-head",robot:".v3-robot",wordmark:".v3-brand",date:".v3-date-panel",
+   countdown:".v3-count",schedule:".v3-power > section:last-child",
+   weather:".v3-weather",garden:".weather-garden",sowing:".weather-sowing",
+   moon:".weather-moon",astrology:".weather-astro",sources:".v3-sources",footer:".v3-footer"}
+  return Object.fromEntries(Object.entries(selectors).map(([name,selector])=>{
+   const el=document.querySelector(selector)
+   if(!el)return [name,null]
+   const r=el.getBoundingClientRect()
+   return [name,{x:Math.round(r.left-root.left),y:Math.round(r.top-root.top),
+    width:Math.round(r.width),height:Math.round(r.height)}]
+  }))
+ })
+ fs.writeFileSync("svitlopuls-v3-reference-geometry.json",JSON.stringify({
+  canvasWidth:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().width)),
+  canvasHeight:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().height)),
+  blocks:referenceGeometry
+ },null,2)+"\n")
+
  // Check actual weather content, not only outer panel geometry.
  const weatherReadability=await page.evaluate(()=>{
   const selectors=[".weather-air",".weather-tomorrow",".weather-sun",".weather-soil"]
