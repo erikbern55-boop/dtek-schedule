@@ -219,6 +219,10 @@ const css = [
   ".v3-date-panel .v3-date b{font-size:29px!important;margin:10px 0 0!important}",
   ".v3-date-panel .v3-dial{width:200px!important;height:200px!important;margin:0 auto!important}",
   ".v3-count .v3-clock{color:#50f529!important;text-shadow:0 0 14px #37e52e!important}",
+  ".v3-brand-white{color:#fff!important;text-shadow:0 0 5px #d2e6d4!important}",
+  ".v3-brand-green{color:#44f32d!important;text-shadow:0 0 12px #3fe52d!important}",
+  ".v3-pulse-mark{color:#4aff55!important;font-size:62px!important;font-style:normal!important;margin-left:8px!important}",
+  ".v3-brand strong{letter-spacing:-1.5px!important;font-size:48px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -240,7 +244,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   )
   const html='<article class="v3">'+
     '<header class="v3-head"><div class="v3-place"><svg class="v3-robot" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Робот Світлопульсу"><path d="M65 18V7" stroke="#8effa3" stroke-width="6"/><circle cx="65" cy="7" r="6" fill="#b8ff8a"/><rect x="13" y="25" width="104" height="90" rx="26" fill="#5abe73" stroke="#aaffad" stroke-width="6"/><rect x="24" y="42" width="82" height="55" rx="19" fill="#092b20"/><ellipse cx="46" cy="66" rx="12" ry="16" fill="#8dffbf"/><ellipse cx="84" cy="66" rx="12" ry="16" fill="#8dffbf"/><path d="M48 87Q65 102 82 87" fill="none" stroke="#90ffc0" stroke-width="5" stroke-linecap="round"/><path d="M12 70H3M118 70H127" stroke="#aaffad" stroke-width="9" stroke-linecap="round"/><path d="M42 115v22m46-22v22" stroke="#aaffad" stroke-width="10" stroke-linecap="round"/></svg><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div>'+
-    '<div class="v3-brand"><strong>⚡ СВІТЛОПУЛЬС 3.0</strong><small>Електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
+    '<div class="v3-brand"><strong><span class="v3-brand-white">СВІТЛО</span><span class="v3-brand-green">ПУЛЬС 3.0</span><span class="v3-pulse-mark" aria-hidden="true">⌁</span></strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
     '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
