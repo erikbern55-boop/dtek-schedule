@@ -201,6 +201,11 @@ const css = [
   ".v3-brand strong{font-weight:900!important;letter-spacing:-1.5px!important;text-shadow:0 0 5px #9fff8e,0 0 19px #2ad958!important}",
   ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#5cf86a!important;box-shadow:inset 0 0 12px #0a6c35,0 0 8px #168f3b,0 0 2px #b7ffb9!important}",
   ".v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}",
+  // Independent garden and sowing panels for the approved V3 layout.
+  ".v3-weather .weather-garden{grid-column:1/8!important;grid-row:2!important;display:block!important;min-height:0!important}",
+  ".v3-weather .weather-sowing{grid-column:8/13!important;grid-row:2!important;min-height:0!important}",
+  ".v3-weather .weather-garden .wx-garden-body{display:flex!important}",
+  ".v3-weather .weather-sowing .wx-sowing{display:flex!important;flex-direction:column!important;gap:5px!important;margin:0!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -214,6 +219,12 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
     .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, "<div class=\"wx-garden-art\"><svg viewBox=\"0 0 180 150\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M92 40Q87 10 98 4Q104 28 102 46\" fill=\"none\" stroke=\"#7eac64\" stroke-width=\"6\"/><path d=\"M90 48Q64 31 49 57Q25 79 41 110Q60 137 90 129Q120 138 143 110Q157 81 133 58Q116 34 90 48Z\" fill=\"#e8dec5\" stroke=\"#f7edda\" stroke-width=\"4\"/><path d=\"M91 48Q67 68 71 104Q75 124 91 130M91 48Q116 69 110 105Q107 126 91 130M55 62Q47 95 63 117M126 62Q136 94 118 119\" stroke=\"#a69a83\" fill=\"none\" stroke-width=\"3\"/></svg></div>")
     .replace(/<div class="wx-moon-icon">[\s\S]*?<\/div>/, "<div class=\"wx-moon-icon\"><svg viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"ml\"><stop stop-color=\"#fffde6\"/><stop offset=\".65\" stop-color=\"#d4d3c6\"/><stop offset=\"1\" stop-color=\"#777d79\"/></radialGradient><clipPath id=\"mc\"><circle cx=\"60\" cy=\"60\" r=\"52\"/></clipPath></defs><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"url(#ml)\"/><g clip-path=\"url(#mc)\" fill=\"#777b78\" opacity=\".28\"><ellipse cx=\"34\" cy=\"42\" rx=\"15\" ry=\"9\"/><ellipse cx=\"78\" cy=\"31\" rx=\"13\" ry=\"18\"/><ellipse cx=\"81\" cy=\"79\" rx=\"24\" ry=\"15\"/><circle cx=\"60\" cy=\"57\" r=\"8\"/></g><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"none\" stroke=\"#e6f8e1\" stroke-width=\"2\"/></svg></div>")
+  // Split the garden markup for V3 only; shared weather rendering is unchanged.
+  const splitGarden=weatherMarkup.replace(
+    /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
+    (_whole,heading,body,sowing)=>heading+body+"</section>"+
+      '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
+  )
   const html='<article class="v3">'+
     '<header class="v3-head"><div class="v3-place"><svg class="v3-robot" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Робот Світлопульсу"><path d="M65 18V7" stroke="#8effa3" stroke-width="6"/><circle cx="65" cy="7" r="6" fill="#b8ff8a"/><rect x="13" y="25" width="104" height="90" rx="26" fill="#5abe73" stroke="#aaffad" stroke-width="6"/><rect x="24" y="42" width="82" height="55" rx="19" fill="#092b20"/><ellipse cx="46" cy="66" rx="12" ry="16" fill="#8dffbf"/><ellipse cx="84" cy="66" rx="12" ry="16" fill="#8dffbf"/><path d="M48 87Q65 102 82 87" fill="none" stroke="#90ffc0" stroke-width="5" stroke-linecap="round"/><path d="M12 70H3M118 70H127" stroke="#aaffad" stroke-width="9" stroke-linecap="round"/><path d="M42 115v22m46-22v22" stroke="#aaffad" stroke-width="10" stroke-linecap="round"/></svg><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div>'+
     '<div class="v3-brand"><strong>⚡ СВІТЛОПУЛЬС 3.0</strong><small>Електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
@@ -222,7 +233,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<section class="v3-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
-    '<div class="v3-weather">'+weatherMarkup+'</div>'+
+    '<div class="v3-weather">'+splitGarden+'</div>'+
     '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ ДТЕК · графіки</span><span>☁ Open-Meteo · погода</span><span>🌱 Поради · локальні правила</span><span>🌙 Місяць · розрахунок</span><span>✨ Астрологія · розвага</span></section>'+
     '<footer class="v3-footer"><span>Дані: '+esc(update)+'</span><span>Графіки · 5 хв</span><span>Погода · 30 хв</span><span>Джерело: '+esc(source)+'</span></footer></article>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+'</body></html>'
