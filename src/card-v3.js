@@ -271,6 +271,7 @@ const css = [
   ".v3-weather .weather-tomorrow .wx-forecast-values{gap:12px!important}",
   ".v3-weather .weather-garden .wx-garden-art{overflow:hidden!important;border-radius:16px!important}",
   ".v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:14px!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center center!important;background:#10231b!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
