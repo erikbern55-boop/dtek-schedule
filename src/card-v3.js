@@ -147,7 +147,7 @@ const css = [
   ".v3-weather .wx-moon-icon svg{width:110px!important;height:110px!important}",
   // Compact reference-aligned layout; retain every dynamic information field.
   ".v3-head{min-height:112px!important;gap:10px!important}",
-  ".v3-robot{height:98px!important;width:91px!important}",
+  ".v3-robot{height:112px!important;width:103px!important}",
   ".v3-brand strong{font-size:49px!important}",
   ".v3-power>.v3-panel{height:240px!important}",
   ".v3-weather .wx-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:10px!important}",
@@ -211,7 +211,7 @@ const css = [
   // Approved reference: horizontal date/dial composition and restrained header.
   ".v3-head{grid-template-columns:350px 1fr 275px!important;gap:12px!important;align-items:center!important}",
   ".v3-place{display:flex!important;align-items:center!important;flex-wrap:wrap!important;align-content:center!important;column-gap:12px!important;line-height:1.25!important}",
-  ".v3-robot{float:none!important;flex:0 0 92px!important;margin:0!important}",
+  ".v3-robot{float:none!important;flex:0 0 105px!important;margin:0!important}",
   ".v3-place strong{flex:1!important;font-size:27px!important}",
   ".v3-brand strong{font-style:italic!important;font-size:49px!important;white-space:nowrap!important}",
   ".v3-brand small{border-top:1px solid #4cdf67!important;padding-top:5px!important}",
