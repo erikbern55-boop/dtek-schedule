@@ -310,6 +310,16 @@ export async function renderCardV3Png(details) {
   try {
     const page=await browser.newPage({viewport:{width:1404,height:900},deviceScaleFactor:1})
     await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+    // A screenshot must not silently capture an empty photo frame.
+    await page.locator(".weather-garden .wx-garden-art img").evaluate(async img=>{
+      if(!img.complete)await new Promise((resolve,reject)=>{
+        const timeout=setTimeout(()=>reject(new Error("Garlic photograph load timed out")),10000)
+        img.addEventListener("load",()=>{clearTimeout(timeout);resolve()},{once:true})
+        img.addEventListener("error",()=>{clearTimeout(timeout);reject(new Error("Garlic photograph failed to load"))},{once:true})
+      })
+      if(!img.naturalWidth)throw new Error("Garlic photograph is unavailable")
+      await img.decode()
+    })
     const png=await page.screenshot({type:"png",fullPage:true})
     if(png.length<2000)throw Error("Empty V3 card image")
     return png
