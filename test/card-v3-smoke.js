@@ -92,7 +92,7 @@ try {
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
- assert.ok(Math.abs(layout.air.y-layout.tomorrow.y)<4&&Math.abs(layout.air.y-layout.tomorrow.y)<4&&Math.abs(layout.air.y-layout.sun.y)<4&&Math.abs(layout.air.y-layout.soil.y)<4,"four weather panels share first row")
+ assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
  assert.ok(layout.garden.y>=layout.air.b-3,"gardening follows weather")
  assert.ok(Math.abs(layout.moon.y-layout.astro.y)<4,"night panels share third row")
@@ -100,6 +100,20 @@ try {
  assert.ok(layout.sources.y>=layout.moon.b-3,"sources follow night row")
  assert.ok(layout.footer.y>=layout.sources.b-3,"footer follows sources")
  assert.ok(Object.values(layout).every(b=>!b.overflow),"no panel horizontally overflows")
+
+ // Guard against hidden or vertically clipped text in the compact garden row.
+ const gardenContent=await page.evaluate(()=>{
+  const selectors=[".weather-garden .wx-garden-body",".weather-garden .wx-garden-copy",".weather-sowing .wx-sowing"]
+  return selectors.map(selector=>{
+   const el=document.querySelector(selector)
+   if(!el)return {selector,missing:true}
+   const r=el.getBoundingClientRect()
+   const parent=el.closest(".wx-box").getBoundingClientRect()
+   return {selector,missing:false,top:r.top-parent.top,bottom:r.bottom-parent.top,panelHeight:parent.height}
+  })
+ })
+ assert.ok(gardenContent.every(x=>!x.missing&&x.top>=-2&&x.bottom<=x.panelHeight+2),
+  "garden advice and sowing content must remain fully inside their panels: "+JSON.stringify(gardenContent))
  // The reference canvas is 1404 px wide; record actual height and panel geometry
  // for reproducible visual comparison instead of asserting pixel perfection.
  const dimensions=await page.evaluate(()=>{
