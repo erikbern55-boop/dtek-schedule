@@ -100,5 +100,17 @@ try {
  assert.ok(layout.sources.y>=layout.moon.b-3,"sources follow night row")
  assert.ok(layout.footer.y>=layout.sources.b-3,"footer follows sources")
  assert.ok(Object.values(layout).every(b=>!b.overflow),"no panel horizontally overflows")
+ // The reference canvas is 1404 px wide; record actual height and panel geometry
+ // for reproducible visual comparison instead of asserting pixel perfection.
+ const dimensions=await page.evaluate(()=>{
+  const card=document.querySelector(".v3").getBoundingClientRect()
+  const selectors=[".v3-head",".v3-power",".v3-weather",".weather-garden",".weather-sowing",".weather-moon",".weather-astro",".v3-sources",".v3-footer"]
+  return {width:Math.round(card.width),height:Math.round(card.height),sections:Object.fromEntries(selectors.map(sel=>{const el=document.querySelector(sel);const r=el?.getBoundingClientRect();return [sel,r?{x:Math.round(r.x-card.x),y:Math.round(r.y-card.y),width:Math.round(r.width),height:Math.round(r.height)}:null]}))}
+ })
+ assert.equal(dimensions.width,1404,"approved V3 canvas width must remain 1404px")
+ assert.ok(dimensions.height>=1200&&dimensions.height<=1900,"card height must remain within reviewable bounds")
+ assert.ok(Object.values(dimensions.sections).every(Boolean),"all reference sections have measurable geometry")
+ fs.writeFileSync("svitlopuls-v3-layout.json",JSON.stringify(dimensions,null,2)+"\\n")
+
  console.log("V3 visual layout OK",JSON.stringify(layout))
 }finally{await browser.close()}
