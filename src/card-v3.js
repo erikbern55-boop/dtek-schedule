@@ -254,6 +254,12 @@ const css = [
 
   ".v3-head .v3-pulse-mark{flex:0 0 68px!important;width:68px!important;height:42px!important;margin-left:7px!important;transform:none!important}",
   ".v3-head .v3-pulse-mark svg{display:block!important;width:68px!important;height:42px!important;filter:drop-shadow(0 0 5px #2ae84e)}",
+
+  // Keep the first weather row compact without hiding live readings.
+  ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:172px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{gap:7px!important}",
+  ".v3-weather .wx-sun-pair,.v3-weather .wx-soil-pair{gap:7px!important}",
+  ".v3-weather .weather-sun,.v3-weather .weather-soil{gap:5px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
