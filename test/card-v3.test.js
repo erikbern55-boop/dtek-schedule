@@ -64,3 +64,13 @@ test("V3 mascot keeps turquoise neon palette and lightning insignia",()=>{
   assert.match(html,/stop-color="#2bc8c7"/)
   assert.match(html,/fill="#e7ff45"/)
 })
+
+
+test("V3 neon wordmark includes an actual vector pulse rather than a placeholder glyph",()=>{
+  const html=buildCardV3Html(details)
+  assert.match(html,/<span class="v3-brand-white">СВІТЛО<\/span>/)
+  assert.match(html,/<span class="v3-brand-green">ПУЛЬС 3\.0<\/span>/)
+  assert.match(html,/<span class="v3-pulse-mark" aria-hidden="true"><svg viewBox="0 0 100 46"/)
+  assert.match(html,/M2 25H22L31 13L43 38L55 5L66 25H98/)
+  assert.doesNotMatch(html,/<span class="v3-pulse-mark"[^>]*>⌁<\/span>/)
+})
