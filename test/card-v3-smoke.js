@@ -143,6 +143,10 @@ try {
     width:Math.round(r.width),height:Math.round(r.height)}]
   }))
  })
+ assert.ok(referenceGeometry.header&&referenceGeometry.robot&&referenceGeometry.wordmark,
+  "reference geometry must contain complete header measurements")
+ assert.ok(referenceGeometry.weather&&referenceGeometry.garden&&referenceGeometry.moon,
+  "reference geometry must contain all major content rows")
  fs.writeFileSync("svitlopuls-v3-reference-geometry.json",JSON.stringify({
   canvasWidth:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().width)),
   canvasHeight:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().height)),
