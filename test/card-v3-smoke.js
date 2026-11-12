@@ -84,6 +84,16 @@ try {
   assert.ok(item.left>=-2&&item.right<=1406,"header "+item.name+" must remain inside card canvas: "+JSON.stringify(item))
   assert.ok(item.scrollWidth<=item.clientWidth+3,"header "+item.name+" text must not clip horizontally: "+JSON.stringify(item))
  }
+ // Verify the new neon ECG mark stays visible within the brand, not just present in HTML.
+ const pulse=await page.evaluate(()=>{
+  const brand=document.querySelector(".v3-brand strong")
+  const mark=document.querySelector(".v3-pulse-mark svg")
+  if(!brand||!mark)return null
+  const b=brand.getBoundingClientRect(),m=mark.getBoundingClientRect()
+  return {brandLeft:b.left,brandRight:b.right,markLeft:m.left,markRight:m.right,width:m.width,height:m.height}
+ })
+ assert.ok(pulse&&pulse.width>=40&&pulse.height>=25&&pulse.markLeft>=pulse.brandLeft-2&&pulse.markRight<=pulse.brandRight+2,
+  "neon ECG mark must fit visibly within the approved V3 wordmark: "+JSON.stringify(pulse))
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
