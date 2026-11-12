@@ -7,6 +7,7 @@ import { renderWeatherPanel, WEATHER_CSS } from "./weather-card.js"
 const esc = value => String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
 const kyivTime = value => new Intl.DateTimeFormat("uk-UA",{timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"}).format(value)
 const displayDate = date => date.split("-").reverse().join(".")
+const weekday = date => new Intl.DateTimeFormat("uk-UA",{weekday:"long",timeZone:"UTC"}).format(new Date(date+"T12:00:00Z"))
 const css = [
   "*{box-sizing:border-box}",
   "html,body{width:1404px;margin:0;background:#020e08;color:#f0fff3;font-family:Arial,sans-serif}",
@@ -223,6 +224,7 @@ const css = [
   ".v3-brand-green{color:#44f32d!important;text-shadow:0 0 12px #3fe52d!important}",
   ".v3-pulse-mark{color:#4aff55!important;font-size:62px!important;font-style:normal!important;margin-left:8px!important}",
   ".v3-brand strong{letter-spacing:-1.5px!important;font-size:48px!important}",
+  ".v3-weekday{display:block;font-size:19px;line-height:1.2;font-weight:700;text-transform:lowercase;margin-top:6px;color:#caffc4}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -247,7 +249,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-brand"><strong><span class="v3-brand-white">СВІТЛО</span><span class="v3-brand-green">ПУЛЬС 3.0</span><span class="v3-pulse-mark" aria-hidden="true">⌁</span></strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
-    '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
+    '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b><span class="v3-weekday">'+esc(weekday(date))+'</span></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
