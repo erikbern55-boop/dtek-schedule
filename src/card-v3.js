@@ -244,6 +244,13 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art{flex:0 0 160px!important;min-width:160px!important;width:160px!important;height:155px!important;min-height:155px!important}",
   ".v3-weather .weather-garden .wx-garden-art svg{width:160px!important;height:155px!important}",
   ".v3-weather .weather-garden .wx-garden-copy{font-size:20px!important;line-height:1.28!important}",
+
+  // Distinguish the approved central brand from the location and information badge.
+  ".v3-head .v3-brand{min-width:0!important;align-self:center!important}",
+  ".v3-head .v3-brand strong{display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;line-height:1.08!important}",
+  ".v3-head .v3-brand small{margin-top:9px!important;line-height:1.2!important}",
+  ".v3-head .v3-pulse-mark{display:inline-block!important;line-height:1!important;margin-left:10px!important;transform:rotate(-12deg)}",
+  ".v3-head .v3-tag{align-self:center!important;line-height:1.35!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
