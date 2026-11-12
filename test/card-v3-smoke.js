@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { readFileSync } from "node:fs"
 import assert from "node:assert/strict"
 import { chromium } from "playwright"
 import {buildCardV3Html,renderCardV3Png} from "../src/card-v3.js"
@@ -19,6 +20,15 @@ const weather={
 }
 const details={schedule,date:"2026-11-07",label:"сьогодні",update:"07.11.2026 12:00",
  source:"ДТЕК",now:new Date("2026-11-07T14:30:00.000Z"),weather}
+// Regression guard: the current Telegram full-screen viewer must survive the redesign.
+// This verifies existing code only; it does not publish to Telegram.
+const mediaSource=readFileSync(new URL("../src/media.js",import.meta.url),"utf8")
+assert.match(mediaSource,/⛶ Відкрити на весь екран/,"keep the full-screen button")
+assert.match(mediaSource,/erikbern55-boop\.github\.io\/dtek-schedule\//,"keep existing viewer URL")
+assert.match(mediaSource,/\?day=/,"keep today/tomorrow viewer selection")
+assert.match(mediaSource,/saveViewerSnapshot\(png, label/,"keep full-screen HTML snapshot generation")
+assert.match(mediaSource,/overflow:auto!important/,"keep full-screen scrolling")
+console.log("Existing full-screen viewer preserved in production integration source")
 const png=await renderCardV3Png(details)
 assert.ok(png.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
 fs.writeFileSync("svitlopuls-v3-preview.png",png)
