@@ -111,6 +111,13 @@ try {
   if(!img.complete)await Promise.race([new Promise(resolve=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",resolve,{once:true})}),new Promise(resolve=>setTimeout(resolve,8000))])
   return {complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc}
  })
+ const garlicPresentation=await page.locator(".weather-garden .wx-garden-art img").evaluate(img=>{
+  const style=getComputedStyle(img),r=img.getBoundingClientRect()
+  return {fit:style.objectFit,width:r.width,height:r.height,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight}
+ })
+ assert.equal(garlicPresentation.fit,"contain","show complete garlic photo rather than cropping it")
+ assert.ok(garlicPresentation.width>=140&&garlicPresentation.height>=130,
+  "garlic photo should remain prominent in gardening panel: "+JSON.stringify(garlicPresentation))
  assert.ok(garlicPhoto.complete&&garlicPhoto.naturalWidth>0&&garlicPhoto.naturalHeight>0,
   "garlic photograph must actually load in Chromium, not merely exist in HTML: "+JSON.stringify(garlicPhoto))
  const layout=await page.evaluate(()=>{
