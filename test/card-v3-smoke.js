@@ -26,6 +26,15 @@ const browser=await chromium.launch({headless:true})
 try {
  const page=await browser.newPage({viewport:{width:1404,height:900}})
  await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+ const sourceLinks=await page.locator(".v3-sources a").evaluateAll(links=>links.map(a=>({text:a.textContent,href:a.href,target:a.target,rel:a.rel})))
+ assert.equal(sourceLinks.length,6,"all six reference links must remain clickable in HTML")
+ for(const link of sourceLinks){
+  assert.match(link.href,/^https:\/\//,"reference link must use HTTPS")
+  assert.equal(link.target,"_blank","reference opens separately")
+  assert.match(link.rel,/noopener/,"external links use noopener")
+ }
+ assert.ok(sourceLinks.some(x=>x.href.includes("dtek-krem.com.ua")),"DTEK source link exists")
+ console.log("V3 source links OK",sourceLinks.map(x=>x.href))
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
