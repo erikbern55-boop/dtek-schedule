@@ -120,6 +120,24 @@ try {
    sources:box(".v3-sources"),footer:box(".v3-footer"),body:box(".v3")}
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
+
+ // Check actual weather content, not only outer panel geometry.
+ const weatherReadability=await page.evaluate(()=>{
+  const selectors=[".weather-air",".weather-tomorrow",".weather-sun",".weather-soil"]
+  return selectors.map(selector=>{
+   const panel=document.querySelector(selector),bounds=panel.getBoundingClientRect()
+   const children=[...panel.querySelectorAll("h3,.wx-fact,.wx-forecast-values,.wx-sun-pair,.wx-soil-pair")]
+    .filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=="hidden")
+    .map(el=>{const r=el.getBoundingClientRect();return {tag:el.className||el.tagName,top:r.top,bottom:r.bottom}})
+   return {selector,top:bounds.top,bottom:bounds.bottom,children}
+  })
+ })
+ for(const panel of weatherReadability){
+  for(const item of panel.children){
+   assert.ok(item.top>=panel.top-3&&item.bottom<=panel.bottom+3,
+    "weather content must fit inside compact panel: "+JSON.stringify({panel:panel.selector,item}))
+  }
+ }
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
