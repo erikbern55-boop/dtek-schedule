@@ -32,10 +32,30 @@ console.log("Existing full-screen viewer preserved in production integration sou
 const png=await renderCardV3Png(details)
 assert.ok(png.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
 fs.writeFileSync("svitlopuls-v3-preview.png",png)
+
+// Test-only full-screen HTML preview: never changes production viewer or Telegram.
+const responsiveViewerCss = '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+  '<style>html,body{width:100%!important;min-height:100%;overflow:auto!important}' +
+  'body{margin:0!important;background:#020e08!important}' +
+  '.v3{width:1404px;max-width:none;transform-origin:top left}' +
+  '</style>'
+const fullScreenHtml=buildCardV3Html(details).replace("</head>",responsiveViewerCss+"</head>")
+fs.writeFileSync("svitlopuls-v3-fullscreen-preview.html",fullScreenHtml)
+
 const browser=await chromium.launch({headless:true})
 try {
  const page=await browser.newPage({viewport:{width:1404,height:900}})
  await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+ const viewerPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true})
+ await viewerPage.setContent(fullScreenHtml,{waitUntil:"load"})
+ const viewerCheck=await viewerPage.evaluate(()=>{
+  const card=document.querySelector(".v3")
+  return {viewport:document.documentElement.clientWidth,cardWidth:card.getBoundingClientRect().width,
+   pageWidth:document.documentElement.scrollWidth,linkCount:document.querySelectorAll(".v3-sources a").length}
+ })
+ assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
+ assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
+ await viewerPage.close()
  const sourceLinks=await page.locator(".v3-sources a").evaluateAll(links=>links.map(a=>({text:a.textContent,href:a.href,target:a.target,rel:a.rel})))
  assert.equal(sourceLinks.length,6,"all six reference links must remain clickable in HTML")
  for(const link of sourceLinks){
