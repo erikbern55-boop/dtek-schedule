@@ -206,6 +206,18 @@ const css = [
   ".v3-weather .weather-sowing{grid-column:8/13!important;grid-row:2!important;min-height:0!important}",
   ".v3-weather .weather-garden .wx-garden-body{display:flex!important}",
   ".v3-weather .weather-sowing .wx-sowing{display:flex!important;flex-direction:column!important;gap:5px!important;margin:0!important}",
+  // Approved reference: horizontal date/dial composition and restrained header.
+  ".v3-head{grid-template-columns:350px 1fr 275px!important;gap:12px!important;align-items:center!important}",
+  ".v3-place{display:flex!important;align-items:center!important;flex-wrap:wrap!important;align-content:center!important;column-gap:12px!important;line-height:1.25!important}",
+  ".v3-robot{float:none!important;flex:0 0 92px!important;margin:0!important}",
+  ".v3-place strong{flex:1!important;font-size:27px!important}",
+  ".v3-brand strong{font-style:italic!important;font-size:49px!important;white-space:nowrap!important}",
+  ".v3-brand small{border-top:1px solid #4cdf67!important;padding-top:5px!important}",
+  ".v3-date-panel{display:grid!important;grid-template-columns:1fr 1fr!important;align-items:center!important;gap:4px!important}",
+  ".v3-date-panel .v3-date{text-align:left!important;padding-left:8px!important;font-size:24px!important}",
+  ".v3-date-panel .v3-date b{font-size:29px!important;margin:10px 0 0!important}",
+  ".v3-date-panel .v3-dial{width:200px!important;height:200px!important;margin:0 auto!important}",
+  ".v3-count .v3-clock{color:#50f529!important;text-shadow:0 0 14px #37e52e!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -230,7 +242,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-brand"><strong>⚡ СВІТЛОПУЛЬС 3.0</strong><small>Електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
-    '<section class="v3-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
+    '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
