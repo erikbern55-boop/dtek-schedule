@@ -230,6 +230,13 @@ const css = [
   ".v3-weather .weather-tomorrow{justify-content:flex-start!important}",
   ".v3-weather .weather-sun,.v3-weather .weather-soil{display:flex!important;flex-direction:column!important;justify-content:flex-start!important}",
   ".v3-weather .weather-sun h3,.v3-weather .weather-soil h3{display:block!important;margin:0 0 8px!important;padding:0 0 6px!important;border-bottom:1px solid #3d9d63!important;text-align:left!important}",
+
+  // Compact the gardening row without hiding advice or sowing recommendations.
+  ".v3-weather .weather-garden,.v3-weather .weather-sowing{align-self:start!important}",
+  ".v3-weather .weather-garden .wx-garden-body{align-items:flex-start!important;gap:10px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{margin:0!important;flex:0 0 110px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{margin:0!important;line-height:1.2!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row{margin:0!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
