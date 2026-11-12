@@ -58,6 +58,11 @@ try {
  })
  assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
  assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
+ // Real mobile screenshot is retained for human visual inspection of the viewer.
+ await viewerPage.screenshot({path:"svitlopuls-v3-mobile-preview.png",fullPage:true})
+ const mobileLinks=await viewerPage.locator(".v3-sources a").evaluateAll(links=>links.map(a=>({href:a.href,clickable:a.getClientRects().length>0})))
+ assert.ok(mobileLinks.every(link=>link.clickable&&link.href.startsWith("https://")),"all mobile viewer source links are visible and valid")
+ assert.ok(viewerCheck.cardWidth>viewerCheck.viewport,"narrow mobile view intentionally permits horizontal panning of the full-size approved card")
  await viewerPage.close()
  const sourceLinks=await page.locator(".v3-sources a").evaluateAll(links=>links.map(a=>({text:a.textContent,href:a.href,target:a.target,rel:a.rel})))
  assert.equal(sourceLinks.length,6,"all six reference links must remain clickable in HTML")
