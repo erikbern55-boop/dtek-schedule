@@ -265,6 +265,8 @@ const css = [
   ".v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:auto!important;margin-bottom:auto!important}",
   ".v3-weather .weather-sun .wx-sun-pair{gap:10px!important}",
   ".v3-weather .weather-soil .wx-soil-pair{gap:9px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{overflow:hidden!important;border-radius:16px!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:14px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -276,7 +278,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const eventHeading=event.kind==="countdown" ? event.title : "Наступна зміна графіка"
   const eventDetail=event.kind==="countdown" ? event.detail+" · станом на "+kyivTime(now)+" (Київ)" : event.detail
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
-    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, "<div class=\"wx-garden-art\"><svg viewBox=\"0 0 180 150\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M92 40Q87 10 98 4Q104 28 102 46\" fill=\"none\" stroke=\"#7eac64\" stroke-width=\"6\"/><path d=\"M90 48Q64 31 49 57Q25 79 41 110Q60 137 90 129Q120 138 143 110Q157 81 133 58Q116 34 90 48Z\" fill=\"#e8dec5\" stroke=\"#f7edda\" stroke-width=\"4\"/><path d=\"M91 48Q67 68 71 104Q75 124 91 130M91 48Q116 69 110 105Q107 126 91 130M55 62Q47 95 63 117M126 62Q136 94 118 119\" stroke=\"#a69a83\" fill=\"none\" stroke-width=\"3\"/></svg></div>")
+    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Garlic_bulbs.jpg?width=330" alt="Фотографія головок часнику" loading="eager" referrerpolicy="no-referrer"/></div>')
     .replace(/<div class="wx-moon-icon">[\s\S]*?<\/div>/, "<div class=\"wx-moon-icon\"><svg viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"ml\"><stop stop-color=\"#fffde6\"/><stop offset=\".65\" stop-color=\"#d4d3c6\"/><stop offset=\"1\" stop-color=\"#777d79\"/></radialGradient><clipPath id=\"mc\"><circle cx=\"60\" cy=\"60\" r=\"52\"/></clipPath></defs><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"url(#ml)\"/><g clip-path=\"url(#mc)\" fill=\"#777b78\" opacity=\".28\"><ellipse cx=\"34\" cy=\"42\" rx=\"15\" ry=\"9\"/><ellipse cx=\"78\" cy=\"31\" rx=\"13\" ry=\"18\"/><ellipse cx=\"81\" cy=\"79\" rx=\"24\" ry=\"15\"/><circle cx=\"60\" cy=\"57\" r=\"8\"/></g><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"none\" stroke=\"#e6f8e1\" stroke-width=\"2\"/></svg></div>")
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
