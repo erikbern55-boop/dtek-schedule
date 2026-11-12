@@ -260,6 +260,11 @@ const css = [
   ".v3-weather .weather-tomorrow .wx-forecast-values{gap:7px!important}",
   ".v3-weather .wx-sun-pair,.v3-weather .wx-soil-pair{gap:7px!important}",
   ".v3-weather .weather-sun,.v3-weather .weather-soil{gap:5px!important}",
+
+  // Center actual sunrise/soil readings in the tall shared weather row while keeping headings at the top.
+  ".v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:auto!important;margin-bottom:auto!important}",
+  ".v3-weather .weather-sun .wx-sun-pair{gap:10px!important}",
+  ".v3-weather .weather-soil .wx-soil-pair{gap:9px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
