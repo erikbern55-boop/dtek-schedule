@@ -110,7 +110,7 @@ try {
  assert.equal(dimensions.width,1404,"approved V3 canvas width must remain 1404px")
  assert.ok(dimensions.height>=1200&&dimensions.height<=1900,"card height must remain within reviewable bounds")
  assert.ok(Object.values(dimensions.sections).every(Boolean),"all reference sections have measurable geometry")
- fs.writeFileSync("svitlopuls-v3-layout.json",JSON.stringify(dimensions,null,2)+"\\n")
+ fs.writeFileSync("svitlopuls-v3-layout.json",JSON.stringify(dimensions,null,2)+"\n")
 
- console.log("V3 visual layout OK",JSON.stringify(layout))
+ console.log("V3 visual layout OK",JSON.stringify({layout,dimensions}))
 }finally{await browser.close()}
