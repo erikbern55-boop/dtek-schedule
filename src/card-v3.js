@@ -187,6 +187,13 @@ const css = [
   ".v3-weather .wx-garden-art svg{display:block!important;width:110px!important;height:105px!important}",
   ".v3-weather .wx-garden-copy{font-size:18px!important;line-height:1.23!important}",
   ".v3-weather .weather-garden{align-items:start!important}",
+  // Reference typography and safe spacing: avoid cropping dynamic text.
+  ".v3{padding-top:10px!important;padding-bottom:8px!important}",
+  ".v3-head{min-height:100px!important}",
+  ".v3-brand strong{font-size:52px!important;letter-spacing:-1px!important;color:#63fa59!important;text-shadow:0 0 12px #3df55a!important}",
+  ".v3-brand small{font-size:16px!important}",
+  ".v3-tag{border:2px solid #67fa58;border-radius:20px;padding:9px 6px;font-size:17px!important;background:#05210f}",
+  ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{box-shadow:inset 0 0 14px #0d7837,0 0 10px #158c35!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
