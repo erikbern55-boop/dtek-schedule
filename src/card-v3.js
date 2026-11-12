@@ -251,6 +251,9 @@ const css = [
   ".v3-head .v3-brand small{margin-top:9px!important;line-height:1.2!important}",
   ".v3-head .v3-pulse-mark{display:inline-block!important;line-height:1!important;margin-left:10px!important;transform:rotate(-12deg)}",
   ".v3-head .v3-tag{align-self:center!important;line-height:1.35!important}",
+
+  ".v3-head .v3-pulse-mark{flex:0 0 68px!important;width:68px!important;height:42px!important;margin-left:7px!important;transform:none!important}",
+  ".v3-head .v3-pulse-mark svg{display:block!important;width:68px!important;height:42px!important;filter:drop-shadow(0 0 5px #2ae84e)}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
