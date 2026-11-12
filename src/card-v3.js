@@ -258,6 +258,7 @@ const css = [
   ".v3-head .v3-robot{max-height:112px!important;align-self:center!important}",
   ".v3-head .v3-robot{overflow:visible!important}",
   ".v3-head .v3-brand strong{max-width:100%!important}",
+  ".v3-head .v3-robot{filter:drop-shadow(0 0 5px #7effee) drop-shadow(0 0 12px #2ad9a8)!important}",
 
   // Keep the first weather row compact without hiding live readings.
   ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{min-height:172px!important}",
