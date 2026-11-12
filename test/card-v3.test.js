@@ -39,3 +39,18 @@ test("V3 renders tomorrow and today without altering schedule data",()=>{
   assert.match(b,/Графік завтра/)
   assert.equal(JSON.stringify(schedule),copy)
 })
+
+test("V3 uses date-specific Ukrainian weekdays for today and tomorrow",()=>{
+  const tuesday=buildCardV3Html(details)
+  const wednesday=buildCardV3Html({...details,date:"2026-11-11",label:"сьогодні"})
+  assert.match(tuesday,/<span class="v3-weekday">вівторок<\/span>/)
+  assert.match(wednesday,/<span class="v3-weekday">середа<\/span>/)
+  assert.match(wednesday,/11\.11\.2026/)
+})
+
+test("V3 keeps the approved garden and sowing panels distinct",()=>{
+  const html=buildCardV3Html(details)
+  assert.match(html,/class="wx-box weather-garden"/)
+  assert.match(html,/class="wx-box weather-sowing"/)
+  assert.match(html,/Посівний календар/)
+})
