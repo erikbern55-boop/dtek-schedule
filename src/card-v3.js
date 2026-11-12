@@ -225,6 +225,11 @@ const css = [
   ".v3-pulse-mark{color:#4aff55!important;font-size:62px!important;font-style:normal!important;margin-left:8px!important}",
   ".v3-brand strong{letter-spacing:-1.5px!important;font-size:48px!important}",
   ".v3-weekday{display:block;font-size:19px;line-height:1.2;font-weight:700;text-transform:lowercase;margin-top:6px;color:#caffc4}",
+
+  // Match the reference's top-aligned weather card headings; avoid floating titles mid-card.
+  ".v3-weather .weather-tomorrow{justify-content:flex-start!important}",
+  ".v3-weather .weather-sun,.v3-weather .weather-soil{display:flex!important;flex-direction:column!important;justify-content:flex-start!important}",
+  ".v3-weather .weather-sun h3,.v3-weather .weather-soil h3{display:block!important;margin:0 0 8px!important;padding:0 0 6px!important;border-bottom:1px solid #3d9d63!important;text-align:left!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
