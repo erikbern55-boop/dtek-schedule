@@ -94,6 +94,13 @@ try {
  })
  assert.ok(pulse&&pulse.width>=40&&pulse.height>=25&&pulse.markLeft>=pulse.brandLeft-2&&pulse.markRight<=pulse.brandRight+2,
   "neon ECG mark must fit visibly within the approved V3 wordmark: "+JSON.stringify(pulse))
+ // A photo URL in HTML is insufficient: ensure Chromium actually decoded the garlic image.
+ const garlicPhoto=await page.locator(".weather-garden .wx-garden-art img").evaluate(async img=>{
+  if(!img.complete)await Promise.race([new Promise(resolve=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",resolve,{once:true})}),new Promise(resolve=>setTimeout(resolve,8000))])
+  return {complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc}
+ })
+ assert.ok(garlicPhoto.complete&&garlicPhoto.naturalWidth>0&&garlicPhoto.naturalHeight>0,
+  "garlic photograph must actually load in Chromium, not merely exist in HTML: "+JSON.stringify(garlicPhoto))
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
