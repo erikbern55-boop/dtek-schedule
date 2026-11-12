@@ -54,3 +54,13 @@ test("V3 keeps the approved garden and sowing panels distinct",()=>{
   assert.match(html,/class="wx-box weather-sowing"/)
   assert.match(html,/Посівний календар/)
 })
+
+
+test("V3 mascot keeps turquoise neon palette and lightning insignia",()=>{
+  const html=buildCardV3Html(details)
+  assert.match(html,/aria-label="Бірюзовий робот Світлопульсу з блискавкою"/)
+  assert.match(html,/<linearGradient id="v3bot"/)
+  assert.match(html,/stop-color="#74f8ed"/)
+  assert.match(html,/stop-color="#2bc8c7"/)
+  assert.match(html,/fill="#e7ff45"/)
+})
