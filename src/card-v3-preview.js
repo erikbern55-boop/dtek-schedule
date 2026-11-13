@@ -15,7 +15,12 @@ export function buildIntegratedPreview({artworkUrl,rectangles,sourceRectangles,p
  const data=mergeFreshArtworkData({previous:previousData,schedule,weather});
  const due=refreshDue({nowMs,scheduleFetchedAtMs,weatherFetchedAtMs});
  const renderData={...data};
- if(useWeatherInset){for(const key of ["temperatureNow","temperatureTodayMin","temperatureTodayMax"])delete renderData[key];}
+ if(useWeatherInset){
+  for(const key of ["temperatureNow","temperatureTodayMin","temperatureTodayMax"]){
+   if(typeof data[key]!=="string"||data[key]==="—"||!data[key].trim())throw new Error("Today weather requires all three temperatures: "+key);
+   delete renderData[key];
+  }
+ }
  let card=buildLiveArtworkV3({artworkUrl,rectangles,sourceRectangles,data:renderData,referenceWidth,referenceHeight});
  if(useWeatherInset){
   const inset=weatherInsetHtml({...data,width:referenceWidth,height:referenceHeight});
