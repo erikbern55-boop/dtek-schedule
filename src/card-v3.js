@@ -289,6 +289,9 @@ const css = [
   ".v3-weather .weather-sowing .wx-sowing-row{padding:3px 7px!important;line-height:1.12!important;font-size:14px!important}",
   ".v3-weather .weather-sowing .wx-sowing-row b{font-size:15px!important;margin-bottom:1px!important}",
   ".v3-weather .weather-garden .wx-garden-body{padding:5px 10px!important}",
+  ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{padding-top:10px!important;padding-bottom:10px!important}",
+  ".v3-weather .weather-air .wx-facts{gap:2px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{gap:8px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
