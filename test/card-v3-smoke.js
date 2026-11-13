@@ -160,6 +160,18 @@ try {
   "garlic photo should remain prominent in gardening panel: "+JSON.stringify(garlicPresentation))
  assert.ok(garlicPhoto.complete&&garlicPhoto.naturalWidth>0&&garlicPhoto.naturalHeight>0,
   "garlic photograph must actually load in Chromium, not merely exist in HTML: "+JSON.stringify(garlicPhoto))
+ // The approved garden source is a distinct, clickable column; no text/photo overlap.
+ const gardenSource=await page.evaluate(()=>{
+  const card=document.querySelector(".weather-garden"),source=card?.querySelector(".v3-garden-source"),photo=card?.querySelector(".wx-garden-art"),copy=card?.querySelector(".wx-garden-copy"),link=source?.querySelector("a");
+  if(!card||!source||!photo||!copy||!link)return null;
+  const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}};
+  return {card:rect(card),source:rect(source),photo:rect(photo),copy:rect(copy),href:link.href,visible:!!link.getClientRects().length};
+ })
+ assert.ok(gardenSource,"garden source panel, photo and advice must all exist")
+ assert.ok(gardenSource.visible&&gardenSource.href.startsWith("https://www.rhs.org.uk/"),"garden attribution must link to RHS")
+ assert.ok(gardenSource.photo.right<=gardenSource.source.left+2,"garden photo must not overlap the attribution column: "+JSON.stringify(gardenSource))
+ assert.ok(gardenSource.copy.right<=gardenSource.source.left+2,"garden advice must not overlap the attribution column: "+JSON.stringify(gardenSource))
+ assert.ok(gardenSource.source.right<=gardenSource.card.right+2,"attribution must fit inside garden card")
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
