@@ -347,6 +347,38 @@ const css = [
   ".v3-weather .weather-moon .wx-moon-main{line-height:1.3!important}",
   // Keep the gardening credit legible as a separate attribution line.
   ".v3-weather .weather-garden .wx-credit{display:block!important;font-size:14px!important;line-height:1.35!important;margin-top:8px!important;border-top:1px solid #3b8557!important;padding-top:6px!important}",
+
+  // Approved 09.11 neon reference: one coordinated geometry system at 1404px.
+  // Keep all data-driven HTML and refresh scripts unchanged.
+  ".v3{padding:8px 14px 18px!important;background:#010b05!important}",
+  ".v3-head{min-height:125px!important;grid-template-columns:365px minmax(0,1fr) 278px!important;gap:12px!important}",
+  ".v3-row{gap:12px!important;margin-top:12px!important}",
+  ".v3-power{grid-template-columns:560px 389px minmax(0,1fr)!important}",
+  ".v3-power>.v3-panel{height:236px!important;min-height:236px!important;padding:12px!important}",
+  ".v3-date-panel{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:6px!important}",
+  ".v3-date-panel .v3-date{flex:1 1 48%!important;min-width:0!important}",
+  ".v3-date-panel .v3-dial{flex:0 0 230px!important;width:230px!important;height:215px!important;margin:0!important}",
+  ".v3-weather{margin-top:12px!important}",
+  ".v3-weather .wx-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;grid-template-rows:270px 311px 234px!important;gap:12px!important;align-items:stretch!important}",
+  ".v3-weather .weather-air{grid-column:1/6!important;grid-row:1!important}",
+  ".v3-weather .weather-tomorrow{grid-column:6/8!important;grid-row:1!important}",
+  ".v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important}",
+  ".v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important}",
+  ".v3-weather .wx-right-stack{display:contents!important}",
+  ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important}",
+  ".v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important}",
+  ".v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important}",
+  ".v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important}",
+  ".v3-weather .wx-box{height:100%!important;min-height:0!important;max-height:none!important;align-self:stretch!important;overflow:hidden!important;padding:12px!important}",
+  ".v3-weather .weather-garden{padding-right:205px!important}",
+  ".v3-weather .weather-garden .wx-garden-body{min-height:0!important;flex:1!important}",
+  ".v3-weather .weather-garden .wx-garden-art{width:195px!important;height:190px!important;min-width:195px!important;min-height:190px!important;flex:0 0 195px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:18px!important;line-height:1.24!important}",
+  ".v3-garden-source{right:12px!important;top:56px!important;bottom:12px!important;width:181px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row{font-size:16px!important;line-height:1.2!important}",
+  ".v3-sources{margin-top:12px!important;min-height:167px!important;grid-template-columns:1.35fr repeat(5,1fr)!important;align-items:stretch!important;padding:14px!important;font-size:17px!important}",
+  ".v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:6px!important}",
+  ".v3-footer{margin-top:16px!important;min-height:68px!important;align-items:center!important;padding:12px 16px!important;font-size:15px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
