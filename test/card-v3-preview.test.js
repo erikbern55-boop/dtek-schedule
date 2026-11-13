@@ -105,3 +105,15 @@ test("combined DTEK periods and live weather retain date, countdown and three re
  for(const temp of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(temp));
  assert.match(out.html,/data-layer="live-power-periods"/);
 });
+
+test("daily modules populate garden sowing moon and astro in measured artwork layers",()=>{
+ const dailyRects=Object.fromEntries(["gardenAdvice","sowingAdvice","moonPhase","lunarDay","astroForecast"].map((k,i)=>[k,{x:20,y:700+i*100,width:1100,height:90}]));
+ const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles:dailyRects,nowMs:Date.parse("2026-11-13T09:00:00Z"),useDailyContent:true,dailyDate:"2026-11-13"});
+ for(const key of Object.keys(dailyRects))assert.equal(typeof out.data[key],"string");
+ assert.match(out.html,/data-layer="live-garden-advice"/);
+ assert.match(out.html,/data-layer="live-sowing-advice"/);
+ assert.match(out.html,/data-layer="live-moon-phase"/);
+ assert.match(out.html,/data-layer="live-lunar-day"/);
+ assert.match(out.html,/data-layer="live-astro-forecast"/);
+ assert.match(out.data.astroForecast,/розважальний прогноз/);
+});
