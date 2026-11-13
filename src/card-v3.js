@@ -351,7 +351,7 @@ const css = [
   // Approved 09.11 neon reference: one coordinated geometry system at 1404px.
   // Keep all data-driven HTML and refresh scripts unchanged.
   ".v3{padding:8px 14px 18px!important;background:#010b05!important}",
-  ".v3-head{min-height:125px!important;grid-template-columns:365px minmax(0,1fr) 278px!important;gap:12px!important}",
+  ".v3-head{min-height:111px!important;grid-template-columns:365px minmax(0,1fr) 278px!important;gap:12px!important}",
   ".v3-row{gap:12px!important;margin-top:12px!important}",
   ".v3-power{grid-template-columns:560px 389px minmax(0,1fr)!important}",
   ".v3-power>.v3-panel{height:236px!important;min-height:236px!important;padding:12px!important}",
