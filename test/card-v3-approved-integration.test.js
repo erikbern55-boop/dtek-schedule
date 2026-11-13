@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {buildApprovedArtworkFromSnapshots,buildApprovedArtworkFromLiveWeather} from "../src/card-v3-approved-integration.js";
-const now=new Date("2026-11-13T09:00:00Z");
+const now=new Date("2026-11-13T07:00:00Z");
 const schedulePeriods=[{begin:"00:00",end:"10:00",power:true},{begin:"10:00",end:"24:00",power:false}];
 const keys=["powerStatus","countdown","powerPeriods","gardenAdvice","sowingAdvice","moonPhase","lunarDay","astroForecast"];
 const rectangles=Object.fromEntries(keys.map((k,i)=>[k,{x:30,y:40+i*160,width:1300,height:120}]));
@@ -22,7 +22,7 @@ test("approved card fails closed when DTEK or weather is absent",()=>{
 });
 test("live Open-Meteo pipeline and DTEK periods enter the same approved card",async()=>{
  const result=await buildApprovedArtworkFromLiveWeather({artworkUrl,rectangles,schedulePeriods,scheduleDate:"2026-11-13",now,
-  weatherLoader:async()=>({fetchedAt:"2026-11-13T08:55:00Z"}),
+  weatherLoader:async()=>({fetchedAt:"2026-11-13T06:55:00Z"}),
   weatherMapper:(_snapshot,date)=>({...weatherSnapshot,date,todayDate:date})});
  assert.equal(result.weatherSource,"Open-Meteo");
  assert.match(result.html,/data-layer="live-garden-advice"/);
