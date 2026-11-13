@@ -344,13 +344,13 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   // altering the schedule, weather or external source links.
   const liveScript = '<script>(function(){'+
     'const el=document.querySelector(".v3-clock[data-countdown-minutes]");'+
-    'if(!el)return;const minutes=Number(el.dataset.countdownMinutes);'+
-    'if(!Number.isFinite(minutes)||minutes<0||el.dataset.countdownMinutes==="")return;'+
+    'const minutes=el?Number(el.dataset.countdownMinutes):NaN;'+
+    'if(el&&Number.isFinite(minutes)&&minutes>=0&&el.dataset.countdownMinutes!==""){'+
     'const deadline=Date.now()+minutes*60000;'+
     'function tick(){const left=Math.max(0,Math.ceil((deadline-Date.now())/60000));'+
     'el.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");'+
     'if(left===0){el.setAttribute("aria-label","Планова подія настала — оновіть графік");}}'+
-    'tick();setInterval(tick,1000);'+
+    'tick();setInterval(tick,1000);}'+
     // Re-read the published HTML periodically so schedule and weather changes are visible.
     // A test-only V3 viewer uses this; production viewer is unchanged.
     'setInterval(function(){if(document.visibilityState!=="visible"||location.protocol==="about:")return;const x=window.scrollX,y=window.scrollY;try{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([x,y]));}catch(e){}location.reload();},300000);try{const p=JSON.parse(sessionStorage.getItem("svitlopuls-v3-scroll")||"null");if(Array.isArray(p)){try{history.scrollRestoration="manual";}catch(e){}requestAnimationFrame(function(){window.scrollTo(p[0],p[1]);setTimeout(function(){window.scrollTo(p[0],p[1]);},150);});sessionStorage.removeItem("svitlopuls-v3-scroll");}}catch(e){}'+
