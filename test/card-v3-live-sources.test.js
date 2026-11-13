@@ -4,14 +4,14 @@ import {periodsFromDtekFact,buildApprovedArtworkFromLiveSources} from "../src/ca
 const now=new Date("2026-11-13T07:00:00Z");
 const key=String(Math.floor(Date.parse("2026-11-12T22:00:00Z")/1000));
 const states=Object.fromEntries(Array.from({length:24},(_,i)=>[i+1,i<10?"yes":"no"]));
-const fact={data:{[key]:{GPV1.1:states}}};
+const fact={data:{[key]:{"GPV1.1":states}}};
 test("official DTEK group is converted to contiguous real periods",()=>{
  const periods=periodsFromDtekFact(fact,{now,group:"GPV1.1"});
  assert.deepEqual(periods,[{begin:"00:00",end:"10:00",power:true},{begin:"10:00",end:"24:00",power:false}]);
 });
 test("missing group or hour cannot be displayed as valid schedule",()=>{
  assert.throws(()=>periodsFromDtekFact(fact,{now,group:"GPV2.1"}),/unavailable/);
- assert.throws(()=>periodsFromDtekFact({data:{[key]:{GPV1.1:{1:"yes"}}}},{now,group:"GPV1.1"}),/Missing DTEK hour/);
+ assert.throws(()=>periodsFromDtekFact({data:{[key]:{"GPV1.1":{1:"yes"}}}},{now,group:"GPV1.1"}),/Missing DTEK hour/);
 });
 test("live DTEK and Open-Meteo enter one approved card with daily content",async()=>{
  const keys=["powerStatus","countdown","powerPeriods","gardenAdvice","sowingAdvice","moonPhase","lunarDay","astroForecast"];
