@@ -207,6 +207,8 @@ const css = [
   ".v3-sources{min-height:86px!important;align-items:center!important;padding:12px 14px!important;box-sizing:border-box!important}",
   ".v3-sources span{line-height:1.35!important}",
   ".v3-footer{min-height:40px!important;align-items:center!important;box-sizing:border-box!important}",
+  ".v3-row{margin-top:3px!important}",
+  ".v3-weather .wx-grid{row-gap:5px!important}",
   // Independent garden and sowing panels for the approved V3 layout.
   ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;display:block!important;min-height:0!important}",
   ".v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important;min-height:0!important}",
