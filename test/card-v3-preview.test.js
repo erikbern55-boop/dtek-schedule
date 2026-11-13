@@ -67,3 +67,20 @@ test("weather inset replaces three raw temperature overlays without losing data"
  assert.equal(out.data.temperatureNow,"+7°C");
  assert.match(out.html,/За графіком: світло є/);
 });
+
+test("weather inset never silently hides missing minimum or maximum",()=>{
+ for(const weatherSnapshot of [
+  {currentNowTemp:6,todayMin:undefined,todayMax:9},
+  {currentNowTemp:6,todayMin:1,todayMax:undefined},
+  {currentNowTemp:undefined,todayMin:1,todayMax:9}
+ ]){
+  assert.throws(()=>buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles:{},nowMs:1800000,useWeatherInset:true,weatherSnapshot}),/Today weather requires all three temperatures/);
+ }
+});
+test("weather inset keeps one plus and displays all three readings",()=>{
+ const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles:{},nowMs:1800000,useWeatherInset:true,weatherSnapshot:{currentNowTemp:6,todayMin:2,todayMax:9}});
+ for(const value of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(value));
+ assert.doesNotMatch(out.html,/\\+\\+6°C/);
+ assert.match(out.html,/Мін\\./);
+ assert.match(out.html,/Макс\\./);
+});
