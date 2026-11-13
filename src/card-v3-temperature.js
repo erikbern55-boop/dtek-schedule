@@ -3,6 +3,7 @@
 const formatTemperature = value => Number.isFinite(value) ? (value>0?"+":"")+Math.round(value)+"°C" : "—";
 export function todayTemperatureOverlay(weather) {
  if(!weather || typeof weather!=="object")throw new Error("Weather snapshot required");
+ if(weather.date && weather.todayDate && weather.date!==weather.todayDate)throw new Error("Today panel requires today weather snapshot");
  return {
   temperatureNow:formatTemperature(weather.currentNowTemp ?? weather.currentTemp),
   temperatureTodayMin:formatTemperature(weather.todayMin),
