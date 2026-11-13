@@ -7,3 +7,11 @@ test("inset refuses a smaller artwork instead of overflowing",()=>{assert.throws
 test("responsive inset clips overflow on narrow cards",()=>{assert.match(WEATHER_INSET_CSS,/overflow:hidden/);assert.match(WEATHER_INSET_CSS,/container-type:inline-size/);assert.match(WEATHER_INSET_CSS,/cqw/)});
 
 test("duplicate plus sign is rendered once in today's temperature",()=>{const html=weatherInsetHtml({temperatureNow:"++6°C"});assert.match(html,/>\+6°C<\/strong>/);assert.doesNotMatch(html,/\+\+6°C/)});
+
+test("temperature overlay stays in the numeric-only area of approved artwork",()=>{
+ const r=WEATHER_VALUE_INSET;
+ assert.ok(r.x>=175,"must not cover cloud pictogram");
+ assert.ok(r.y>=504,"must not cover date");
+ assert.ok(r.x+r.width<=340,"must not cover weather metrics column");
+ assert.ok(r.y+r.height<=572,"must not cover feels-like label");
+});
