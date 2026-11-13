@@ -183,6 +183,19 @@ try {
 
  const photoState=await page.evaluate(()=>{
   const img=document.querySelector(".weather-garden .wx-garden-art img")
+  const rect=img?.closest(".wx-garden-art")?.getBoundingClientRect()
+  return {loaded:!!img?.complete&&img.naturalWidth>0&&img.naturalHeight>0,
+   naturalWidth:img?.naturalWidth,naturalHeight:img?.naturalHeight,
+   objectFit:img?getComputedStyle(img).objectFit:null,
+   frameWidth:rect?.width,frameHeight:rect?.height}
+ })
+ assert.ok(photoState.loaded,"garlic photograph must load in browser: "+JSON.stringify(photoState))
+ assert.equal(photoState.objectFit,"contain","garlic photograph must not be cropped")
+ assert.ok(photoState.frameWidth>=190&&photoState.frameHeight>=150,"garlic tile should remain prominent: "+JSON.stringify(photoState))
+
+
+ const photoState=await page.evaluate(()=>{
+  const img=document.querySelector(".weather-garden .wx-garden-art img")
   const frame=img?.closest(".wx-garden-art")
   const rect=frame?.getBoundingClientRect()
   return {loaded:!!img?.complete&&img.naturalWidth>0&&img.naturalHeight>0,
