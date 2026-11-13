@@ -351,6 +351,9 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     'el.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");'+
     'if(left===0){el.setAttribute("aria-label","Планова подія настала — оновіть графік");}}'+
     'tick();setInterval(tick,1000);'+
+    // Re-read the published HTML periodically so schedule and weather changes are visible.
+    // A test-only V3 viewer uses this; production viewer is unchanged.
+    'setInterval(function(){if(document.visibilityState==="visible"&&location.protocol!=="about:")location.reload();},300000);'+
     '})();</scr'+'ipt>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
 }
