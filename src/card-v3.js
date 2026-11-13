@@ -450,6 +450,21 @@ const css = [
   // Approved footer is a narrow status strip; keep all four live status fields.
   ".v3-footer{min-height:62px!important;justify-content:space-between!important;font-size:17px!important}",
   ".v3-footer>span{white-space:normal!important;line-height:1.2!important;text-align:center!important}",
+
+  // Align the four weather panels' content to the compact reference composition.
+  ".v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{justify-content:flex-start!important;gap:8px!important}",
+  ".v3-weather .weather-tomorrow h3,.v3-weather .weather-sun h3,.v3-weather .weather-soil h3{font-size:21px!important;line-height:1.13!important;min-height:44px!important;margin:0!important;padding:0 0 6px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-box{margin:8px 0 0!important;padding:4px!important;flex:1!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-heading{font-size:14px!important;line-height:1.2!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{gap:5px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values div{font-size:14px!important;padding:5px 2px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:25px!important}",
+  ".v3-weather .weather-sun .wx-sun-pair{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:8px!important;flex:1!important;margin:0!important;font-size:17px!important}",
+  ".v3-weather .weather-sun .wx-sun-pair span{display:flex!important;justify-content:space-between!important;gap:6px!important;white-space:normal!important}",
+  ".v3-weather .weather-sun .wx-sun-pair b{font-size:21px!important}",
+  ".v3-weather .weather-soil .wx-soil-pair{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12px!important;flex:1!important;margin:0!important;text-align:center!important}",
+  ".v3-weather .weather-soil .wx-soil-pair strong{font-size:52px!important;line-height:1.1!important}",
+  ".v3-weather .weather-soil .wx-soil-pair span{font-size:15px!important;line-height:1.3!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
