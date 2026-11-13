@@ -275,6 +275,7 @@ try {
    return {selector,top:bounds.top,bottom:bounds.bottom,children}
   })
  })
+ console.log("Compact weather bounds:",JSON.stringify(weatherReadability))
  for(const panel of weatherReadability){
   for(const item of panel.children){
    assert.ok(item.top>=panel.top-3&&item.bottom<=panel.bottom+3,
