@@ -210,6 +210,17 @@ try {
   const selectors=[".v3-head",".v3-power",".v3-weather",".weather-garden",".weather-sowing",".weather-moon",".weather-astro",".v3-sources",".v3-footer"]
   return {width:Math.round(card.width),height:Math.round(card.height),sections:Object.fromEntries(selectors.map(sel=>{const el=document.querySelector(sel);const r=el?.getBoundingClientRect();return [sel,r?{x:Math.round(r.x-card.x),y:Math.round(r.y-card.y),width:Math.round(r.width),height:Math.round(r.height)}:null]}))}
  })
+
+ // Verify the title, mascot and header tagline stay inside the reference header.
+ const headerContent=await page.evaluate(()=>{
+  const header=document.querySelector(".v3-head").getBoundingClientRect()
+  return [".v3-robot",".v3-brand strong",".v3-brand small",".v3-tag"].map(selector=>{
+   const r=document.querySelector(selector).getBoundingClientRect()
+   return {selector,left:r.left-header.left,right:r.right-header.left,top:r.top-header.top,bottom:r.bottom-header.top,width:header.width,height:header.height}
+  })
+ })
+ assert.ok(headerContent.every(x=>x.left>=-3&&x.right<=x.width+3&&x.top>=-3&&x.bottom<=x.height+3),
+  "mascot and brand must remain inside approved header: "+JSON.stringify(headerContent))
  assert.equal(dimensions.width,1404,"approved V3 canvas width must remain 1404px")
  assert.ok(dimensions.height>=1200&&dimensions.height<=1900,"card height must remain within reviewable bounds")
  console.log("V3 reference height delta",JSON.stringify({actual:dimensions.height,target:1536,delta:dimensions.height-1536}))
