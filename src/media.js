@@ -3,7 +3,8 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
 import { renderCardPng, buildCardHtml } from "./card.js"
-import { buildCardV3Html } from "./card-v3.js"\nimport { buildV3LivePayload } from "./card-v3-live-json.js"
+import { buildCardV3Html } from "./card-v3.js"
+import { buildV3LivePayload } from "./card-v3-live-json.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
