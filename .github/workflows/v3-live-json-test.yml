@@ -32,5 +32,7 @@ jobs:
         if: always()
         with:
           name: svitlopuls-v3-live-json-test
-          path: artifacts/web/svitlopuls-live.json
+          path: |
+            artifacts/web/svitlopuls-live.json
+            artifacts/web/v3-live-check.html
           if-no-files-found: warn
