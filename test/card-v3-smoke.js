@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs"
 import assert from "node:assert/strict"
 import { chromium } from "playwright"
 import {buildCardV3Html,renderCardV3Png} from "../src/card-v3.js"
+import {buildViewerV3Preview} from "../src/media.js"
 const schedule=[
  {begin:"00:00",end:"06:00",power:true},
  {begin:"06:00",end:"13:30",power:false},
@@ -39,7 +40,9 @@ const responsiveViewerCss = '<meta name="viewport" content="width=device-width,i
   'body{margin:0!important;background:#020e08!important}' +
   '.v3{width:1404px;max-width:none;transform-origin:top left}' +
   '</style>'
-const fullScreenHtml=buildCardV3Html(details).replace("</head>",responsiveViewerCss+"</head>")
+// Render the browser preview through the same adapter as the opt-in live snapshot.
+const fullScreenHtml=buildViewerV3Preview(details).replace("</head>",responsiveViewerCss+"</head>")
+assert.equal(buildViewerV3Preview(details),buildCardV3Html(details),"viewer adapter and approved V3 generator must agree")
 fs.writeFileSync("svitlopuls-v3-fullscreen-preview.html",fullScreenHtml)
 
 const browser=await chromium.launch({headless:true})
