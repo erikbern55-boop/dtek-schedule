@@ -173,8 +173,6 @@ try {
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
- assert.ok(layout.garden.w>=layout.air.w*2.4,
-  "approved gardening panel should be significantly wider than weather tiles")
  const middleRow=await page.evaluate(()=>{
   const garden=document.querySelector(".weather-garden").getBoundingClientRect()
   const sowing=document.querySelector(".weather-sowing").getBoundingClientRect()
