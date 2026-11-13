@@ -7,7 +7,7 @@ const escape=s=>String(s??"—").replace(/&/g,"&amp;").replace(/</g,"&lt;").repl
 // Ensure the live value itself contains exactly one leading plus sign.
 const cleanTemp = value => typeof value==="string" ? value.replace(/^\s*\+\s*(?:\+\s*)+(?=\d)/u,"+") : value;
 export function weatherHeaderDateHtml(date,{width=1404,height=1536}={}){
- if(typeof date!=="string"||!/^\\d{2}\\.\\d{2}$/.test(date))throw new Error("Weather header date must be DD.MM");
+ if(typeof date!=="string"||!/^[0-9]{2}[.][0-9]{2}$/.test(date))throw new Error("Weather header date must be DD.MM");
  const r=WEATHER_HEADER_DATE_RECT;
  if(r.x+r.width>width||r.y+r.height>height)throw new Error("Weather date outside artwork bounds");
  return `<span class="svitlo-weather-header-date" style="left:${r.x/width*100}%;top:${r.y/height*100}%;width:${r.width/width*100}%;height:${r.height/height*100}%">${escape(date)}</span>`;
