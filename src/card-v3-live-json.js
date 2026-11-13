@@ -11,12 +11,12 @@ export function buildV3LivePayload({schedule,date,label,update,source,weather,no
  for(const p of schedule){if(!validTime(p.begin)||!validTime(p.end)||typeof p.power!=="boolean")throw Error("Invalid schedule period");}
  calculateDailyTotals(schedule);
  const off=schedule.filter(p=>!p.power),on=schedule.filter(p=>p.power);
- const event=label==="сьогодні"?nextPowerEvent(schedule,now):null;
+ const event=label==="сьогодні"?nextPowerEvent(schedule,date,now):null;
  const payload={updatedAt:now.toISOString(),scheduleDate:date,source:source||"ДТЕК",
   power:{periods:schedule,onText:on.length?on.map(p=>p.begin+"–"+p.end).join(", "):"Немає",
    offText:off.length?off.map(p=>p.begin+"–"+p.end).join(", "):"Немає",
-   status:"За графіком ДТЕК",eventLabel:event?"До наступної події":"Подій немає",
-   eventTime:event?.time||null,nextAt:event?.at||null}};
+   status:event?.currentPower===true?"За графіком: світло є":event?.currentPower===false?"За графіком: світла немає":"Графік ДТЕК",eventLabel:event?.title||"Подій немає",
+   eventTime:event?.time||null,nextAt:event?.kind==="countdown"?new Date(now.getTime()+event.minutesRemaining*60000).toISOString():null}};
  // The weather object must be explicitly mapped; never fabricate values from a timestamp.
  if(weather?.current&&weather?.daily){payload.weather=weather;}
  for(const key of ["garden","moon","astro"]){if(daily[key]&&typeof daily[key]==="object")payload[key]=daily[key];}
