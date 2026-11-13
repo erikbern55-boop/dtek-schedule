@@ -328,6 +328,13 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#10231b!important}",
   ".v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.32!important}",
   ".v3-weather .weather-garden h3{font-size:25px!important}",
+  // Make the lunar illustration a focal element without obscuring live phase text.
+  ".v3-weather .weather-moon .wx-moon-icon{flex:0 0 104px!important;width:104px!important;height:104px!important;min-width:104px!important;display:flex!important;align-items:center!important;justify-content:center!important}",
+  ".v3-weather .weather-moon .wx-moon-icon svg{display:block!important;width:104px!important;height:104px!important;max-width:100%!important}",
+  ".v3-weather .weather-moon .wx-moon-row{align-items:center!important;gap:16px!important}",
+  ".v3-weather .weather-moon .wx-moon-main{line-height:1.3!important}",
+  // Keep the gardening credit legible as a separate attribution line.
+  ".v3-weather .weather-garden .wx-credit{display:block!important;font-size:14px!important;line-height:1.35!important;margin-top:8px!important;border-top:1px solid #3b8557!important;padding-top:6px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
