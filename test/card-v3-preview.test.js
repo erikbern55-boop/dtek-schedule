@@ -36,3 +36,17 @@ test("weather-only refresh retains countdown",()=>{
  assert.equal(out.data.countdown,"00:20");
  assert.equal(out.data.temperatureTodayMin,"0°C");
 });
+
+test("integrated preview accepts actual DTEK periods and weather together",()=>{
+ const out=buildIntegratedPreview({
+  artworkUrl:"/assets/approved-clean-plate.png",rectangles,nowMs:Date.parse("2026-11-13T07:00:00Z"),
+  scheduleDate:"2026-11-13",
+  schedulePeriods:[{begin:"00:00",end:"10:00",power:true},{begin:"10:00",end:"24:00",power:false}],
+  weatherSnapshot:{currentNowTemp:4.5,todayMin:0,todayMax:8}
+ });
+ assert.equal(out.data.powerStatus,"За графіком: світло є");
+ assert.equal(out.data.countdown,"01:00");
+ assert.equal(out.data.temperatureNow,"+5°C");
+ assert.equal(out.data.temperatureTodayMin,"0°C");
+ assert.equal(out.data.temperatureTodayMax,"+8°C");
+});
