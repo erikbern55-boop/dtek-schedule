@@ -38,4 +38,5 @@ jobs:
             svitlopuls-v3-mobile-preview.png
             svitlopuls-v3-layout.json
             svitlopuls-v3-reference-geometry.json
+            svitlopuls-v3-etalon-comparison.json
             svitlopuls-approved-preview.png
