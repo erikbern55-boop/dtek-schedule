@@ -42,3 +42,13 @@ test("keeps Ukrainian live values escaped and in independent layers",()=>{
  assert.match(html,/Часник &amp; цибуля/);
  assert.equal((html.match(/class="art-layer"/g)||[]).length,3);
 });
+
+test("source link fills its touch region and remains keyboard accessible",()=>{
+ const html=buildArtworkFirstCard({artworkUrl:"/assets/clean-plate.png",layers:[{id:"dtek-link",x:100,y:100,width:300,height:60,text:"ДТЕК",href:"https://www.dtek-krem.com.ua/ua/shutdowns"}]});
+ assert.match(html,/class="art-source-link"/);
+ assert.match(html,/aria-label="ДТЕК"/);
+ assert.match(html,/rel="noopener noreferrer"/);
+ assert.match(ARTWORK_FIRST_CSS,/touch-action:manipulation/);
+ assert.match(ARTWORK_FIRST_CSS,/:focus-visible/);
+ assert.match(ARTWORK_FIRST_CSS,/height:100%/);
+});
