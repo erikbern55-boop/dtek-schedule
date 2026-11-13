@@ -351,7 +351,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     'el.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");'+
     'if(left===0){el.setAttribute("aria-label","Планова подія настала — оновіть графік");}}'+
     'tick();setInterval(tick,1000);'+
-    '})();<\\/script>'
+    '})();</scr'+'ipt>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
 }
 
