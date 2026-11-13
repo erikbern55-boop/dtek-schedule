@@ -1,6 +1,7 @@
 import test from "node:test"
 import assert from "node:assert/strict"
 import {buildCardV3Html} from "../src/card-v3.js"
+import {buildViewerV3Preview} from "../src/media.js"
 
 const schedule=[
   {begin:"00:00",end:"06:00",power:true},
@@ -125,4 +126,18 @@ test("V3 preview adapter uses live schedule and weather while production viewer 
   const media=readFileSync(new URL("../src/media.js",import.meta.url),"utf8")
   assert.match(media,/if \(process\.env\.SVITLOPULS_V3_PREVIEW === "1"\)/)
   assert.match(media,/const html = buildCardHtml\(details\)/)
+})
+
+test("V3 viewer preview uses the same supplied schedule and weather as the live snapshot",()=>{
+  const scheduleA=[{begin:"00:00",end:"05:45",power:false},{begin:"05:45",end:"24:00",power:true}]
+  const scheduleB=[{begin:"00:00",end:"09:10",power:true},{begin:"09:10",end:"24:00",power:false}]
+  const a=buildViewerV3Preview({...details,schedule:scheduleA,update:"13.11.2026 13:00"})
+  const b=buildViewerV3Preview({...details,schedule:scheduleB,update:"13.11.2026 13:05"})
+  assert.equal(a,buildCardV3Html({...details,schedule:scheduleA,update:"13.11.2026 13:00"}))
+  assert.match(a,/00:00 — 05:45/)
+  assert.match(b,/09:10 — 24:00/)
+  assert.doesNotMatch(b,/00:00 — 05:45/)
+  assert.match(b,/13\.11\.2026 13:05/)
+  assert.match(b,/weather-garden/)
+  assert.match(b,/weather-moon/)
 })
