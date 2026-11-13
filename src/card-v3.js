@@ -473,6 +473,18 @@ const css = [
   ".v3-sources>span a{font-size:16px!important;line-height:1.2!important}",
   ".v3-footer{display:grid!important;grid-template-columns:1.1fr 1fr 1.15fr 1.4fr 1fr!important;align-items:center!important;gap:8px!important;min-height:64px!important;padding:8px 12px!important}",
   ".v3-footer>span{font-size:14px!important;line-height:1.15!important;white-space:nowrap!important;text-align:center!important}",
+
+  // Approved neon reference: daylight card uses a large central duration,
+  // followed by two separated sunrise/sunset rows rather than a blank center.
+  ".v3-weather .weather-sun{display:flex!important;flex-direction:column!important;justify-content:flex-start!important}",
+  ".v3-weather .weather-sun h3{display:block!important;min-height:0!important;padding:0 0 12px!important;margin:0 0 10px!important;border-bottom:1px solid #3cc85c!important;text-align:center!important;font-size:23px!important;line-height:1.35!important}",
+  ".v3-weather .weather-sun .wx-sun-pair{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;justify-content:center!important;gap:0!important;margin:0!important;padding:0 8px!important}",
+  ".v3-weather .weather-sun .wx-sun-pair span{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;padding:13px 2px!important;border-bottom:1px solid #216b38!important;font-size:18px!important;white-space:normal!important}",
+  ".v3-weather .weather-sun .wx-sun-pair span:last-child{border-bottom:0!important}",
+  ".v3-weather .weather-sun .wx-sun-pair b{font-size:22px!important;white-space:nowrap!important}",
+  // Keep the live source attribution visible but visually subordinate to the
+  // five status items in the reference.
+  ".v3-footer .v3-source-detail{display:block!important;font-size:10px!important;font-weight:400!important;opacity:.7!important;line-height:1.1!important;white-space:normal!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
