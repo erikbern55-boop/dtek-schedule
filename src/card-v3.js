@@ -334,12 +334,25 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
     '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b><span class="v3-weekday">'+esc(weekday(date))+'</span></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
-    '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
+    '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
     '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ <a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · графіки</a></span><span>☁ <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo · погода</a></span><span>🌱 <a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a> · <a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span>🌙 <a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span>✨ <a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
     '<footer class="v3-footer"><span>Дані: '+esc(update)+'</span><span>Графіки · 5 хв</span><span>Погода · 30 хв</span><span>Джерело: '+esc(source)+'</span></footer></article>'
-  return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+'</body></html>'
+  // Interactive HTML countdown: the static PNG remains a snapshot for Telegram.
+  // The browser clock starts from the server-rendered remaining minutes, without
+  // altering the schedule, weather or external source links.
+  const liveScript = '<script>(function(){'+
+    'const el=document.querySelector(".v3-clock[data-countdown-minutes]");'+
+    'if(!el)return;const minutes=Number(el.dataset.countdownMinutes);'+
+    'if(!Number.isFinite(minutes)||minutes<0||el.dataset.countdownMinutes==="")return;'+
+    'const deadline=Date.now()+minutes*60000;'+
+    'function tick(){const left=Math.max(0,Math.ceil((deadline-Date.now())/60000));'+
+    'el.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");'+
+    'if(left===0){el.setAttribute("aria-label","Планова подія настала — оновіть графік");}}'+
+    'tick();setInterval(tick,1000);'+
+    '})();<\\/script>'
+  return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
 }
 
 export async function renderCardV3Png(details) {
