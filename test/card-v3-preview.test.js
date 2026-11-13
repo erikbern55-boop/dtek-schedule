@@ -91,3 +91,17 @@ test("optional Today header date uses Kyiv calendar and keeps all three temperat
  assert.ok(out.html.includes(">14.11</span>"));
  for(const value of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(value));
 });
+
+test("combined DTEK periods and live weather retain date, countdown and three readings",()=>{
+ const out=buildIntegratedPreview({
+  artworkUrl:"/assets/approved-clean-plate.png",rectangles:{powerStatus:rectangles.powerStatus,countdown:rectangles.countdown,powerPeriods:rectangles.powerPeriods},
+  nowMs:Date.parse("2026-11-13T07:00:00Z"),scheduleDate:"2026-11-13",
+  schedulePeriods:[{begin:"00:00",end:"10:00",power:true},{begin:"10:00",end:"24:00",power:false}],
+  weatherSnapshot:{currentNowTemp:6,todayMin:2,todayMax:9},useWeatherInset:true,useWeatherHeaderDate:true
+ });
+ assert.equal(out.data.powerStatus,"За графіком: світло є");
+ assert.equal(out.data.countdown,"01:00");
+ assert.ok(out.html.includes(">13.11</span>"));
+ for(const temp of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(temp));
+ assert.match(out.html,/data-layer="live-power-periods"/);
+});
