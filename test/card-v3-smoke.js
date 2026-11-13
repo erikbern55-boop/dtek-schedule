@@ -97,6 +97,13 @@ try {
  await restorePage.waitForFunction(()=>{const maxX=Math.max(0,document.documentElement.scrollWidth-innerWidth);const maxY=Math.max(0,document.documentElement.scrollHeight-innerHeight);return window.scrollX>=Math.min(150,maxX)&&window.scrollY>=Math.min(400,maxY)},{},{timeout:5000})
  const restored=await restorePage.evaluate(()=>({x:window.scrollX,y:window.scrollY,maxX:Math.max(0,document.documentElement.scrollWidth-innerWidth),maxY:Math.max(0,document.documentElement.scrollHeight-innerHeight)}))
  assert.ok(restored.x>=Math.min(150,restored.maxX)&&restored.y>=Math.min(400,restored.maxY),"viewer restores scroll within available bounds: "+JSON.stringify({restored,scrollLimits}))
+ // The viewer must still restore its position when no countdown is available.
+ const noCountdownHtml=fullScreenHtml.replace(/data-countdown-minutes="[^"]*"/,'data-countdown-minutes=""')
+ await restorePage.route("https://svitlopuls.test/v3",route=>route.fulfill({status:200,contentType:"text/html",body:noCountdownHtml}))
+ await restorePage.evaluate(()=>sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([80,240])))
+ await restorePage.reload()
+ await restorePage.waitForFunction(()=>window.scrollX>=Math.min(70,Math.max(0,document.documentElement.scrollWidth-innerWidth))&&window.scrollY>=Math.min(230,Math.max(0,document.documentElement.scrollHeight-innerHeight)),null,{timeout:5000})
+ assert.equal(await restorePage.evaluate(()=>document.querySelector(".v3-clock")?.dataset.countdownMinutes),"","countdown-free viewer fixture is active")
  await restorePage.close()
  assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
  assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
