@@ -398,6 +398,28 @@ const css = [
   ".v3-weather .weather-air>.wx-facts{grid-column:2!important;grid-row:3/5!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;margin:0!important;min-height:0!important}",
   ".v3-weather .weather-air .wx-fact{padding:3px 5px!important;font-size:12px!important;line-height:1.1!important}",
   ".v3-weather .weather-air .wx-fact b{font-size:14px!important}",
+
+  // Approved lower row: compact moon facts alongside illustration, no clipped rows.
+  ".v3-weather .weather-moon{display:grid!important;grid-template-columns:150px minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;column-gap:12px!important;align-items:center!important}",
+  ".v3-weather .weather-moon>h3{grid-column:1/-1!important;grid-row:1!important;font-size:24px!important;margin:0!important;padding:0 0 6px!important}",
+  ".v3-weather .weather-moon .wx-moon-main{grid-column:1!important;grid-row:2!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;margin:0!important;min-width:0!important}",
+  ".v3-weather .weather-moon .wx-moon-icon{min-width:0!important;width:122px!important;height:122px!important;flex:0 0 122px!important}",
+  ".v3-weather .weather-moon .wx-moon-icon svg{width:122px!important;height:122px!important}",
+  ".v3-weather .weather-moon .wx-moon-main>div:last-child{text-align:center!important}",
+  ".v3-weather .weather-moon .wx-moon-number{font-size:22px!important;line-height:1.1!important}",
+  ".v3-weather .weather-moon .wx-moon-note{font-size:11px!important;line-height:1.1!important}",
+  ".v3-weather .weather-moon .wx-moon-rows{grid-column:2!important;grid-row:2!important;border-top:0!important;min-width:0!important}",
+  ".v3-weather .weather-moon .wx-moon-row{font-size:17px!important;padding:5px 0!important;line-height:1.2!important;gap:6px!important;flex-wrap:wrap!important}",
+  ".v3-weather .weather-moon .wx-moon-row b{font-size:17px!important;white-space:normal!important}",
+  // Astro: reserve the entire row for forecast text, keeping disclaimer visible.
+  ".v3-weather .weather-astro{display:flex!important;flex-direction:column!important;gap:4px!important}",
+  ".v3-weather .weather-astro h3{font-size:24px!important;margin:0!important;padding:0 0 6px!important}",
+  ".v3-weather .weather-astro .wx-astro-tag{font-size:15px!important;margin:0!important}",
+  ".v3-weather .weather-astro .wx-astro-body{gap:12px!important;align-items:center!important;min-height:0!important}",
+  ".v3-weather .weather-astro .wx-astro-symbol{flex:0 0 90px!important;width:90px!important;height:90px!important;font-size:54px!important}",
+  ".v3-weather .weather-astro .wx-astro-copy{font-size:17px!important;line-height:1.2!important;min-width:0!important}",
+  ".v3-weather .weather-astro .wx-astro-copy b{font-size:20px!important;margin-bottom:3px!important}",
+  ".v3-weather .weather-astro .wx-astro-disclaimer{font-size:11px!important;line-height:1.2!important;margin-top:6px!important;padding-top:4px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
