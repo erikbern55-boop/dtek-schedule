@@ -1,0 +1,38 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {buildIntegratedPreview} from "../src/card-v3-preview.js";
+const rectangles={
+ temperatureNow:{x:30,y:630,width:180,height:60},
+ temperatureTodayMin:{x:230,y:630,width:180,height:60},
+ temperatureTodayMax:{x:430,y:630,width:180,height:60},
+ powerStatus:{x:30,y:230,width:200,height:60},
+ countdown:{x:250,y:230,width:200,height:60}
+};
+test("full-screen preview combines live weather and schedule without fake values",()=>{
+ const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles,
+ nowMs:1800000,scheduleFetchedAtMs:1500000,weatherFetchedAtMs:1500000,
+ scheduleSnapshot:{powerStatus:"Є світло",countdown:"00:25"},
+ weatherSnapshot:{currentNowTemp:6.5,todayMin:-2,todayMax:11}});
+ assert.match(out.html,/<meta name="viewport"/);
+ assert.match(out.html,/data-layer="live-temperature-now"/);
+ assert.match(out.html,/data-layer="live-temperature-today-min"/);
+ assert.match(out.html,/data-layer="live-temperature-today-max"/);
+ assert.match(out.html,/Є світло/);
+ assert.deepEqual(out.due,{schedule:true,weather:false});
+});
+test("schedule-only refresh retains all three temperatures and their coordinates",()=>{
+ const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles,nowMs:1800000,
+ previousData:{temperatureNow:"+5°C",temperatureTodayMin:"-1°C",temperatureTodayMax:"+9°C"},
+ scheduleSnapshot:{powerStatus:"Немає світла",countdown:"00:15"}});
+ assert.equal(out.data.temperatureNow,"+5°C");
+ assert.equal(out.data.temperatureTodayMin,"-1°C");
+ assert.equal(out.data.temperatureTodayMax,"+9°C");
+ assert.match(out.html,/Немає світла/);
+});
+test("weather-only refresh retains countdown",()=>{
+ const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles,nowMs:1800000,
+ previousData:{powerStatus:"Є світло",countdown:"00:20"},
+ weatherSnapshot:{currentNowTemp:3,todayMin:0,todayMax:7}});
+ assert.equal(out.data.countdown,"00:20");
+ assert.equal(out.data.temperatureTodayMin,"0°C");
+});
