@@ -328,6 +328,14 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#10231b!important}",
   ".v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.32!important}",
   ".v3-weather .weather-garden h3{font-size:25px!important}",
+  // The approved garden card has its own visible source column.
+  ".v3-weather .weather-garden{position:relative!important;padding-right:196px!important}",
+  ".v3-weather .weather-garden .wx-garden-body{gap:12px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex-basis:175px!important;min-width:175px!important;width:175px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:19px!important}",
+  ".v3-garden-source{position:absolute;right:12px;top:51px;bottom:12px;width:176px;border:2px solid #72ec79;border-radius:17px;padding:12px;background:#07391f;display:flex;flex-direction:column;justify-content:center;gap:12px;font-size:17px;line-height:1.28}",
+  ".v3-garden-source b{color:#e6ffac;font-size:17px}",
+  ".v3-garden-source a{color:#9ceaff;text-decoration:underline;overflow-wrap:anywhere}",
   // Make the lunar illustration a focal element without obscuring live phase text.
   ".v3-weather .weather-moon .wx-moon-icon{flex:0 0 104px!important;width:104px!important;height:104px!important;min-width:104px!important;display:flex!important;align-items:center!important;justify-content:center!important}",
   ".v3-weather .weather-moon .wx-moon-icon svg{display:block!important;width:104px!important;height:104px!important;max-width:100%!important}",
@@ -351,7 +359,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
     /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
-    (_whole,heading,body,sowing)=>heading+body+"</section>"+
+    (_whole,heading,body,sowing)=>heading+body+'<aside class="v3-garden-source"><b>📖 Джерело порад</b><span>RHS · Royal Horticultural Society</span><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">rhs.org.uk</a></aside></section>'+
       '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
   )
   const html='<article class="v3">'+
