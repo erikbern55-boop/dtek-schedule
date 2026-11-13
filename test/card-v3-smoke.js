@@ -324,6 +324,23 @@ try {
   }
  }
 
+ // Approved reference: the daylight duration must be a distinct, prominent
+ // live value (fixture sunrise 07:01 to sunset 16:29 = 9 h 28 min).
+ const daylight=await page.evaluate(()=>{
+  const panel=document.querySelector(".weather-sun"),title=panel.querySelector("h3"),value=panel.querySelector(".v3-daylight-duration")
+  const p=panel.getBoundingClientRect(),h=title.getBoundingClientRect(),v=value?.getBoundingClientRect()
+  return {title:title.textContent,value:value?.textContent,
+   panel:{left:p.left,right:p.right,top:p.top,bottom:p.bottom},
+   heading:{bottom:h.bottom},duration:v?{left:v.left,right:v.right,top:v.top,bottom:v.bottom}:null,
+   fontSize:value?parseFloat(getComputedStyle(value).fontSize):0}
+ })
+ assert.equal(daylight.value,"9 год 28 хв","daylight duration must reflect live sunrise/sunset")
+ assert.ok(daylight.duration&&daylight.duration.top>=daylight.heading.bottom-3,
+  "duration must appear below its heading: "+JSON.stringify(daylight))
+ assert.ok(daylight.duration.left>=daylight.panel.left-3&&daylight.duration.right<=daylight.panel.right+3&&daylight.duration.bottom<=daylight.panel.bottom+3,
+  "large daylight duration must fit in its card: "+JSON.stringify(daylight))
+ assert.ok(daylight.fontSize>=28,"daylight duration must be visually prominent")
+ console.log("Reference daylight duration:",JSON.stringify(daylight))
  // The approved reference has six source columns and a narrow readable footer.
  // Detect clipping introduced by larger type or longer live source labels.
  const bottomBounds=await page.evaluate(()=>[".v3-sources",".v3-footer"].map(selector=>{
