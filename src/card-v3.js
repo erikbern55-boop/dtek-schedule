@@ -322,6 +322,12 @@ const css = [
   ".v3-sources{align-items:center!important;font-size:17px!important;gap:8px!important}",
   ".v3-sources span{min-height:52px!important;display:flex!important;align-items:center!important}",
   ".v3-footer{font-size:16px!important;align-items:center!important}",
+  // Bring the garden photograph and advice hierarchy closer to the approved reference.
+  ".v3-weather .weather-garden .wx-garden-body{gap:18px!important;align-items:center!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex:0 0 195px!important;min-width:195px!important;width:195px!important;height:190px!important;min-height:190px!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{width:100%!important;height:100%!important;object-fit:cover!important;background:transparent!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.32!important}",
+  ".v3-weather .weather-garden h3{font-size:25px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
