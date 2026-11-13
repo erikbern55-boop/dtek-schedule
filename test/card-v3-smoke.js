@@ -181,6 +181,22 @@ try {
  assert.equal(gardenHeadings.advice,"Актуально сьогодні:","today garden advice heading must match the approved reference")
  assert.ok(gardenHeadings.photo&&gardenHeadings.photo.startsWith("https://"),"garden photo must have a valid source")
 
+ const photoState=await page.evaluate(()=>{
+  const img=document.querySelector(".weather-garden .wx-garden-art img")
+  const frame=img?.closest(".wx-garden-art")
+  const rect=frame?.getBoundingClientRect()
+  return {loaded:!!img?.complete&&img.naturalWidth>0&&img.naturalHeight>0,
+   naturalWidth:img?.naturalWidth,naturalHeight:img?.naturalHeight,
+   objectFit:img?getComputedStyle(img).objectFit:null,
+   frameWidth:rect?.width,frameHeight:rect?.height}
+ })
+ assert.ok(photoState.loaded,"garlic photograph must actually load in the preview browser: "+JSON.stringify(photoState))
+ assert.equal(photoState.objectFit,"contain","garlic photograph must not crop its bulbs")
+ assert.ok(photoState.frameWidth>=190&&photoState.frameHeight>=150,
+  "garlic photo must retain a prominent reference-sized tile: "+JSON.stringify(photoState))
+ console.log("Reference garden photo:",JSON.stringify(photoState))
+
+
  assert.ok(gardenSource.visible&&gardenSource.href.startsWith("https://www.rhs.org.uk/"),"garden attribution must link to RHS")
  assert.ok(gardenSource.photo.right<=gardenSource.source.left+2,"garden photo must not overlap the attribution column: "+JSON.stringify(gardenSource))
  assert.ok(gardenSource.copy.right<=gardenSource.source.left+2,"garden advice must not overlap the attribution column: "+JSON.stringify(gardenSource))
