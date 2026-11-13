@@ -514,7 +514,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
     /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
-    (_whole,heading,body,sowing)=>heading+body+'<aside class="v3-garden-source"><b>📖 Джерело порад</b><span>RHS · Royal Horticultural Society</span><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">rhs.org.uk</a></aside></section>'+
+    (_whole,heading,body,sowing)=>heading.replace(/<h3>[\s\S]*?<\/h3>/,'<h3>🌿 Поради городникам</h3>')+body+'<aside class="v3-garden-source"><b>📖 Джерело порад</b><span>RHS · Royal Horticultural Society</span><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">rhs.org.uk</a></aside></section>'+
       '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
   )
   const html='<article class="v3">'+
