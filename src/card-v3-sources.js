@@ -14,6 +14,6 @@ export function buildSourceLinkLayers(rectangles) {
  return Object.entries(SOURCE_LINKS).map(([key,source])=>{
   const rect=rectangles[key];
   if(!rect)throw new Error("Missing source-link region: "+key);
-  return {id:"source-"+key,...rect,text:source.label,href:source.url};
+  return {id:"source-"+key.replace(/([a-z])([A-Z])/g,"$1-$2").toLowerCase(),...rect,text:source.label,href:source.url};
  });
 }
