@@ -6,7 +6,7 @@ import {createPeriod,useSchedule} from "./helpers.js";
 import {buildApprovedArtworkFromLiveWeather} from "./card-v3-approved-integration.js";
 
 export function periodsFromDtekFact(fact,{now=new Date(),group=GROUP,day=kyivDate(now)}={}){
- if(typeof group!=="string"||!/^GPV\d+$/.test(group))throw Error("Configured DTEK group required");
+ if(typeof group!=="string"||!/^GPV[1-6]\.[12]$/.test(group))throw Error("Configured DTEK group required");
  const selected=selectScheduleDays(fact,now).find(d=>d.date===day);
  if(!selected)throw Error("Current DTEK schedule day unavailable");
  const states=fact.data?.[selected.key]?.[group];
