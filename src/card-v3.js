@@ -353,7 +353,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     'tick();setInterval(tick,1000);'+
     // Re-read the published HTML periodically so schedule and weather changes are visible.
     // A test-only V3 viewer uses this; production viewer is unchanged.
-    'setInterval(function(){if(document.visibilityState!=="visible"||location.protocol==="about:")return;const x=window.scrollX,y=window.scrollY;try{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([x,y]));}catch(e){}location.reload();},300000);try{const p=JSON.parse(sessionStorage.getItem("svitlopuls-v3-scroll")||"null");if(Array.isArray(p)){requestAnimationFrame(function(){window.scrollTo(p[0],p[1]);});sessionStorage.removeItem("svitlopuls-v3-scroll");}}catch(e){}'+
+    'setInterval(function(){if(document.visibilityState!=="visible"||location.protocol==="about:")return;const x=window.scrollX,y=window.scrollY;try{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([x,y]));}catch(e){}location.reload();},300000);try{const p=JSON.parse(sessionStorage.getItem("svitlopuls-v3-scroll")||"null");if(Array.isArray(p)){try{history.scrollRestoration="manual";}catch(e){}requestAnimationFrame(function(){window.scrollTo(p[0],p[1]);setTimeout(function(){window.scrollTo(p[0],p[1]);},150);});sessionStorage.removeItem("svitlopuls-v3-scroll");}}catch(e){}'+
     '})();</scr'+'ipt>'
   return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
 }
