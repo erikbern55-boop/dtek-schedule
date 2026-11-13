@@ -465,6 +465,14 @@ const css = [
   ".v3-weather .weather-soil .wx-soil-pair{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12px!important;flex:1!important;margin:0!important;text-align:center!important}",
   ".v3-weather .weather-soil .wx-soil-pair strong{font-size:52px!important;line-height:1.1!important}",
   ".v3-weather .weather-soil .wx-soil-pair span{font-size:15px!important;line-height:1.3!important}",
+
+  // Etalon footer and six-column source panel: restore exact information hierarchy.
+  ".v3-sources{grid-template-columns:1.35fr repeat(5,minmax(0,1fr))!important;min-height:156px!important;gap:0!important}",
+  ".v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;gap:6px!important;font-size:16px!important;line-height:1.2!important;padding:9px 10px!important}",
+  ".v3-sources>span strong{font-size:17px!important;line-height:1.2!important;font-weight:600!important}",
+  ".v3-sources>span a{font-size:16px!important;line-height:1.2!important}",
+  ".v3-footer{display:grid!important;grid-template-columns:1.1fr 1fr 1.15fr 1.4fr 1fr!important;align-items:center!important;gap:8px!important;min-height:64px!important;padding:8px 12px!important}",
+  ".v3-footer>span{font-size:14px!important;line-height:1.15!important;white-space:nowrap!important;text-align:center!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -493,8 +501,8 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">'+esc(eventHeading)+'</div><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
-    '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ <a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · графіки</a></span><span>☁ <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo · погода</a></span><span>🌱 <a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a> · <a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span>🌙 <a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span>✨ <a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
-    '<footer class="v3-footer"><span>Дані: '+esc(update)+'</span><span>Графіки · 5 хв</span><span>Погода · 30 хв</span><span>Джерело: '+esc(source)+'</span></footer></article>'
+    '<section class="v3-sources"><b>▰ Джерела та<br>методика</b><span><strong>⚡ Графіки відключень:</strong><a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · dtek.com.ua</a></span><span><strong>☁ Погода і ґрунт:</strong><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span><span><strong>🌱 Агрономічні поради:</strong><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a><a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span><strong>🌙 Місячний календар:</strong><a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span><strong>✨ Астропрогноз:</strong><a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
+    '<footer class="v3-footer"><span>⟳ Оновлено: '+esc(update)+'</span><span>🔄 Погода: кожні 30 хв</span><span>⚡ Графіки ДТЕК: кожні 5 хв</span><span>ⓘ Рекомендації: перевірені джерела</span><span>⬡ Дані для СТ «Хімік»</span></footer></article>'
   // Interactive HTML countdown: the static PNG remains a snapshot for Telegram.
   // The browser clock starts from the server-rendered remaining minutes, without
   // altering the schedule, weather or external source links.
