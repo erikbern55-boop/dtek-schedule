@@ -309,6 +309,19 @@ const css = [
   ".v3-weather .weather-air,.v3-weather .weather-tomorrow,.v3-weather .weather-sun,.v3-weather .weather-soil{padding-top:10px!important;padding-bottom:10px!important}",
   ".v3-weather .weather-air .wx-facts{gap:2px!important}",
   ".v3-weather .weather-tomorrow .wx-forecast-values{gap:8px!important}",
+  // Approved reference: a dominant current-weather card, narrower tomorrow/daylight cards.
+  ".v3-weather .weather-air{grid-column:1/6!important}",
+  ".v3-weather .weather-tomorrow{grid-column:6/8!important}",
+  ".v3-weather .weather-sun{grid-column:8/11!important}",
+  ".v3-weather .weather-soil{grid-column:11/13!important}",
+  // Reference has a larger central wordmark and a tighter, legible source/footer band.
+  ".v3-head{grid-template-columns:305px minmax(0,1fr) 260px!important;gap:12px!important}",
+  ".v3-head .v3-brand strong{font-size:58px!important;letter-spacing:-1.2px!important}",
+  ".v3-head .v3-brand small{font-size:16px!important}",
+  ".v3-head .v3-tag{font-size:19px!important}",
+  ".v3-sources{align-items:center!important;font-size:17px!important;gap:8px!important}",
+  ".v3-sources span{min-height:52px!important;display:flex!important;align-items:center!important}",
+  ".v3-footer{font-size:16px!important;align-items:center!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
