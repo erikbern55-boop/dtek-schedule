@@ -606,6 +606,20 @@ const css = [
   ".v3-weather .weather-tomorrow .wx-forecast-values{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;align-items:stretch!important}",
   ".v3-weather .weather-tomorrow .wx-forecast-values>div{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:8px!important;padding:12px 2px!important;font-size:14px!important;min-width:0!important}",
   ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:32px!important;line-height:1.1!important;white-space:nowrap!important}",
+
+  // Etalon gardening interior: 3 independent visual columns in a fixed card.
+  // Keep the outer 954x311 panel and the dynamic garden advice unchanged.
+  ".v3-weather .weather-garden{display:grid!important;grid-template-columns:minmax(0,1fr) 206px!important;grid-template-rows:48px minmax(0,1fr)!important;column-gap:10px!important;row-gap:0!important;overflow:hidden!important}",
+  ".v3-weather .weather-garden .wx-garden-body{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;gap:12px!important;min-width:0!important;min-height:0!important;align-items:stretch!important;padding:0!important}",
+  ".v3-weather .weather-garden .wx-garden-art{grid-column:1!important;grid-row:1!important;min-width:0!important;min-height:0!important;width:224px!important;height:100%!important;max-height:none!important;align-self:stretch!important;margin:0!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{grid-column:2!important;grid-row:1!important;align-self:center!important;min-width:0!important;max-width:100%!important;margin:0!important;font-size:17px!important;line-height:1.19!important;overflow-wrap:break-word!important}",
+  ".v3-weather .weather-garden .wx-garden-heading{font-size:21px!important;line-height:1.15!important;margin:0 0 7px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy p,.v3-weather .weather-garden .wx-garden-copy li{font-size:17px!important;line-height:1.2!important;margin:0 0 5px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy ul{margin:0!important;padding-left:19px!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}",
+  ".v3-weather .weather-garden .v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;box-sizing:border-box!important;width:100%!important;height:100%!important;min-height:0!important;max-width:100%!important;align-self:stretch!important;justify-content:center!important;gap:10px!important;padding:11px!important;font-size:15px!important;line-height:1.18!important;overflow-wrap:anywhere!important}",
+  ".v3-weather .weather-garden .v3-garden-source b{font-size:16px!important;line-height:1.15!important}",
+  ".v3-weather .weather-garden .v3-garden-source a{font-size:15px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
