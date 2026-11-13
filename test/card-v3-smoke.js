@@ -230,6 +230,34 @@ try {
   "reference geometry must contain complete header measurements")
  assert.ok(referenceGeometry.weather&&referenceGeometry.garden&&referenceGeometry.moon,
   "reference geometry must contain all major content rows")
+
+ // Approximate manually measured rectangles from the user-approved 1170x1280
+ // reference image, normalized to the 1404px render width. These are diagnostic
+ // targets, not claims of pixel-perfect alignment or automated image recognition.
+ const referenceBoxes1170={
+  header:[0,0,1170,114],date:[12,116,467,197],
+  countdown:[489,116,324,197],schedule:[823,116,336,197],
+  weather:[12,325,1147,225],garden:[12,565,795,259],
+  sowing:[820,565,339,259],moon:[12,834,475,195],
+  astrology:[499,834,660,195],sources:[12,1041,1147,139],
+  footer:[7,1197,1152,57]
+ }
+ const scale=1404/1170
+ const comparison=Object.fromEntries(Object.entries(referenceBoxes1170).map(([name,rect])=>{
+  const target={x:Math.round(rect[0]*scale),y:Math.round(rect[1]*scale),
+   width:Math.round(rect[2]*scale),height:Math.round(rect[3]*scale)}
+  const actual=referenceGeometry[name]??null
+  const delta=actual?Object.fromEntries(Object.keys(target).map(k=>[k,actual[k]-target[k]])):null
+  return [name,{target,actual,delta}]
+ }))
+ fs.writeFileSync("svitlopuls-v3-etalon-comparison.json",JSON.stringify({
+  reference:"Approved neon dashboard screenshot, approximate manual block bounds",
+  referenceSize:{width:1170,height:1280},renderWidth:1404,
+  note:"Diagnostic only: compare screenshot and browser preview visually before approval",
+  blocks:comparison
+ },null,2))
+ console.log("V3 etalon geometry comparison saved")
+
  fs.writeFileSync("svitlopuls-v3-reference-geometry.json",JSON.stringify({
   canvasWidth:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().width)),
   canvasHeight:Math.round(await page.locator(".v3").evaluate(el=>el.getBoundingClientRect().height)),
