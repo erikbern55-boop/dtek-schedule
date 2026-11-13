@@ -104,3 +104,25 @@ test("V3 updates displayed schedule from supplied live data, without stale fixtu
   assert.doesNotMatch(html,/06:00 — 13:30/)
   assert.match(html,/13\.11\.2026 12:30/)
 })
+
+test("V3 preview adapter uses live schedule and weather while production viewer remains unchanged",async()=>{
+  const {buildViewerV3Preview}=await import("../src/media.js")
+  const weather={
+    currentNowTemp:17,todayMin:6,todayMax:19,tomorrowMin:3,tomorrowMax:12,
+    currentNowWind:5,todayRain:10,todayGust:13,
+    soilTemp:9,sunrise:"07:21",sunset:"16:31",
+    fetchedAt:"2026-11-13T09:00:00.000Z"
+  }
+  const live=[{begin:"00:00",end:"09:45",power:false},{begin:"09:45",end:"24:00",power:true}]
+  const html=buildViewerV3Preview({...details,schedule:live,weather,update:"13.11.2026 11:45"})
+  assert.match(html,/00:00 — 09:45/)
+  assert.doesNotMatch(html,/06:00 — 13:30/)
+  assert.match(html,/\+17°C/)
+  assert.match(html,/13\.11\.2026 11:45/)
+  assert.match(html,/weather-moon/)
+  assert.match(html,/weather-astro/)
+  const {readFileSync}=await import("node:fs")
+  const media=readFileSync(new URL("../src/media.js",import.meta.url),"utf8")
+  assert.match(media,/if \(process\.env\.SVITLOPULS_V3_PREVIEW === "1"\)/)
+  assert.match(media,/const html = buildCardHtml\(details\)/)
+})
