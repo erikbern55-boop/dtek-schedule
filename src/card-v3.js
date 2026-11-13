@@ -441,6 +441,15 @@ const css = [
   ".v3-sources>span{justify-content:center!important;gap:4px!important;padding:8px 10px!important}",
   ".v3-sources>span a{display:inline!important;max-width:100%!important;overflow-wrap:anywhere!important}",
   ".v3-footer{min-height:60px!important;justify-content:space-around!important}",
+
+  // PNG review: source legend should be visually populated, not six sparse columns.
+  ".v3-sources{min-height:145px!important;align-items:stretch!important}",
+  ".v3-sources>b{display:flex!important;align-items:center!important;font-size:23px!important;line-height:1.22!important}",
+  ".v3-sources>span{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;gap:10px!important;font-size:19px!important;line-height:1.3!important}",
+  ".v3-sources>span a{font-size:19px!important;line-height:1.25!important}",
+  // Approved footer is a narrow status strip; keep all four live status fields.
+  ".v3-footer{min-height:62px!important;justify-content:space-between!important;font-size:17px!important}",
+  ".v3-footer>span{white-space:normal!important;line-height:1.2!important;text-align:center!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
