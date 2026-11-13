@@ -82,3 +82,25 @@ test("V3 gardening artwork uses a real garlic photograph with descriptive altern
   assert.match(html,/alt="Фотографія головок часнику"/)
   assert.doesNotMatch(html,/<div class="wx-garden-art"><svg/)
 })
+
+test("V3 countdown preserves the approved heading without repeating event title",()=>{
+  const html=buildCardV3Html(details)
+  assert.match(html,/<h2 class="v3-title">⏱ Відлік до події<\/h2>/)
+  const panel=html.match(/<section class="v3-panel v3-count">([\s\S]*?)<\/section>/)?.[1]
+  assert.ok(panel,"countdown panel exists")
+  assert.match(panel,/<div class="v3-count-event">[^<]+<\/div>/)
+  assert.match(panel,/<div class="v3-clock" data-countdown-minutes="[^"]*">/)
+  const title=panel.match(/<div class="v3-count-event">([^<]+)<\/div>/)?.[1]
+  const detail=panel.match(/<div class="v3-next">([^<]*)<\/div>/)?.[1]
+  assert.ok(title&&detail,"event and explanatory detail exist")
+  assert.ok(!detail.startsWith(title),"event title is not duplicated in explanatory detail")
+})
+
+test("V3 updates displayed schedule from supplied live data, without stale fixture periods",()=>{
+  const changed=[{begin:"00:00",end:"08:15",power:false},{begin:"08:15",end:"24:00",power:true}]
+  const html=buildCardV3Html({...details,schedule:changed,update:"13.11.2026 12:30"})
+  assert.match(html,/00:00 — 08:15/)
+  assert.match(html,/08:15 — 24:00/)
+  assert.doesNotMatch(html,/06:00 — 13:30/)
+  assert.match(html,/13\.11\.2026 12:30/)
+})
