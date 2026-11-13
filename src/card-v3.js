@@ -420,6 +420,14 @@ const css = [
   ".v3-weather .weather-astro .wx-astro-copy{font-size:17px!important;line-height:1.2!important;min-width:0!important}",
   ".v3-weather .weather-astro .wx-astro-copy b{font-size:20px!important;margin-bottom:3px!important}",
   ".v3-weather .weather-astro .wx-astro-disclaimer{font-size:11px!important;line-height:1.2!important;margin-top:6px!important;padding-top:4px!important}",
+
+  // Final lower-row legibility pass based on the rendered CI PNG.
+  ".v3-weather .weather-zone>.wx-credit{font-size:13px!important;line-height:1.25!important;margin:8px 8px 4px!important;text-align:left!important;color:#d1e9d9!important}",
+  ".v3-sources{min-height:144px!important;grid-template-columns:1.35fr repeat(5,minmax(0,1fr))!important;gap:0!important}",
+  ".v3-sources>b{font-size:22px!important;line-height:1.2!important;align-self:center!important;padding:0 10px!important}",
+  ".v3-sources>span{font-size:17px!important;line-height:1.3!important;align-items:flex-start!important;text-align:left!important;padding:8px 12px!important;overflow-wrap:anywhere!important}",
+  ".v3-sources a{font-size:16px!important;line-height:1.3!important}",
+  ".v3-footer{min-height:60px!important;gap:12px!important;font-size:16px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
