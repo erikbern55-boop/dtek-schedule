@@ -301,6 +301,22 @@ try {
     "lower panel text must not be clipped: "+JSON.stringify({section:section.selector,item}))
   }
  }
+
+ // The approved reference has six source columns and a narrow readable footer.
+ // Detect clipping introduced by larger type or longer live source labels.
+ const bottomBounds=await page.evaluate(()=>[".v3-sources",".v3-footer"].map(selector=>{
+  const root=document.querySelector(selector),r=root.getBoundingClientRect()
+  const items=[...root.querySelectorAll("b,span,a")].filter(e=>e.getClientRects().length)
+   .map(e=>{const b=e.getBoundingClientRect();return {text:e.textContent.slice(0,48),left:b.left,right:b.right,top:b.top,bottom:b.bottom}})
+  return {selector,panel:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},items}
+ }))
+ for(const section of bottomBounds){
+  for(const item of section.items){
+   assert.ok(item.left>=section.panel.left-4&&item.right<=section.panel.right+4&&item.top>=section.panel.top-4&&item.bottom<=section.panel.bottom+4,
+    "sources/footer content must fit inside panel: "+JSON.stringify({section:section.selector,item}))
+  }
+ }
+ console.log("Sources and footer bounds:",JSON.stringify(bottomBounds))
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
