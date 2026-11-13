@@ -6,6 +6,7 @@ const rectangles={
  temperatureTodayMin:{x:230,y:630,width:180,height:60},
  temperatureTodayMax:{x:430,y:630,width:180,height:60},
  powerStatus:{x:30,y:230,width:200,height:60},
+ powerPeriods:{x:30,y:310,width:700,height:180},
  countdown:{x:250,y:230,width:200,height:60}
 };
 test("full-screen preview combines live weather and schedule without fake values",()=>{
