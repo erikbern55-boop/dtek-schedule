@@ -1,7 +1,7 @@
-// Preview-only opaque inset over the baked-in weather values of the approved image.
+// Preview-only temperature-only inset: avoid weather pictograms, date, feels-like and condition labels.
 // This does not edit the owner artwork. For release, replace with a designer-approved
 // clean plate. Rectangles are measured in the 1404x1536 reference coordinate space.
-export const WEATHER_VALUE_INSET=Object.freeze({x:146,y:472,width:245,height:168});
+export const WEATHER_VALUE_INSET=Object.freeze({x:175,y:504,width:165,height:68});
 const escape=s=>String(s??"—").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 // Ensure the live value itself contains exactly one leading plus sign.
 const cleanTemp = value => typeof value==="string" ? value.replace(/^\s*\+\s*(?:\+\s*)+(?=\d)/u,"+") : value;
