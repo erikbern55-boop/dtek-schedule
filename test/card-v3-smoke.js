@@ -85,6 +85,16 @@ try {
  assert.match(htmlSource,/svitlopuls-v3-scroll/,"viewer persists scroll position across refresh")
  assert.match(htmlSource,/sessionStorage\\.setItem/,"viewer saves its current scroll coordinates")
  assert.match(htmlSource,/window\\.scrollTo/,"viewer restores the saved coordinates")
+ // Browser-level restoration test on a real HTTPS origin (not about:blank).
+ const restorePage=await browser.newPage({viewport:{width:390,height:700}})
+ await restorePage.route("https://svitlopuls.test/v3",route=>route.fulfill({status:200,contentType:"text/html",body:fullScreenHtml}))
+ await restorePage.goto("https://svitlopuls.test/v3")
+ await restorePage.evaluate(()=>{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([160,420]));})
+ await restorePage.reload()
+ await restorePage.waitForFunction(()=>window.scrollX>=150&&window.scrollY>=400)
+ const restored=await restorePage.evaluate(()=>({x:window.scrollX,y:window.scrollY}))
+ assert.ok(restored.x>=150&&restored.y>=400,"viewer restores both scroll axes: "+JSON.stringify(restored))
+ await restorePage.close()
  assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
  assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
  // Real mobile screenshot is retained for human visual inspection of the viewer.
