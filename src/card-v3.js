@@ -393,7 +393,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     // A test-only V3 viewer uses this; production viewer is unchanged.
     'setInterval(function(){if(document.visibilityState!=="visible"||location.protocol==="about:")return;const x=window.scrollX,y=window.scrollY;try{sessionStorage.setItem("svitlopuls-v3-scroll",JSON.stringify([x,y]));}catch(e){}location.reload();},300000);try{const p=JSON.parse(sessionStorage.getItem("svitlopuls-v3-scroll")||"null");if(Array.isArray(p)){try{history.scrollRestoration="manual";}catch(e){}function restoreScroll(){const x=Math.max(0,Number(p[0])||0),y=Math.max(0,Number(p[1])||0);window.scrollTo(x,y);}requestAnimationFrame(restoreScroll);window.addEventListener("load",restoreScroll,{once:true});setTimeout(restoreScroll,150);setTimeout(restoreScroll,600);setTimeout(function(){restoreScroll();sessionStorage.removeItem("svitlopuls-v3-scroll");},1200);}}catch(e){}'+
     '})();</scr'+'ipt>'
-  return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
+  return '<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'+css+'</style></head><body>'+html+liveScript+'</body></html>'
 }
 
 export async function renderCardV3Png(details) {
