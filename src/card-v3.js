@@ -204,6 +204,9 @@ const css = [
   ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#5cf86a!important;box-shadow:inset 0 0 12px #0a6c35,0 0 8px #168f3b,0 0 2px #b7ffb9!important}",
   ".v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}",
   ".v3-sources a{color:#80dcff!important;text-decoration:underline!important;text-underline-offset:3px!important}",
+  ".v3-sources{min-height:86px!important;align-items:center!important;padding:12px 14px!important;box-sizing:border-box!important}",
+  ".v3-sources span{line-height:1.35!important}",
+  ".v3-footer{min-height:40px!important;align-items:center!important;box-sizing:border-box!important}",
   // Independent garden and sowing panels for the approved V3 layout.
   ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;display:block!important;min-height:0!important}",
   ".v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important;min-height:0!important}",
