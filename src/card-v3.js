@@ -633,7 +633,7 @@ const css = [
   // Reference uses a garden photograph filling the portrait tile, rather
   // than a small product-style image on a dark empty background.
   ".v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}",
-  ".v3-weather .weather-garden .wx-garden-art img{object-fit:cover!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
