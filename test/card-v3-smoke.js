@@ -83,8 +83,8 @@ try {
  // Ensure the published HTML contains a scroll restoration path for five-minute refreshes.
  const htmlSource=await viewerPage.content()
  assert.match(htmlSource,/svitlopuls-v3-scroll/,"viewer persists scroll position across refresh")
- assert.match(htmlSource,/sessionStorage\\.setItem/,"viewer saves its current scroll coordinates")
- assert.match(htmlSource,/window\\.scrollTo/,"viewer restores the saved coordinates")
+ assert.match(htmlSource,/sessionStorage\.setItem/,"viewer saves its current scroll coordinates")
+ assert.match(htmlSource,/window\.scrollTo/,"viewer restores the saved coordinates")
  // Browser-level restoration test on a real HTTPS origin (not about:blank).
  const restorePage=await browser.newPage({viewport:{width:390,height:700}})
  await restorePage.route("https://svitlopuls.test/v3",route=>route.fulfill({status:200,contentType:"text/html",body:fullScreenHtml}))
