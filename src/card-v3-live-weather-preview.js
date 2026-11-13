@@ -6,7 +6,7 @@ import {buildIntegratedPreview} from "./card-v3-preview.js";
 export async function buildLiveWeatherInsetPreview({
  now=new Date(),weatherLoader=loadWeather,weatherMapper=weatherForDate,
  artworkUrl,rectangles={},sourceRectangles,previousData={},scheduleSnapshot,
- schedulePeriods,scheduleDate,referenceWidth=1404,referenceHeight=1536,useWeatherHeaderDate=false
+ schedulePeriods,scheduleDate,referenceWidth=1404,referenceHeight=1536,useWeatherHeaderDate=false,useDailyContent=false
 }={}){
  if(!(now instanceof Date)||!Number.isFinite(now.getTime()))throw Error("Valid current date required");
  const snapshot=await weatherLoader({now});
@@ -19,7 +19,8 @@ export async function buildLiveWeatherInsetPreview({
  const result=buildIntegratedPreview({
   artworkUrl,rectangles,sourceRectangles,previousData,scheduleSnapshot,schedulePeriods,scheduleDate,
   weatherSnapshot:weather,nowMs:now.getTime(),weatherFetchedAtMs:fetchedAtMs,
-  referenceWidth,referenceHeight,useWeatherInset:true,useWeatherHeaderDate
+  referenceWidth,referenceHeight,useWeatherInset:true,useWeatherHeaderDate,
+  useDailyContent,dailyDate:scheduleDate||today
  });
  return {...result,weatherFetchedAt:snapshot.fetchedAt,weatherSource:"Open-Meteo",weatherDate:today};
 }
