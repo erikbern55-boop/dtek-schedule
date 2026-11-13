@@ -21,3 +21,14 @@ test("no invented readings if source fails or is stale",async()=>{
  await assert.rejects(buildLiveWeatherInsetPreview({...args,weatherLoader:async()=>null}),/unavailable/);
  await assert.rejects(buildLiveWeatherInsetPreview({...args,weatherLoader:async()=>({fetchedAt:now.toISOString()}),weatherMapper:()=>({stale:true})}),/stale/);
 });
+
+test("real weather preview can opt into dynamic Kyiv date without losing temperatures",async()=>{
+ const result=await buildLiveWeatherInsetPreview({
+  now,artworkUrl:"/assets/approved-clean-plate.png",useWeatherHeaderDate:true,
+  weatherLoader:async()=>({fetchedAt:"2026-11-13T08:55:00Z"}),
+  weatherMapper:(_snapshot,date)=>({date,todayDate:date,currentNowTemp:6,todayMin:1,todayMax:9})
+ });
+ assert.ok(result.html.includes('class="svitlo-weather-header-date"'));
+ assert.ok(result.html.includes(">13.11</span>"));
+ for(const temp of ["+6°C","+1°C","+9°C"])assert.ok(result.html.includes(temp));
+});
