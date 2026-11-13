@@ -205,8 +205,8 @@ const css = [
   ".v3-tag{box-shadow:inset 0 0 8px #176b34,0 0 9px #177b37!important}",
   ".v3-sources a{color:#80dcff!important;text-decoration:underline!important;text-underline-offset:3px!important}",
   // Independent garden and sowing panels for the approved V3 layout.
-  ".v3-weather .weather-garden{grid-column:1/8!important;grid-row:2!important;display:block!important;min-height:0!important}",
-  ".v3-weather .weather-sowing{grid-column:8/13!important;grid-row:2!important;min-height:0!important}",
+  ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;display:block!important;min-height:0!important}",
+  ".v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important;min-height:0!important}",
   ".v3-weather .weather-garden .wx-garden-body{display:flex!important}",
   ".v3-weather .weather-sowing .wx-sowing{display:flex!important;flex-direction:column!important;gap:5px!important;margin:0!important}",
   // Approved reference: horizontal date/dial composition and restrained header.
