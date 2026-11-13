@@ -175,6 +175,28 @@ try {
  assert.ok(gardenSource.photo.right<=gardenSource.source.left+2,"garden photo must not overlap the attribution column: "+JSON.stringify(gardenSource))
  assert.ok(gardenSource.copy.right<=gardenSource.source.left+2,"garden advice must not overlap the attribution column: "+JSON.stringify(gardenSource))
  assert.ok(gardenSource.source.right<=gardenSource.card.right+2,"attribution must fit inside garden card")
+
+ assert.ok(gardenSource.photo.right<=gardenSource.copy.left+3,
+  "garlic photo must not overlap the advice text: "+JSON.stringify(gardenSource))
+ assert.ok(gardenSource.photo.left>=gardenSource.card.left-2&&gardenSource.photo.bottom<=gardenSource.card.bottom+2,
+  "garlic photo must fit inside approved garden panel: "+JSON.stringify(gardenSource))
+ assert.ok(gardenSource.copy.top>=gardenSource.card.top-2&&gardenSource.copy.bottom<=gardenSource.card.bottom+2,
+  "garden advice must fit vertically: "+JSON.stringify(gardenSource))
+ assert.ok(gardenSource.source.top>=gardenSource.card.top-2&&gardenSource.source.bottom<=gardenSource.card.bottom+2,
+  "RHS attribution must fit vertically: "+JSON.stringify(gardenSource))
+ const gardenTextFit=await page.evaluate(()=>{
+  const elements=[...document.querySelectorAll(".weather-garden .wx-garden-copy,.weather-garden .wx-garden-copy *,.v3-garden-source,.v3-garden-source *")]
+   .filter(e=>e.getClientRects().length)
+  return elements.map(e=>({tag:e.tagName,cls:e.className,
+   scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,
+   scrollHeight:e.scrollHeight,clientHeight:e.clientHeight}))
+ })
+ for(const item of gardenTextFit){
+  assert.ok(item.scrollWidth<=item.clientWidth+4&&item.scrollHeight<=item.clientHeight+4,
+   "garden/RHS text must not clip: "+JSON.stringify(item))
+ }
+ console.log("Garden reference layout:",JSON.stringify(gardenSource))
+
  const layout=await page.evaluate(()=>{
   const box=selector=>{const e=document.querySelector(selector);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,overflow:e.scrollWidth>e.clientWidth+3}}
   return {power:box(".v3-power"),air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),sun:box(".weather-sun"),soil:box(".weather-soil"),
