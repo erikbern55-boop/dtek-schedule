@@ -502,6 +502,28 @@ const css = [
   ".v3-daylight-duration{display:block!important;text-align:center!important;font-size:33px!important;font-weight:800!important;line-height:1.1!important;color:#fff!important;margin:7px 0!important;white-space:nowrap!important}",
   ".v3-weather .weather-sun .wx-sun-pair{justify-content:flex-start!important;gap:0!important}",
   ".v3-weather .weather-sun .wx-sun-pair span{padding:8px 2px!important;font-size:17px!important}",
+
+  // Coordinated 1404x1536 etalon geometry pass, measured against the user's
+  // approved image. This overrides legacy fractional grid widths.
+  ".v3-head{height:119px!important;min-height:0!important;align-items:center!important}",
+  ".v3-place{font-size:19px!important;line-height:1.23!important}",
+  ".v3-place strong{font-size:24px!important}",
+  ".v3-brand strong{font-size:56px!important;line-height:1.12!important}",
+  ".v3-brand small{font-size:14px!important;line-height:1.2!important}",
+  ".v3-weather .wx-grid{grid-template-columns:560px 248px 270px minmax(0,1fr)!important;grid-template-rows:255px 311px 234px!important;gap:12px!important;margin-left:-8px!important;margin-right:-8px!important}",
+  ".v3-weather .weather-air{grid-column:1!important;grid-row:1!important}",
+  ".v3-weather .weather-tomorrow{grid-column:2!important;grid-row:1!important}",
+  ".v3-weather .weather-sun{grid-column:3!important;grid-row:1!important}",
+  ".v3-weather .weather-soil{grid-column:4!important;grid-row:1!important}",
+  ".v3-weather .weather-garden{grid-column:1/4!important;grid-row:2!important;width:954px!important}",
+  ".v3-weather .weather-sowing{grid-column:4!important;grid-row:2!important;width:407px!important;transform:translateX(-144px)!important}",
+  ".v3-weather .weather-moon{grid-column:1!important;grid-row:3!important;width:570px!important}",
+  ".v3-weather .weather-astro{grid-column:2/5!important;grid-row:3!important;width:792px!important;transform:translateX(13px)!important}",
+  // The source legend already carries attribution; the extra full-width
+  // diagnostic credit below the weather grid is not part of the approved art.
+  ".v3-weather .weather-zone>.wx-credit{display:none!important}",
+  ".v3-sources{min-height:167px!important}",
+  ".v3-footer{min-height:68px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
