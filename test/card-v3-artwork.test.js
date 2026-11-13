@@ -21,3 +21,24 @@ test("rejects overflowing layers, duplicate ids and injected markup",()=>{
  const html=buildArtworkFirstCard({artworkUrl:"/assets/clean-plate.png",layers:[{id:"safe",x:0,y:0,width:100,height:100,text:"<script>"}]});
  assert.ok(!html.includes("<script>"));
 });
+
+test("respects approved artwork dimensions instead of assuming a fixed card ratio",()=>{
+ const html=buildArtworkFirstCard({artworkUrl:"/assets/clean-plate.png",referenceWidth:1404,referenceHeight:1536,layers:[{id:"weather",x:702,y:768,width:351,height:384,text:"+7°C"}]});
+ assert.match(html,/aspect-ratio:1404\/1536/);
+ assert.match(html,/left:50%/);
+ assert.match(html,/top:50%/);
+ assert.match(html,/width:25%/);
+ assert.match(html,/height:25%/);
+ assert.match(html,/\+7°C/);
+});
+test("keeps Ukrainian live values escaped and in independent layers",()=>{
+ const html=buildArtworkFirstCard({artworkUrl:"/assets/clean-plate.png",layers:[
+  {id:"today",x:20,y:20,width:200,height:50,text:"Сьогодні: світло є"},
+  {id:"countdown",x:250,y:20,width:200,height:50,text:"00:58"},
+  {id:"garden",x:20,y:700,width:800,height:200,text:"Часник & цибуля"}
+ ]});
+ assert.match(html,/Сьогодні: світло є/);
+ assert.match(html,/00:58/);
+ assert.match(html,/Часник &amp; цибуля/);
+ assert.equal((html.match(/class="art-layer"/g)||[]).length,3);
+});
