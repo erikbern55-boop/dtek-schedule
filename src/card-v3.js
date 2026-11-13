@@ -285,6 +285,10 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center center!important;background:#10231b!important}",
   ".v3-weather .weather-garden .wx-garden-art{background:#10231b!important;border:1px solid #3f9c68!important;box-sizing:border-box!important}",
   ".v3-weather .weather-garden .wx-garden-art img{border-radius:12px!important}",
+  ".v3-weather .weather-sowing .wx-sowing{gap:3px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row{padding:3px 7px!important;line-height:1.12!important;font-size:14px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row b{font-size:15px!important;margin-bottom:1px!important}",
+  ".v3-weather .weather-garden .wx-garden-body{padding:5px 10px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
