@@ -428,6 +428,19 @@ const css = [
   ".v3-sources>span{font-size:17px!important;line-height:1.3!important;align-items:flex-start!important;text-align:left!important;padding:8px 12px!important;overflow-wrap:anywhere!important}",
   ".v3-sources a{font-size:16px!important;line-height:1.3!important}",
   ".v3-footer{min-height:60px!important;gap:12px!important;font-size:16px!important}",
+
+  // Visual review 13.11: fill the gardening panel rather than centering tiny content
+  // in a large empty area; keep the dynamic advice and RHS link intact.
+  ".v3-weather .weather-garden .wx-garden-body{align-items:stretch!important;justify-content:flex-start!important;gap:16px!important;padding:10px 4px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex:0 0 205px!important;min-width:205px!important;width:205px!important;height:215px!important;min-height:215px!important;align-self:center!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.3!important;align-self:center!important}",
+  ".v3-weather .weather-garden .wx-garden-heading{font-size:23px!important;line-height:1.2!important}",
+  ".v3-garden-source{top:52px!important;bottom:14px!important;justify-content:center!important;gap:9px!important}",
+  // Make the source legend resemble the six distinct, readable columns in the etalon.
+  ".v3-sources{min-height:144px!important;padding:12px 10px!important}",
+  ".v3-sources>span{justify-content:center!important;gap:4px!important;padding:8px 10px!important}",
+  ".v3-sources>span a{display:inline!important;max-width:100%!important;overflow-wrap:anywhere!important}",
+  ".v3-footer{min-height:60px!important;justify-content:space-around!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
