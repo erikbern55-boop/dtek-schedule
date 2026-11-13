@@ -88,6 +88,6 @@ test("weather inset keeps one plus and displays all three readings",()=>{
 test("optional Today header date uses Kyiv calendar and keeps all three temperatures",()=>{
  const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles:{},nowMs:Date.parse("2026-11-13T23:30:00Z"),useWeatherInset:true,useWeatherHeaderDate:true,weatherSnapshot:{currentNowTemp:6,todayMin:2,todayMax:9}});
  assert.match(out.html,/class="svitlo-weather-header-date"/);
- assert.match(out.html,/>14\\.11<\\/span>/);
+ assert.ok(out.html.includes(">14.11</span>"));
  for(const value of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(value));
 });
