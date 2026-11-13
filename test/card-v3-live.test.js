@@ -17,3 +17,13 @@ test("unsupported nested data must be formatted by existing pipeline",()=>{
  assert.ok(ARTWORK_DATA_FIELDS.includes("gardenAdvice"));
  assert.ok(ARTWORK_DATA_FIELDS.includes("moonPhase"));
 });
+
+test("today panel renders current, minimum and maximum temperatures independently",()=>{
+ const html=buildLiveArtworkV3({artworkUrl:"/assets/clean-plate.png",referenceWidth:1404,referenceHeight:1536,
+ rectangles:{temperatureNow:{x:100,y:500,width:180,height:50},temperatureTodayMin:{x:300,y:500,width:150,height:50},temperatureTodayMax:{x:470,y:500,width:150,height:50}},
+ data:{temperatureNow:"+7°C",temperatureTodayMin:"+2°C",temperatureTodayMax:"+9°C"}});
+ assert.match(html,/data-layer="live-temperature-now"/);
+ assert.match(html,/data-layer="live-temperature-today-min"/);
+ assert.match(html,/data-layer="live-temperature-today-max"/);
+ assert.match(html,/\+2°C/);assert.match(html,/\+9°C/);
+});
