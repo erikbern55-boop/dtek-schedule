@@ -105,6 +105,9 @@ try {
  await restorePage.waitForFunction(()=>window.scrollX>=Math.min(70,Math.max(0,document.documentElement.scrollWidth-innerWidth))&&window.scrollY>=Math.min(230,Math.max(0,document.documentElement.scrollHeight-innerHeight)),null,{timeout:5000})
  assert.equal(await restorePage.evaluate(()=>document.querySelector(".v3-clock")?.dataset.countdownMinutes),"","countdown-free viewer fixture is active")
  await restorePage.close()
+ // Guard the reference garden photo against accidental shrinking in future CSS overrides.
+ const gardenGeometry=await page.evaluate(()=>{const art=document.querySelector(".v3-weather .weather-garden .wx-garden-art");const img=art?.querySelector("img");const r=art?.getBoundingClientRect();return {exists:!!art,image:!!img,width:r?.width??0,height:r?.height??0}})
+ assert.ok(gardenGeometry.exists&&gardenGeometry.width>=190&&gardenGeometry.height>=185,"approved garden image frame remains prominent: "+JSON.stringify(gardenGeometry))
  assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
  assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
  // Real mobile screenshot is retained for human visual inspection of the viewer.
