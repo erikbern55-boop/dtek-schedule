@@ -16,6 +16,6 @@ export function buildArtworkFirstCard({artworkUrl,referenceWidth=1170,referenceH
     const inner=href ? (()=>{if(typeof href!=="string"||!/^https:\/\//.test(href))throw new Error("Only HTTPS links are allowed");return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${body}</a>`})() : body;
     return `<div class="art-layer" data-layer="${id}" style="${style}">${inner}</div>`;
   }).join("");
-  return `<section class="svitlo-artwork" aria-label="Світлопульс 3.0"><img class="art-base" src="${escapeHtml(artworkUrl)}" alt="" decoding="async"/>${nodes}</section>`;
+  return `<section class="svitlo-artwork" style="aspect-ratio:${referenceWidth}/${referenceHeight}" aria-label="Світлопульс 3.0"><img class="art-base" src="${escapeHtml(artworkUrl)}" alt="" decoding="async"/>${nodes}</section>`;
 }
-export const ARTWORK_FIRST_CSS = `.svitlo-artwork{position:relative;width:100%;aspect-ratio:1170/1280;overflow:hidden}.svitlo-artwork .art-base{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:fill}.svitlo-artwork .art-layer{position:absolute;overflow-wrap:anywhere;white-space:pre-line}.svitlo-artwork .art-layer a{color:inherit;text-decoration:underline}`;
+export const ARTWORK_FIRST_CSS = `.svitlo-artwork{position:relative;width:100%;overflow:hidden}.svitlo-artwork .art-base{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:fill}.svitlo-artwork .art-layer{position:absolute;overflow-wrap:anywhere;white-space:pre-line}.svitlo-artwork .art-layer a{color:inherit;text-decoration:underline}`;
