@@ -582,6 +582,20 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-heading{font-size:23px!important;line-height:1.2!important;margin-bottom:8px!important;color:#e8ff9c!important}",
   ".v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;padding:12px!important;gap:9px!important;font-size:16px!important;line-height:1.22!important}",
   ".v3-garden-source b{font-size:17px!important;line-height:1.2!important}",
+
+  // Prevent the denser reference weather layout from widening its 560px panel.
+  // Retain all live readings and the established outer grid dimensions.
+  ".v3-weather .weather-air{min-width:0!important;overflow:hidden!important;grid-template-columns:minmax(0,1fr) minmax(0,0.92fr)!important;column-gap:7px!important;padding-left:12px!important;padding-right:12px!important}",
+  ".v3-weather .weather-air>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}",
+  ".v3-weather .weather-air>.wx-weather-main{min-width:0!important;max-width:100%!important;gap:4px!important;justify-content:flex-start!important}",
+  ".v3-weather .weather-air>.wx-weather-main>div{min-width:0!important;max-width:100%!important}",
+  ".v3-weather .weather-air .wx-symbol{font-size:54px!important;flex:0 1 auto!important}",
+  ".v3-weather .weather-air .wx-now{font-size:48px!important;white-space:nowrap!important}",
+  ".v3-weather .weather-air .wx-cond{font-size:15px!important;overflow-wrap:anywhere!important}",
+  ".v3-weather .weather-air>.wx-facts{min-width:0!important;max-width:100%!important;padding-left:8px!important}",
+  ".v3-weather .weather-air .wx-fact{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important;font-size:14px!important;line-height:1.13!important;padding:6px 2px!important}",
+  ".v3-weather .weather-air .wx-fact b{font-size:15px!important;white-space:normal!important}",
+  ".v3-weather .weather-air .wx-today-box,.v3-weather .weather-air .wx-forecast-values{min-width:0!important;max-width:100%!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
