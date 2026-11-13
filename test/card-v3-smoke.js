@@ -282,6 +282,25 @@ try {
     "weather content must fit inside compact panel: "+JSON.stringify({panel:panel.selector,item}))
   }
  }
+
+ // Detect any clipped lower-row text, including lunar zodiac and astro disclaimer.
+ const lowerTextBounds=await page.evaluate(()=>{
+  const selectors=[".weather-moon",".weather-astro"]
+  return selectors.map(selector=>{
+   const panel=document.querySelector(selector),p=panel.getBoundingClientRect()
+   const items=[...panel.querySelectorAll("h3,.wx-moon-row,.wx-moon-number,.wx-moon-note,.wx-astro-tag,.wx-astro-copy,.wx-astro-disclaimer")]
+    .filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=="hidden")
+    .map(el=>{const r=el.getBoundingClientRect();return {name:el.className||el.tagName,left:r.left,right:r.right,top:r.top,bottom:r.bottom}})
+   return {selector,panel:{left:p.left,right:p.right,top:p.top,bottom:p.bottom},items}
+  })
+ })
+ console.log("Lower row text bounds:",JSON.stringify(lowerTextBounds))
+ for(const section of lowerTextBounds){
+  for(const item of section.items){
+   assert.ok(item.left>=section.panel.left-3&&item.right<=section.panel.right+3&&item.top>=section.panel.top-3&&item.bottom<=section.panel.bottom+3,
+    "lower panel text must not be clipped: "+JSON.stringify({section:section.selector,item}))
+  }
+ }
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
