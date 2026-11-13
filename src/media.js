@@ -76,7 +76,7 @@ export function buildViewerV3Preview(details) {
   return buildCardV3Html(details)
 }
 
-function saveViewerSnapshot(png, label, details) {
+export function saveViewerSnapshot(png, label, details) {
   // Public viewer receives only rendered graphics, never Telegram credentials.
   try {
     fs.mkdirSync("artifacts/web", { recursive: true })
