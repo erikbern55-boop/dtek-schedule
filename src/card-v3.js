@@ -620,6 +620,15 @@ const css = [
   ".v3-weather .weather-garden .v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;box-sizing:border-box!important;width:100%!important;height:100%!important;min-height:0!important;max-width:100%!important;align-self:stretch!important;justify-content:center!important;gap:10px!important;padding:11px!important;font-size:15px!important;line-height:1.18!important;overflow-wrap:anywhere!important}",
   ".v3-weather .weather-garden .v3-garden-source b{font-size:16px!important;line-height:1.15!important}",
   ".v3-weather .weather-garden .v3-garden-source a{font-size:15px!important}",
+
+  // Visual review f736: eliminate large empty top half of the advice column.
+  // Keep advice data, photo source and reference attribution unchanged.
+  ".v3-weather .weather-garden .wx-garden-copy{align-self:start!important;padding-top:13px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:8px!important;font-size:19px!important;line-height:1.27!important}",
+  ".v3-weather .weather-garden .wx-garden-heading{font-size:24px!important;line-height:1.15!important;margin:0 0 4px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{border:1px solid #8bda6a!important;border-radius:12px!important;overflow:hidden!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important}",
+  ".v3-weather .weather-garden .v3-garden-source{justify-content:flex-start!important;padding-top:20px!important;gap:12px!important;font-size:17px!important}",
+  ".v3-weather .weather-garden .v3-garden-source b{font-size:18px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
