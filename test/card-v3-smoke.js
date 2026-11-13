@@ -52,7 +52,7 @@ try {
  await clockPage.clock.install({time:new Date("2026-11-07T14:30:00.000Z")})
  await clockPage.setContent(buildCardV3Html(details),{waitUntil:"load"})
  const clockBefore=await clockPage.locator(".v3-clock").textContent()
- assert.match(clockBefore,/^\\d{2}:\\d{2}$/,"live countdown uses HH:MM")
+ assert.match(clockBefore,/^\d{2}:\d{2}$/,"live countdown uses HH:MM")
  await clockPage.clock.fastForward(61000)
  const clockAfter=await clockPage.locator(".v3-clock").textContent()
  const toMinutes=text=>{const [h,m]=text.split(":").map(Number);return h*60+m}
