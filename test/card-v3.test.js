@@ -141,3 +141,11 @@ test("V3 viewer preview uses the same supplied schedule and weather as the live 
   assert.match(b,/weather-garden/)
   assert.match(b,/weather-moon/)
 })
+
+test("V3 preview keeps internal credentials and injected markup out of public HTML",()=>{
+  const html=buildViewerV3Preview({...details,update:'<img src=x onerror=alert(1)>',source:'<script>unsafe</script>'})
+  assert.doesNotMatch(html,/<script>unsafe<\/script>/)
+  assert.doesNotMatch(html,/<img src=x onerror=alert\(1\)>/)
+  assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/)
+  assert.doesNotMatch(html,/TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID|process\.env\./)
+})
