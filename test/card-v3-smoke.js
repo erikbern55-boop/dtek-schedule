@@ -180,6 +180,34 @@ try {
  })
  for(const [name,b] of Object.entries(layout))assert.ok(b,name+" missing")
 
+ // Approved 09.11 neon reference: electricity above weather, weather above gardening,
+ // gardening above moon/astrology, sources and status at the bottom.
+ // These checks catch whole-row rearrangements that isolated component tests miss.
+ const referenceOrder=await page.evaluate(()=>{
+  const box=s=>{const e=document.querySelector(s);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.left,y:r.top,right:r.right,bottom:r.bottom}}
+  return {
+   date:box(".v3-date-panel"),countdown:box(".v3-count"),
+   schedule:box(".v3-power > section:last-child"),
+   air:box(".weather-air"),tomorrow:box(".weather-tomorrow"),
+   sun:box(".weather-sun"),soil:box(".weather-soil"),
+   garden:box(".weather-garden"),sowing:box(".weather-sowing"),
+   moon:box(".weather-moon"),astro:box(".weather-astro"),
+   sources:box(".v3-sources"),footer:box(".v3-footer")
+  }
+ })
+ for(const [name,b] of Object.entries(referenceOrder))assert.ok(b,"approved reference block missing: "+name)
+ const R=referenceOrder
+ assert.ok(R.date.x<R.countdown.x&&R.countdown.x<R.schedule.x,"reference electricity row must run date / countdown / schedule")
+ assert.ok(R.air.x<R.tomorrow.x&&R.tomorrow.x<R.sun.x&&R.sun.x<R.soil.x,"reference weather row must run current / tomorrow / daylight / soil")
+ assert.ok(R.garden.x<R.sowing.x,"reference gardening advice must sit left of sowing guidance")
+ assert.ok(R.moon.x<R.astro.x,"reference moon must sit left of astrology")
+ assert.ok(R.schedule.bottom<=R.air.y+10,"reference electricity row must precede weather")
+ assert.ok(R.soil.bottom<=R.garden.y+10,"reference weather must precede gardening")
+ assert.ok(R.garden.bottom<=R.moon.y+10,"reference gardening must precede lunar row")
+ assert.ok(R.astro.bottom<=R.sources.y+10&&R.sources.bottom<=R.footer.y+10,"reference sources and footer must stay last")
+ console.log("Approved reference block order:",JSON.stringify(referenceOrder))
+
+
  // Persist full block geometry so every iteration can be compared with the approved 1404px reference.
  const referenceGeometry=await page.evaluate(()=>{
   const root=document.querySelector(".v3").getBoundingClientRect()
