@@ -328,6 +328,10 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#10231b!important}",
   ".v3-weather .weather-garden .wx-garden-copy{font-size:21px!important;line-height:1.32!important}",
   ".v3-weather .weather-garden h3{font-size:25px!important}",
+  ".v3-count{justify-content:center!important;gap:4px!important}",
+  ".v3-count .v3-title{margin:0 0 3px!important;font-size:28px!important}",
+  ".v3-count .v3-count-event{font-size:21px!important;font-weight:700!important;color:#f2ffe9!important}",
+  ".v3-count .v3-next{font-size:18px!important;line-height:1.25!important;margin-top:3px!important}",
   // The approved garden card has its own visible source column.
   ".v3-weather .weather-garden{position:relative!important;padding-right:196px!important}",
   ".v3-weather .weather-garden .wx-garden-body{gap:12px!important}",
@@ -368,7 +372,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
     '<section class="v3-panel v3-date-panel"><div class="v3-date">📅 '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b><span class="v3-weekday">'+esc(weekday(date))+'</span></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
-    '<section class="v3-panel v3-count"><h2 class="v3-title">⏳ '+esc(eventHeading)+'</h2><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
+    '<section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">'+esc(eventHeading)+'</div><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventHeading+' · '+eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+splitGarden+'</div>'+
     '<section class="v3-sources"><b>▱ Джерела та методика</b><span>⚡ <a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · графіки</a></span><span>☁ <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo · погода</a></span><span>🌱 <a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a> · <a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span>🌙 <a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span>✨ <a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
