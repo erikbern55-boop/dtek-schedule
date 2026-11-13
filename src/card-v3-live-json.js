@@ -2,12 +2,12 @@
 import {nextPowerEvent} from "./countdown.js";
 import {calculateDailyTotals} from "./summary.js";
 
-function validTime(t){return typeof t==="string"&&/^([01]\\d|2[0-4]):[0-5]\\d$/.test(t)}
+function validTime(t){return typeof t==="string"&&/^([01]\d|2[0-4]):[0-5]\d$/.test(t)}
 function safeText(v){return typeof v==="string"&&v.trim()?v.trim():undefined}
 export function buildV3LivePayload({schedule,date,label,update,source,weather,now=new Date(),daily={}}={}){
  if(!Array.isArray(schedule)||!schedule.length)throw Error("Verified schedule required");
  if(!(now instanceof Date)||!Number.isFinite(now.getTime()))throw Error("Valid timestamp required");
- if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date||""))throw Error("Valid schedule date required");
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date||""))throw Error("Valid schedule date required");
  for(const p of schedule){if(!validTime(p.begin)||!validTime(p.end)||typeof p.power!=="boolean")throw Error("Invalid schedule period");}
  calculateDailyTotals(schedule);
  const off=schedule.filter(p=>!p.power),on=schedule.filter(p=>p.power);
