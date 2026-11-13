@@ -234,6 +234,7 @@ const css = [
 
   // Compact the gardening row without hiding advice or sowing recommendations.
   ".v3-weather .weather-garden,.v3-weather .weather-sowing{align-self:start!important}",
+  ".v3-weather .weather-garden,.v3-weather .weather-sowing{align-self:stretch!important}",
   ".v3-weather .weather-garden .wx-garden-body{align-items:flex-start!important;gap:10px!important}",
   ".v3-weather .weather-garden .wx-garden-art{margin:0!important;flex:0 0 110px!important}",
   ".v3-weather .weather-garden .wx-garden-copy{margin:0!important;line-height:1.2!important}",
