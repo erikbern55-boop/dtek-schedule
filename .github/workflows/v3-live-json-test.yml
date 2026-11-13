@@ -9,6 +9,7 @@ on:
       - 'src/media.js'
       - 'scripts/v3-live-test.mjs'
       - 'test/card-v3-live-json.test.js'
+      - 'test/card-v3-live-sources.test.js'
       - '.github/workflows/v3-live-json-test.yml'
 jobs:
   live-json:
