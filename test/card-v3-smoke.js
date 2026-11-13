@@ -80,6 +80,11 @@ try {
   return {viewport:document.documentElement.clientWidth,cardWidth:card.getBoundingClientRect().width,
    pageWidth:document.documentElement.scrollWidth,linkCount:document.querySelectorAll(".v3-sources a").length}
  })
+ // Ensure the published HTML contains a scroll restoration path for five-minute refreshes.
+ const htmlSource=await viewerPage.content()
+ assert.match(htmlSource,/svitlopuls-v3-scroll/,"viewer persists scroll position across refresh")
+ assert.match(htmlSource,/sessionStorage\\.setItem/,"viewer saves its current scroll coordinates")
+ assert.match(htmlSource,/window\\.scrollTo/,"viewer restores the saved coordinates")
  assert.ok(viewerCheck.pageWidth>=viewerCheck.viewport,"full-screen card remains horizontally scrollable on narrow screens")
  assert.equal(viewerCheck.linkCount,6,"full-screen preview retains all source links")
  // Real mobile screenshot is retained for human visual inspection of the viewer.
