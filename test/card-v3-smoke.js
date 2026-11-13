@@ -186,7 +186,7 @@ try {
   const selectors={header:".v3-head",robot:".v3-robot",wordmark:".v3-brand",date:".v3-date-panel",
    countdown:".v3-count",schedule:".v3-power > section:last-child",
    weather:".v3-weather",garden:".weather-garden",sowing:".weather-sowing",
-   moon:".weather-moon",astrology:".weather-astro",sources:".v3-sources",footer:".v3-footer"}
+   moon:".weather-moon",moonIllustration:".weather-moon .wx-moon-icon",astrology:".weather-astro",gardenSource:".v3-garden-source",sources:".v3-sources",footer:".v3-footer"}
   return Object.fromEntries(Object.entries(selectors).map(([name,selector])=>{
    const el=document.querySelector(selector)
    if(!el)return [name,null]
