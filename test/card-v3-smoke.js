@@ -46,6 +46,18 @@ const browser=await chromium.launch({headless:true})
 try {
  const page=await browser.newPage({viewport:{width:1404,height:900}})
  await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+
+ // Exercise the embedded timer under a deterministic Playwright browser clock.
+ const clockPage=await browser.newPage({viewport:{width:1404,height:900}})
+ await clockPage.clock.install({time:new Date("2026-11-07T14:30:00.000Z")})
+ await clockPage.setContent(buildCardV3Html(details),{waitUntil:"load"})
+ const clockBefore=await clockPage.locator(".v3-clock").textContent()
+ assert.match(clockBefore,/^\\d{2}:\\d{2}$/,"live countdown uses HH:MM")
+ await clockPage.clock.fastForward(61000)
+ const clockAfter=await clockPage.locator(".v3-clock").textContent()
+ const toMinutes=text=>{const [h,m]=text.split(":").map(Number);return h*60+m}
+ assert.equal(toMinutes(clockAfter),toMinutes(clockBefore)-1,"HTML countdown must tick down by one minute")
+ await clockPage.close()
  assert.equal(await page.locator(".v3-weekday").textContent(),"субота","weekday follows card date")
  assert.equal(await page.locator(".v3-brand-white").textContent(),"СВІТЛО","approved white brand segment")
  assert.equal(await page.locator(".v3-brand-green").textContent(),"ПУЛЬС 3.0","approved neon-green brand segment")
