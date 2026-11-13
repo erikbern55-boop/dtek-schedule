@@ -10,3 +10,8 @@ test("missing measurements never become invented zero values",()=>{
 test("negative and zero temperatures have correct signs",()=>{
  assert.deepEqual(todayTemperatureOverlay({currentNowTemp:-3.6,todayMin:-8.2,todayMax:0}),{temperatureNow:"-4°C",temperatureTodayMin:"-8°C",temperatureTodayMax:"0°C"});
 });
+
+test("today temperature panel refuses a tomorrow-specific snapshot",()=>{
+ assert.throws(()=>todayTemperatureOverlay({date:"2026-11-14",todayDate:"2026-11-13",currentNowTemp:7,todayMin:1,todayMax:9}),/today weather snapshot/);
+ assert.equal(todayTemperatureOverlay({date:"2026-11-13",todayDate:"2026-11-13",currentNowTemp:7,todayMin:1,todayMax:9}).temperatureNow,"+7°C");
+});
