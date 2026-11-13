@@ -596,6 +596,16 @@ const css = [
   ".v3-weather .weather-air .wx-fact{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important;font-size:14px!important;line-height:1.13!important;padding:6px 2px!important}",
   ".v3-weather .weather-air .wx-fact b{font-size:15px!important;white-space:normal!important}",
   ".v3-weather .weather-air .wx-today-box,.v3-weather .weather-air .wx-forecast-values{min-width:0!important;max-width:100%!important}",
+
+  // Approved compact tomorrow panel: one heading and paired min/max figures,
+  // rather than two headings and vertically stacked cards.
+  ".v3-weather .weather-tomorrow{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important}",
+  ".v3-weather .weather-tomorrow h3{font-size:24px!important;line-height:1.2!important;margin:0!important;padding:0 0 9px!important;white-space:nowrap!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-box{display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;flex:1!important;gap:10px!important;padding:0!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-heading{font-size:16px!important;text-align:left!important;padding:3px 0!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;align-items:stretch!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values>div{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:8px!important;padding:12px 2px!important;font-size:14px!important;min-width:0!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:32px!important;line-height:1.1!important;white-space:nowrap!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -616,7 +626,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
       '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
   )
   // V3-only presentation: daylight duration on its own prominent line.
-  const referenceWeather=splitGarden.replace(
+  const referenceWeather=splitGarden.replace(/<h3>🌤 Погода — ЗАВТРА<\/h3>/,'<h3>🌤 Завтра</h3>').replace(
     /(<section class="wx-box weather-sun"><h3>☀️ Світловий день)(?: · ([^<]+))?(<\/h3>)/,
     (_whole,heading,duration,close)=>heading+close+
       '<div class="v3-daylight-duration">'+(duration||'—')+'</div>'
