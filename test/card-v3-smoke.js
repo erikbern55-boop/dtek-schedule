@@ -173,6 +173,18 @@ try {
  assert.ok(layout.air.y>=layout.power.b-3,"weather follows power")
  assert.ok(["tomorrow","sun","soil"].every(name=>Math.abs(layout.air.y-layout[name].y)<4),"four weather panels share first row")
  assert.ok(layout.garden.w>layout.air.w,"gardening spans the wide middle row")
+ assert.ok(layout.garden.w>=layout.air.w*2.4,
+  "approved gardening panel should be significantly wider than weather tiles")
+ const middleRow=await page.evaluate(()=>{
+  const garden=document.querySelector(".weather-garden").getBoundingClientRect()
+  const sowing=document.querySelector(".weather-sowing").getBoundingClientRect()
+  return {garden:{x:garden.x,width:garden.width,bottom:garden.bottom},
+   sowing:{x:sowing.x,width:sowing.width,bottom:sowing.bottom}}
+ })
+ assert.ok(middleRow.garden.width>middleRow.sowing.width*1.7,
+  "approved garden/sowing split must retain wider gardening panel: "+JSON.stringify(middleRow))
+ assert.ok(Math.abs(middleRow.garden.bottom-middleRow.sowing.bottom)<45,
+  "garden and sowing panels should remain balanced vertically: "+JSON.stringify(middleRow))
  assert.ok(layout.garden.y>=layout.air.b-3,"gardening follows weather")
  assert.ok(Math.abs(layout.moon.y-layout.astro.y)<4,"night panels share third row")
  assert.ok(layout.moon.y>=layout.garden.b-3,"moon follows gardening")
