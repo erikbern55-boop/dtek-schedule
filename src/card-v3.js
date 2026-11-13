@@ -524,6 +524,32 @@ const css = [
   ".v3-weather .weather-zone>.wx-credit{display:none!important}",
   ".v3-sources{min-height:167px!important}",
   ".v3-footer{min-height:68px!important}",
+
+  // Internal composition pass: retain the measured external panel geometry.
+  // Etalon: date and dial side-by-side, phase illustration on the left,
+  // astronomical facts in the middle and astrology symbol beside its copy.
+  ".v3-date-panel{display:grid!important;grid-template-columns:minmax(0,1fr) 235px!important;gap:4px!important;align-items:center!important}",
+  ".v3-date-panel .v3-date{padding-left:12px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:9px!important;text-align:left!important;font-size:28px!important;line-height:1.12!important}",
+  ".v3-date-panel .v3-date b{font-size:34px!important;line-height:1.1!important;margin:0!important;white-space:nowrap!important}",
+  ".v3-date-panel .v3-weekday{font-size:25px!important;line-height:1.12!important}",
+  ".v3-date-panel .v3-dial{width:225px!important;height:210px!important;min-width:0!important;flex:none!important;margin:0!important}",
+  ".v3-weather .weather-moon{display:grid!important;grid-template-columns:168px minmax(0,1fr)!important;grid-template-rows:43px minmax(0,1fr)!important;column-gap:14px!important;align-items:center!important;padding:10px 13px!important}",
+  ".v3-weather .weather-moon>h3{grid-column:1/-1!important;grid-row:1!important;font-size:27px!important;line-height:1.1!important;padding:0!important}",
+  ".v3-weather .weather-moon .wx-moon-main{grid-column:1!important;grid-row:2!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:0!important;margin:0!important;min-width:0!important}",
+  ".v3-weather .weather-moon .wx-moon-icon{width:155px!important;height:155px!important;min-width:0!important;flex:none!important}",
+  ".v3-weather .weather-moon .wx-moon-icon svg{width:155px!important;height:155px!important}",
+  ".v3-weather .weather-moon .wx-moon-main>div:last-child{display:none!important}",
+  ".v3-weather .weather-moon .wx-moon-rows{grid-column:2!important;grid-row:2!important;align-self:center!important;min-width:0!important;border-top:0!important}",
+  ".v3-weather .weather-moon .wx-moon-row{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:7px!important;flex-wrap:nowrap!important;font-size:17px!important;line-height:1.25!important;padding:9px 0!important}",
+  ".v3-weather .weather-moon .wx-moon-row b{font-size:17px!important;white-space:normal!important;text-align:right!important}",
+  ".v3-weather .weather-astro{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;padding:10px 15px!important;gap:7px!important}",
+  ".v3-weather .weather-astro h3{font-size:27px!important;line-height:1.1!important;margin:0!important;padding:0!important}",
+  ".v3-weather .weather-astro .wx-astro-tag{display:none!important}",
+  ".v3-weather .weather-astro .wx-astro-body{display:grid!important;grid-template-columns:115px minmax(0,1fr)!important;gap:17px!important;align-items:center!important;flex:1!important;min-height:0!important}",
+  ".v3-weather .weather-astro .wx-astro-symbol{width:108px!important;height:108px!important;font-size:68px!important;display:flex!important;align-items:center!important;justify-content:center!important}",
+  ".v3-weather .weather-astro .wx-astro-copy{font-size:20px!important;line-height:1.26!important;min-width:0!important}",
+  ".v3-weather .weather-astro .wx-astro-copy b{font-size:24px!important;line-height:1.15!important;margin-bottom:5px!important}",
+  ".v3-weather .weather-astro .wx-astro-disclaimer{font-size:12px!important;line-height:1.2!important;margin-top:6px!important;padding-top:5px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
