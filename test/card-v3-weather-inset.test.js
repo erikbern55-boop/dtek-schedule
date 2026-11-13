@@ -5,3 +5,5 @@ test("inset displays all three readings with HTML escaping",()=>{const html=weat
 
 test("inset refuses a smaller artwork instead of overflowing",()=>{assert.throws(()=>weatherInsetHtml({width:200,height:300}),/outside artwork bounds/);assert.throws(()=>weatherInsetHtml({width:0,height:1536}),/outside artwork bounds/)});
 test("responsive inset clips overflow on narrow cards",()=>{assert.match(WEATHER_INSET_CSS,/overflow:hidden/);assert.match(WEATHER_INSET_CSS,/container-type:inline-size/);assert.match(WEATHER_INSET_CSS,/cqw/)});
+
+test("duplicate plus sign is rendered once in today's temperature",()=>{const html=weatherInsetHtml({temperatureNow:"++6°C"});assert.match(html,/>\+6°C<\/strong>/);assert.doesNotMatch(html,/\+\+6°C/)});
