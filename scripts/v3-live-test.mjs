@@ -3,7 +3,7 @@ import {getShutdownsData,kyivDate} from "../src/source.js";
 import {periodsFromDtekFact} from "../src/card-v3-live-sources.js";
 import {buildV3LivePayload} from "../src/card-v3-live-json.js";
 const now=new Date();
-if(!/^\d+$/.test(process.env.GROUP||""))throw Error("GROUP environment variable required; no guessed group");
+if(!/^\d+$/.test(process.env.GROUP||""))throw Error("GROUP must be the numeric DTEK GPV key; public queue 1.1 is not a verified mapping");
 const {fact,source}=await getShutdownsData();
 const date=kyivDate(now);
 const schedule=periodsFromDtekFact(fact,{now,day:date});
