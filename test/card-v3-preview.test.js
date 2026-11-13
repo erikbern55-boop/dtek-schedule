@@ -81,6 +81,6 @@ test("weather inset keeps one plus and displays all three readings",()=>{
  const out=buildIntegratedPreview({artworkUrl:"/assets/approved-clean-plate.png",rectangles:{},nowMs:1800000,useWeatherInset:true,weatherSnapshot:{currentNowTemp:6,todayMin:2,todayMax:9}});
  for(const value of ["+6°C","+2°C","+9°C"])assert.ok(out.html.includes(value));
  assert.doesNotMatch(out.html,/\\+\\+6°C/);
- assert.match(out.html,/Мін\\./);
- assert.match(out.html,/Макс\\./);
+ assert.ok(out.html.includes("Мін."));
+ assert.ok(out.html.includes("Макс."));
 });
