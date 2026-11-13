@@ -331,7 +331,7 @@ const css = [
   // The approved garden card has its own visible source column.
   ".v3-weather .weather-garden{position:relative!important;padding-right:196px!important}",
   ".v3-weather .weather-garden .wx-garden-body{gap:12px!important}",
-  ".v3-weather .weather-garden .wx-garden-art{flex-basis:175px!important;min-width:175px!important;width:175px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex-basis:195px!important;min-width:195px!important;width:195px!important}",
   ".v3-weather .weather-garden .wx-garden-copy{font-size:19px!important}",
   ".v3-garden-source{position:absolute;right:12px;top:51px;bottom:12px;width:176px;border:2px solid #72ec79;border-radius:17px;padding:12px;background:#07391f;display:flex;flex-direction:column;justify-content:center;gap:12px;font-size:17px;line-height:1.28}",
   ".v3-garden-source b{color:#e6ffac;font-size:17px}",
