@@ -32,3 +32,13 @@ test("real weather preview can opt into dynamic Kyiv date without losing tempera
  assert.ok(result.html.includes(">13.11</span>"));
  for(const temp of ["+6°C","+1°C","+9°C"])assert.ok(result.html.includes(temp));
 });
+
+test("dynamic date remains disabled until clean background artwork is approved",async()=>{
+ const result=await buildLiveWeatherInsetPreview({
+  now,artworkUrl:"/assets/approved-clean-plate.png",
+  weatherLoader:async()=>({fetchedAt:"2026-11-13T08:55:00Z"}),
+  weatherMapper:(_snapshot,date)=>({date,todayDate:date,currentNowTemp:6,todayMin:1,todayMax:9})
+ });
+ assert.ok(!result.html.includes('class="svitlo-weather-header-date"'));
+ for(const temp of ["+6°C","+1°C","+9°C"])assert.ok(result.html.includes(temp));
+});
