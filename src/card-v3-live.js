@@ -3,7 +3,7 @@
 import {buildArtworkFirstCard} from "./card-v3-artwork.js";
 import {buildSourceLinkLayers} from "./card-v3-sources.js";
 
-const FIELDS = ["date","weekday","countdown","powerStatus","powerPeriods","powerTotals","temperatureNow","temperatureToday","temperatureTomorrow","wind","gusts","precipitation","soilTemperature","sunrise","sunset","gardenAdvice","sowingAdvice","moonPhase","lunarDay","astroForecast","updatedAt"];
+const FIELDS = ["date","weekday","countdown","powerStatus","powerPeriods","powerTotals","temperatureNow","temperatureTodayMin","temperatureTodayMax","temperatureToday","temperatureTomorrow","wind","gusts","precipitation","soilTemperature","sunrise","sunset","gardenAdvice","sowingAdvice","moonPhase","lunarDay","astroForecast","updatedAt"];
 export const ARTWORK_DATA_FIELDS = Object.freeze([...FIELDS]);
 export function buildLiveArtworkV3({artworkUrl,referenceWidth,referenceHeight,rectangles,data,sourceRectangles}={}) {
  if(!data || typeof data!=="object") throw new Error("Live data object required");
