@@ -1,0 +1,16 @@
+import fs from "node:fs";
+import {getShutdownsData,kyivDate} from "../src/source.js";
+import {periodsFromDtekFact} from "../src/card-v3-live-sources.js";
+import {buildV3LivePayload} from "../src/card-v3-live-json.js";
+const now=new Date();
+if(!/^GPV\\d+$/.test("GPV"+process.env.GROUP))throw Error("GROUP environment variable required; no guessed group");
+const {fact,source}=await getShutdownsData();
+const date=kyivDate(now);
+const schedule=periodsFromDtekFact(fact,{now,day:date});
+const payload=buildV3LivePayload({schedule,date,label:"сьогодні",source,now});
+fs.mkdirSync("artifacts/web",{recursive:true});
+fs.writeFileSync("artifacts/web/svitlopuls-live.json",JSON.stringify(payload,null,2));
+const saved=JSON.parse(fs.readFileSync("artifacts/web/svitlopuls-live.json","utf8"));
+if(JSON.stringify(saved.power.periods)!==JSON.stringify(schedule))throw Error("Source/JSON schedule mismatch");
+if(saved.scheduleDate!==date)throw Error("Schedule date mismatch");
+console.log("Verified source -> JSON:",date,source,schedule.length,"periods");
