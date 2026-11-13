@@ -3,12 +3,12 @@
 // All rectangles use original artwork pixels, not CSS viewport pixels.
 export const APPROVED_REFERENCE={width:1404,height:1536};
 export const ARTWORK_PREVIEW_RECTS=Object.freeze({
- powerStatus:{x:1015,y:214,width:220,height:54},
- countdown:{x:665,y:234,width:240,height:72},
- powerPeriods:{x:1010,y:282,width:350,height:75},
- temperatureNow:{x:174,y:496,width:160,height:77},
- temperatureTodayMin:{x:175,y:585,width:135,height:39},
- temperatureTodayMax:{x:315,y:585,width:135,height:39},
+ powerStatus:{x:1030,y:215,width:180,height:50},
+ countdown:{x:687,y:237,width:240,height:64},
+ powerPeriods:{x:1020,y:220,width:340,height:135},
+ temperatureNow:{x:178,y:495,width:180,height:80},
+ temperatureTodayMin:{x:160,y:585,width:145,height:40},
+ temperatureTodayMax:{x:310,y:585,width:145,height:40},
 });
 export function validatePreviewRects(rects=ARTWORK_PREVIEW_RECTS,{width,height}=APPROVED_REFERENCE){
  for(const [id,r] of Object.entries(rects)){
