@@ -550,6 +550,38 @@ const css = [
   ".v3-weather .weather-astro .wx-astro-copy{font-size:20px!important;line-height:1.26!important;min-width:0!important}",
   ".v3-weather .weather-astro .wx-astro-copy b{font-size:24px!important;line-height:1.15!important;margin-bottom:5px!important}",
   ".v3-weather .weather-astro .wx-astro-disclaimer{font-size:12px!important;line-height:1.2!important;margin-top:6px!important;padding-top:5px!important}",
+
+  // Approved reference: internal weather composition only; preserve the
+  // measured 1404px external grid and all live forecast values.
+  ".v3-weather .weather-air{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr) auto!important;gap:5px 10px!important;padding:12px 15px!important}",
+  ".v3-weather .weather-air>h3{font-size:28px!important;line-height:1.12!important;padding:0 0 6px!important}",
+  ".v3-weather .weather-air>.wx-weather-main{grid-column:1!important;grid-row:3!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}",
+  ".v3-weather .weather-air .wx-symbol{font-size:69px!important;line-height:1!important}",
+  ".v3-weather .weather-air .wx-now{font-size:57px!important;line-height:1.05!important;font-weight:900!important}",
+  ".v3-weather .weather-air .wx-now-label{font-size:14px!important}",
+  ".v3-weather .weather-air .wx-cond{font-size:17px!important;line-height:1.2!important}",
+  ".v3-weather .weather-air>.wx-facts{grid-column:2!important;grid-row:3/5!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;gap:0!important;padding-left:12px!important;border-left:1px solid #238d42!important}",
+  ".v3-weather .weather-air .wx-fact{padding:9px 3px!important;font-size:16px!important;line-height:1.17!important;border-bottom:1px solid #287b3c!important}",
+  ".v3-weather .weather-air .wx-fact b{font-size:18px!important}",
+  ".v3-weather .weather-air>.wx-today-box{grid-column:1!important;grid-row:4!important;min-height:0!important;padding:3px 5px!important}",
+  ".v3-weather .weather-tomorrow{padding:12px 12px!important;gap:5px!important}",
+  ".v3-weather .weather-tomorrow h3{font-size:22px!important;min-height:0!important;line-height:1.2!important;padding:0 0 8px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-box{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:13px!important;margin:0!important;padding:8px 2px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-heading{font-size:17px!important;text-align:center!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{gap:7px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values div{font-size:15px!important;line-height:1.2!important;padding:7px 3px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:27px!important;line-height:1.1!important}",
+  // Etalon gardening composition: a full-height photo, dynamic advice, RHS
+  // reference link. The link is a source reference, not an endorsement.
+  ".v3-weather .weather-garden{grid-template-columns:minmax(0,1fr) 206px!important;grid-template-rows:48px minmax(0,1fr)!important;column-gap:12px!important;padding:11px 13px!important}",
+  ".v3-weather .weather-garden>h3{font-size:29px!important;line-height:1.13!important;padding:0 0 5px!important}",
+  ".v3-weather .weather-garden .wx-garden-body{grid-template-columns:224px minmax(0,1fr)!important;gap:14px!important}",
+  ".v3-weather .weather-garden .wx-garden-art{width:224px!important;height:100%!important;max-height:228px!important;min-height:0!important;align-self:stretch!important;border-radius:12px!important;overflow:hidden!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;width:100%!important;height:100%!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:19px!important;line-height:1.25!important;align-self:center!important}",
+  ".v3-weather .weather-garden .wx-garden-heading{font-size:23px!important;line-height:1.2!important;margin-bottom:8px!important;color:#e8ff9c!important}",
+  ".v3-garden-source{grid-column:2!important;grid-row:2!important;position:static!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;padding:12px!important;gap:9px!important;font-size:16px!important;line-height:1.22!important}",
+  ".v3-garden-source b{font-size:17px!important;line-height:1.2!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
