@@ -99,7 +99,8 @@ export function saveViewerSnapshot(png, label, details) {
     // Opt-in local/test output only; default production behavior stays unchanged.
     if (process.env.SVITLOPULS_V3_PREVIEW === "1") {
       fs.writeFileSync("artifacts/web/v3-" + basename + ".html", buildViewerV3Preview(details))
-      fs.writeFileSync("artifacts/web/v3-" + basename + "-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))\n      if (basename === "today") fs.writeFileSync("artifacts/web/svitlopuls-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))
+      fs.writeFileSync("artifacts/web/v3-" + basename + "-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))
+      if (basename === "today") fs.writeFileSync("artifacts/web/svitlopuls-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))
     }
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
