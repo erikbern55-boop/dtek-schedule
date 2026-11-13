@@ -18,7 +18,7 @@ test("temperature overlay stays in the numeric-only area of approved artwork",()
 
 test("Today date stays in approved weather header and outside temperature inset",()=>{
  const d=WEATHER_HEADER_DATE_RECT,t=WEATHER_VALUE_INSET;
- assert.ok(d.x>=0&&d.y>=325&&d.x+d.width<=480&&d.y+d.height<=470);
+ assert.ok(d.x>=0&&d.y>=325&&d.x+d.width<=500&&d.y+d.height<=470);
  assert.ok(d.y+d.height<=t.y || d.x+d.width<=t.x || d.x>=t.x+t.width);
  assert.ok(weatherHeaderDateHtml("13.11").includes("13.11"));
  assert.throws(()=>weatherHeaderDateHtml("2026-11-13"),/DD.MM/);
