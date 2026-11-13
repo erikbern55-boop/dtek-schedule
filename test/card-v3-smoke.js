@@ -171,6 +171,16 @@ try {
   return {card:rect(card),source:rect(source),photo:rect(photo),copy:rect(copy),href:link.href,visible:!!link.getClientRects().length};
  })
  assert.ok(gardenSource,"garden source panel, photo and advice must all exist")
+
+ const gardenHeadings=await page.evaluate(()=>({
+  title:document.querySelector(".weather-garden>h3")?.textContent.trim(),
+  advice:document.querySelector(".weather-garden .wx-garden-heading")?.textContent.trim(),
+  photo:document.querySelector(".weather-garden .wx-garden-art img")?.getAttribute("src")
+ }))
+ assert.equal(gardenHeadings.title,"🌿 Поради городникам","garden title must match the approved reference")
+ assert.equal(gardenHeadings.advice,"Актуально сьогодні:","today garden advice heading must match the approved reference")
+ assert.ok(gardenHeadings.photo&&gardenHeadings.photo.startsWith("https://"),"garden photo must have a valid source")
+
  assert.ok(gardenSource.visible&&gardenSource.href.startsWith("https://www.rhs.org.uk/"),"garden attribution must link to RHS")
  assert.ok(gardenSource.photo.right<=gardenSource.source.left+2,"garden photo must not overlap the attribution column: "+JSON.stringify(gardenSource))
  assert.ok(gardenSource.copy.right<=gardenSource.source.left+2,"garden advice must not overlap the attribution column: "+JSON.stringify(gardenSource))
