@@ -5,9 +5,11 @@ import {mergeFreshArtworkData,refreshDue} from "./card-v3-refresh.js";
 import {todayTemperatureOverlay} from "./card-v3-temperature.js";
 import {buildLiveArtworkV3} from "./card-v3-live.js";
 import {ARTWORK_FIRST_CSS} from "./card-v3-artwork.js";
+import {dtekArtworkFields} from "./card-v3-dtek.js";
 
-export function buildIntegratedPreview({artworkUrl,rectangles,sourceRectangles,previousData={},scheduleSnapshot,weatherSnapshot,nowMs,scheduleFetchedAtMs,weatherFetchedAtMs,referenceWidth=1404,referenceHeight=1536}={}) {
- const schedule=scheduleSnapshot===undefined?undefined:scheduleSnapshot;
+export function buildIntegratedPreview({artworkUrl,rectangles,sourceRectangles,previousData={},scheduleSnapshot,schedulePeriods,scheduleDate,weatherSnapshot,nowMs,scheduleFetchedAtMs,weatherFetchedAtMs,referenceWidth=1404,referenceHeight=1536}={}) {
+ if(scheduleSnapshot!==undefined && schedulePeriods!==undefined)throw new Error("Provide either DTEK periods or preformatted schedule, not both");
+ const schedule=schedulePeriods!==undefined?dtekArtworkFields({schedule:schedulePeriods,date:scheduleDate,now:new Date(nowMs)}):scheduleSnapshot;
  const weather=weatherSnapshot===undefined?undefined:todayTemperatureOverlay(weatherSnapshot);
  const data=mergeFreshArtworkData({previous:previousData,schedule,weather});
  const due=refreshDue({nowMs,scheduleFetchedAtMs,weatherFetchedAtMs});
