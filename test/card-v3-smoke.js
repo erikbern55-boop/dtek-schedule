@@ -341,6 +341,20 @@ try {
   "large daylight duration must fit in its card: "+JSON.stringify(daylight))
  assert.ok(daylight.fontSize>=28,"daylight duration must be visually prominent")
  console.log("Reference daylight duration:",JSON.stringify(daylight))
+ // The approved tomorrow panel has paired minimum/maximum readings,
+ // with no clipped figures or a second competing heading.
+ const tomorrow=await page.evaluate(()=>{
+  const card=document.querySelector(".weather-tomorrow")
+  const boxes=[...card.querySelectorAll(".wx-forecast-values>div")]
+  const rect=card.getBoundingClientRect()
+  return {heading:card.querySelector("h3")?.textContent,card:{left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom},
+   readings:boxes.map(el=>{const r=el.getBoundingClientRect();return {text:el.textContent,left:r.left,right:r.right,top:r.top,bottom:r.bottom,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}})}
+ })
+ assert.equal(tomorrow.readings.length,2,"tomorrow must show both minimum and maximum")
+ assert.ok(tomorrow.readings[0].right<=tomorrow.readings[1].left+3,"tomorrow readings must sit side by side: "+JSON.stringify(tomorrow))
+ assert.ok(tomorrow.readings.every(x=>x.left>=tomorrow.card.left-3&&x.right<=tomorrow.card.right+3&&x.top>=tomorrow.card.top-3&&x.bottom<=tomorrow.card.bottom+3&&x.scrollWidth<=x.clientWidth+3),
+  "tomorrow readings must fit the reference panel: "+JSON.stringify(tomorrow))
+ console.log("Reference tomorrow panel:",JSON.stringify(tomorrow))
  // The approved reference has six source columns and a narrow readable footer.
  // Detect clipping introduced by larger type or longer live source labels.
  const bottomBounds=await page.evaluate(()=>[".v3-sources",".v3-footer"].map(selector=>{
