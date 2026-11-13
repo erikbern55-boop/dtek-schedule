@@ -485,6 +485,19 @@ const css = [
   // Keep the live source attribution visible but visually subordinate to the
   // five status items in the reference.
   ".v3-footer .v3-source-detail{display:block!important;font-size:10px!important;font-weight:400!important;opacity:.7!important;line-height:1.1!important;white-space:normal!important}",
+
+  // Reference garden composition: fixed left photograph, full-height advice,
+  // and dedicated RHS source column. Preserve the dynamic advice text and links.
+  ".v3-weather .weather-garden{display:grid!important;grid-template-columns:minmax(0,1fr) 190px!important;grid-template-rows:46px minmax(0,1fr)!important;column-gap:12px!important;padding:10px 12px!important;align-items:stretch!important}",
+  ".v3-weather .weather-garden>h3{grid-column:1/-1!important;grid-row:1!important;margin:0!important;padding:0 0 6px!important;font-size:27px!important;line-height:1.12!important}",
+  ".v3-weather .weather-garden .wx-garden-body{grid-column:1!important;grid-row:2!important;display:grid!important;grid-template-columns:205px minmax(0,1fr)!important;align-items:stretch!important;gap:14px!important;margin:0!important;padding:0!important;min-width:0!important;min-height:0!important}",
+  ".v3-weather .weather-garden .wx-garden-art{grid-column:1!important;grid-row:1!important;align-self:stretch!important;width:205px!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:236px!important;margin:0!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:cover!important;object-position:center!important;width:100%!important;height:100%!important;background:#10231b!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{grid-column:2!important;grid-row:1!important;align-self:start!important;min-width:0!important;margin:0!important;font-size:18px!important;line-height:1.23!important}",
+  ".v3-weather .weather-garden .wx-garden-heading{font-size:22px!important;line-height:1.15!important;margin-bottom:6px!important}",
+  ".v3-garden-source{position:static!important;grid-column:2!important;grid-row:2!important;align-self:stretch!important;width:auto!important;height:auto!important;min-width:0!important;margin:0!important;padding:10px!important;font-size:15px!important;line-height:1.2!important;gap:8px!important}",
+  ".v3-garden-source b{font-size:16px!important}",
+  ".v3-weather .weather-garden>.wx-credit{display:none!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
