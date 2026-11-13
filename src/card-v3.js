@@ -219,6 +219,8 @@ const css = [
   ".v3-weather .weather-moon .wx-moon-row{padding-top:2px!important;padding-bottom:2px!important}",
   ".v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:5px!important;padding-bottom:5px!important}",
   ".v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:4px!important;padding-bottom:4px!important}",
+  ".v3-weather .weather-sun .wx-sun-pair,.v3-weather .weather-soil .wx-soil-pair{margin-top:12px!important;margin-bottom:8px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-box{margin-top:10px!important;margin-bottom:8px!important}",
   ".v3-weather .weather-moon,.v3-weather .weather-astro{padding-top:5px!important;padding-bottom:5px!important}",
   // Independent garden and sowing panels for the approved V3 layout.
   ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;display:block!important;min-height:0!important}",
