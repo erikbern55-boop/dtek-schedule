@@ -629,6 +629,11 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important}",
   ".v3-weather .weather-garden .v3-garden-source{justify-content:flex-start!important;padding-top:20px!important;gap:12px!important;font-size:17px!important}",
   ".v3-weather .weather-garden .v3-garden-source b{font-size:18px!important}",
+
+  // Reference uses a garden photograph filling the portrait tile, rather
+  // than a small product-style image on a dark empty background.
+  ".v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}",
+  ".v3-weather .weather-garden .wx-garden-art img{object-fit:cover!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -640,7 +645,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const eventHeading=event.kind==="countdown" ? event.title : "Наступна зміна графіка"
   const eventDetail=event.kind==="countdown" ? event.detail+" · станом на "+kyivTime(now)+" (Київ)" : event.detail
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
-    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Garlic_bulbs.jpg?width=330" alt="Фотографія головок часнику" loading="eager" referrerpolicy="no-referrer"/></div>')
+    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Garlic_Bulbs_(Unsplash).jpg?width=500" alt="Фотографія головок часнику" loading="eager" referrerpolicy="no-referrer"/></div>')
     .replace(/<div class="wx-moon-icon">[\s\S]*?<\/div>/, "<div class=\"wx-moon-icon\"><svg viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"ml\"><stop stop-color=\"#fffde6\"/><stop offset=\".65\" stop-color=\"#d4d3c6\"/><stop offset=\"1\" stop-color=\"#777d79\"/></radialGradient><clipPath id=\"mc\"><circle cx=\"60\" cy=\"60\" r=\"52\"/></clipPath></defs><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"url(#ml)\"/><g clip-path=\"url(#mc)\" fill=\"#777b78\" opacity=\".28\"><ellipse cx=\"34\" cy=\"42\" rx=\"15\" ry=\"9\"/><ellipse cx=\"78\" cy=\"31\" rx=\"13\" ry=\"18\"/><ellipse cx=\"81\" cy=\"79\" rx=\"24\" ry=\"15\"/><circle cx=\"60\" cy=\"57\" r=\"8\"/></g><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"none\" stroke=\"#e6f8e1\" stroke-width=\"2\"/></svg></div>")
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
