@@ -374,7 +374,7 @@ try {
  assert.ok(layout.moon.y>=layout.garden.b-3,"moon follows gardening")
  assert.ok(layout.sources.y>=layout.moon.b-3,"sources follow night row")
  assert.ok(layout.footer.y>=layout.sources.b-3,"footer follows sources")
- assert.ok(Object.values(layout).every(b=>!b.overflow),"no panel horizontally overflows")
+ assert.ok(Object.values(layout).every(b=>!b.overflow),"no panel horizontally overflows: "+JSON.stringify(Object.entries(layout).filter(([,b])=>b.overflow)))
 
  // Guard against hidden or vertically clipped text in the compact garden row.
  const gardenContent=await page.evaluate(()=>{
