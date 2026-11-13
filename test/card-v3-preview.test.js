@@ -51,3 +51,19 @@ test("integrated preview accepts actual DTEK periods and weather together",()=>{
  assert.equal(out.data.temperatureTodayMin,"0°C");
  assert.equal(out.data.temperatureTodayMax,"+8°C");
 });
+
+test("weather inset replaces three raw temperature overlays without losing data",()=>{
+ const out=buildIntegratedPreview({
+  artworkUrl:"/assets/approved-clean-plate.png",rectangles:{powerStatus:rectangles.powerStatus},
+  nowMs:1800000,useWeatherInset:true,
+  scheduleSnapshot:{powerStatus:"За графіком: світло є"},
+  weatherSnapshot:{currentNowTemp:7,todayMin:2,todayMax:9}
+ });
+ assert.match(out.html,/class="svitlo-weather-inset"/);
+ assert.match(out.html,/\+7°C/);
+ assert.match(out.html,/\+2°C/);
+ assert.match(out.html,/\+9°C/);
+ assert.doesNotMatch(out.html,/data-layer="live-temperature-now"/);
+ assert.equal(out.data.temperatureNow,"+7°C");
+ assert.match(out.html,/За графіком: світло є/);
+});
