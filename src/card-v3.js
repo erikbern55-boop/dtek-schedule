@@ -649,7 +649,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
       '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
   )
   // V3-only presentation: daylight duration on its own prominent line.
-  const referenceWeather=splitGarden.replace(/<h3>🌤 Погода — ЗАВТРА<\/h3>/,'<h3>🌤 Завтра</h3>').replace(
+  const referenceWeather=splitGarden.replace(/<div class="wx-garden-heading">Порада на сьогодні:<\/div>/,'<div class="wx-garden-heading">Актуально сьогодні:</div>').replace(/<h3>🌤 Погода — ЗАВТРА<\/h3>/,'<h3>🌤 Завтра</h3>').replace(
     /(<section class="wx-box weather-sun"><h3>☀️ Світловий день)(?: · ([^<]+))?(<\/h3>)/,
     (_whole,heading,duration,close)=>heading+close+
       '<div class="v3-daylight-duration">'+(duration||'—')+'</div>'
