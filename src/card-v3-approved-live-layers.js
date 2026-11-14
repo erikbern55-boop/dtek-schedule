@@ -11,7 +11,7 @@ const coords={
  moon:[399,1045,220,158],astro:[772,1040,378,169],
  updated:[74,1448,225,36]
 };
-function layer(id,value){const [x,y,width,height]=coords[id];return {id,x,y,width,height,text:text(value)};}
+function layer(id,value){const [x,y,width,height]=coords[id];return {id:id.replace(/[A-Z]/g,c=>"-"+c.toLowerCase()),x,y,width,height,text:text(value)};}
 function timeLeft(nextAt,now){if(!nextAt)return "—";const n=new Date(nextAt).getTime();if(!Number.isFinite(n))return "—";const minutes=Math.max(0,Math.ceil((n-now.getTime())/60000));return String(Math.floor(minutes/60)).padStart(2,"0")+":"+String(minutes%60).padStart(2,"0");}
 function fmtDay(iso){if(!iso||!/^\d{4}-\d{2}-\d{2}$/.test(iso))return "—";const [y,m,d]=iso.split("-");return d+"."+m+"."+y;}
 export function buildApprovedLiveLayers(payload,{now=new Date()}={}){
