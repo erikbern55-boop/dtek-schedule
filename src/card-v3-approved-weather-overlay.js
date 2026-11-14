@@ -11,9 +11,11 @@ export function approvedWeatherOverlayHtml({date="—",temperatureNow="—",temp
   maximum:`Макс. ${temperatureTodayMax}`,
   feelsLike:temperatureFeelsLike===undefined?"":`Відчувається ${temperatureFeelsLike}`,
   conditions,
-  metrics:[wind&&`Вітер: ${wind}`,precipitation&&`Опади: ${precipitation}`,pressure&&`Тиск: ${pressure}`,humidity&&`Вологість: ${humidity}`].filter(Boolean).join(" · ")
+  metrics:""
  };
- return Object.entries(TODAY_WEATHER_REGIONS).filter(([key])=>key!=="feelsLike"||temperatureFeelsLike!==undefined).map(([key,r])=>`<div class="v3-weather-field v3-weather-${key}" data-weather-field="${key}" style="${box(r)}">${escape(values[key])}</div>`).join("");
+ const metrics=[["wind","🌬️","Вітер",wind],["precipitation","💧","Опади",precipitation],["pressure","◉","Тиск",pressure],["humidity","💦","Вологість",humidity]].filter(([, , ,value])=>value!==""&&value!==null&&value!==undefined);
+ const metricHtml=metrics.map(([key,icon,label,value])=>`<div class="v3-weather-metric-row" data-weather-metric="${key}"><span class="v3-weather-metric-icon" aria-hidden="true">${icon}</span><span class="v3-weather-metric-label">${label}:</span><strong>${escape(value)}</strong></div>`).join("");
+ return Object.entries(TODAY_WEATHER_REGIONS).filter(([key])=>key!=="feelsLike"||temperatureFeelsLike!==undefined).map(([key,r])=>`<div class="v3-weather-field v3-weather-${key}" data-weather-field="${key}" style="${box(r)}">${key==="metrics"?metricHtml:escape(values[key])}</div>`).join("");
 }
 export const APPROVED_WEATHER_OVERLAY_CSS=`
 .v3-approved-stage{position:relative;width:100%;aspect-ratio:1199/1312;container-type:inline-size;overflow:hidden}
@@ -21,5 +23,9 @@ export const APPROVED_WEATHER_OVERLAY_CSS=`
 .v3-weather-heading{font-size:clamp(6px,1.55cqw,19px);font-weight:800;white-space:nowrap}
 .v3-weather-temperature{font-size:clamp(9px,3.1cqw,38px);font-weight:800;color:#baffd1}
 .v3-weather-minimum,.v3-weather-maximum,.v3-weather-feelsLike,.v3-weather-conditions{font-size:clamp(5px,1.16cqw,14px)}
-.v3-weather-metrics{font-size:clamp(5px,1.1cqw,13px);line-height:1.35}
+.v3-weather-metrics{display:flex;flex-direction:column;align-items:stretch;justify-content:space-evenly;gap:2%;padding:2% 3%;font-size:clamp(5px,1.0cqw,12px);line-height:1.1}
+.v3-weather-metric-row{display:flex;align-items:center;gap:3%;min-width:0;white-space:nowrap;overflow:hidden}
+.v3-weather-metric-icon{flex:0 0 16%;font-size:1.2em;text-align:center}
+.v3-weather-metric-label{flex:0 0 auto;color:#b9ffdf}
+.v3-weather-metric-row strong{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#fff;font-weight:700}
 `;
