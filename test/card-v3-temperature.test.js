@@ -15,3 +15,10 @@ test("today temperature panel refuses a tomorrow-specific snapshot",()=>{
  assert.throws(()=>todayTemperatureOverlay({date:"2026-11-14",todayDate:"2026-11-13",currentNowTemp:7,todayMin:1,todayMax:9}),/today weather snapshot/);
  assert.equal(todayTemperatureOverlay({date:"2026-11-13",todayDate:"2026-11-13",currentNowTemp:7,todayMin:1,todayMax:9}).temperatureNow,"+7°C");
 });
+
+test("feels-like appears only when a measured weather field exists",()=>{
+ const measured=todayTemperatureOverlay({currentNowTemp:7,todayMin:3,todayMax:8,currentFeelsLike:5});
+ assert.equal(measured.temperatureFeelsLike,"+5°C");
+ const missing=todayTemperatureOverlay({currentNowTemp:7,todayMin:3,todayMax:8});
+ assert.equal(Object.hasOwn(missing,"temperatureFeelsLike"),false);
+});
