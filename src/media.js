@@ -3,6 +3,12 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
 import { renderCardPng, buildCardHtml } from "./card.js"
+import { renderCardV3Png, buildCardV3Html } from "./card-v3.js"
+
+// Opt-in only; unset in production until schedule and visual release gates pass.
+const USE_V3_CARDS = process.env.SVITLOPULS_V3_CARDS === "1"
+const renderSelectedPng = details => USE_V3_CARDS ? renderCardV3Png(details) : renderCardPng(details)
+const buildSelectedHtml = details => USE_V3_CARDS ? buildCardV3Html(details) : buildCardHtml(details)
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
@@ -16,7 +22,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-09-svitlopuls-3-approved-release-v13"
+export const CARD_RENDER_VERSION = "2026-11-09-svitlopuls-3-approved-release-v13" + (USE_V3_CARDS ? "-v3-opt-in" : "")
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
@@ -86,7 +92,7 @@ function saveViewerSnapshot(png, label, details) {
       '.card .footer{margin-top:auto!important}' +
       '@media(max-width:650px){body{padding:4px!important}.card{min-height:calc(100dvh - 8px)!important}}' +
       '</style>'
-    const html = buildCardHtml(details).replace("</head>",responsiveCss+"</head>")
+    const html = (USE_V3_CARDS ? buildSelectedHtml(details) : buildSelectedHtml(details).replace("</head>",responsiveCss+"</head>"))
     fs.writeFileSync("artifacts/web/" + basename + ".html", html)
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
@@ -129,7 +135,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     try {
       let result
       if (imageRefresh) {
-        const png = await renderCardPng({ schedule, date, label, update, source, weather })
+        const png = await renderSelectedPng({ schedule, date, label, update, source, weather })
         saveViewerSnapshot(png, label, { schedule, date, label, update, source, weather })
         const form = new FormData()
         form.set("chat_id", String(TELEGRAM_CHAT_ID))
@@ -165,7 +171,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
   }
 
   try {
-    const png = await renderCardPng({ schedule, date, label, update, source, weather })
+    const png = await renderSelectedPng({ schedule, date, label, update, source, weather })
         saveViewerSnapshot(png, label, { schedule, date, label, update, source, weather })
     const form = new FormData()
     form.set("chat_id", String(TELEGRAM_CHAT_ID))
