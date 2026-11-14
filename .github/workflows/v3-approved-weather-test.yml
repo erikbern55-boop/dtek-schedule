@@ -8,10 +8,12 @@ on:
       - 'src/card-v3-temperature.js'
       - 'src/card-v3-weather-inset.js'
       - 'src/card-v3-neon-weather-geometry.js'
+      - 'src/card-v3-approved-weather-overlay.js'
       - 'scripts/v3-weather-visual-check.mjs'
       - 'test/card-v3-temperature.test.js'
       - 'test/card-v3-weather-inset.test.js'
       - 'test/card-v3-neon-weather-geometry.test.js'
+      - 'test/card-v3-approved-weather-overlay.test.js'
       - 'test/card-v3-approved-integration.test.js'
       - '.github/workflows/v3-approved-weather-test.yml'
 jobs:
@@ -28,7 +30,7 @@ jobs:
       - name: Check weather modules
         run: node --check src/card-v3-temperature.js && node --check src/card-v3-weather-inset.js
       - name: Verify approved weather data and containment contracts
-        run: node --test test/card-v3-temperature.test.js test/card-v3-weather-inset.test.js test/card-v3-approved-integration.test.js test/card-v3-neon-weather-geometry.test.js
+        run: node --test test/card-v3-temperature.test.js test/card-v3-weather-inset.test.js test/card-v3-approved-integration.test.js test/card-v3-neon-weather-geometry.test.js test/card-v3-approved-weather-overlay.test.js
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Capture approved-weather geometry wireframe in Chromium
