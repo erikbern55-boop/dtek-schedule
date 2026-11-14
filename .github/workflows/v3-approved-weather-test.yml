@@ -1,0 +1,46 @@
+name: V3 approved weather isolated tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/svitlopuls-v3-independent-generator
+    paths:
+      - 'src/card-v3-temperature.js'
+      - 'src/card-v3-weather-inset.js'
+      - 'src/card-v3-neon-weather-geometry.js'
+      - 'src/card-v3-approved-weather-overlay.js'
+      - 'scripts/v3-weather-visual-check.mjs'
+      - 'test/card-v3-temperature.test.js'
+      - 'test/card-v3-weather-inset.test.js'
+      - 'test/card-v3-neon-weather-geometry.test.js'
+      - 'test/card-v3-approved-weather-overlay.test.js'
+      - 'test/card-v3-approved-integration.test.js'
+      - 'test/card-v3-approved-stage.test.js'
+      - 'src/card-v3-approved-stage.js'
+      - '.github/workflows/v3-approved-weather-test.yml'
+jobs:
+  approved-weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check weather modules
+        run: node --check src/card-v3-temperature.js && node --check src/card-v3-weather-inset.js
+      - name: Verify approved weather data and containment contracts
+        run: node --test test/card-v3-temperature.test.js test/card-v3-weather-inset.test.js test/card-v3-approved-integration.test.js test/card-v3-neon-weather-geometry.test.js test/card-v3-approved-weather-overlay.test.js test/card-v3-approved-stage.test.js
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture approved-weather geometry wireframe in Chromium
+        run: node scripts/v3-weather-visual-check.mjs
+      - name: Upload isolated geometry evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: svitlopuls-v3-weather-wireframe
+          path: artifacts/weather-visual/
+          if-no-files-found: warn

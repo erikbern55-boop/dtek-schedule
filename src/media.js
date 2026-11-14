@@ -3,6 +3,8 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
 import { renderCardPng, buildCardHtml } from "./card.js"
+import { buildCardV3Html } from "./card-v3.js"
+import { buildV3LivePayload } from "./card-v3-live-json.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
@@ -69,7 +71,13 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   return caption
 }
 
-function saveViewerSnapshot(png, label, details) {
+// Preview-only adapter: same live schedule/weather details as the existing viewer.
+// No Telegram or public viewer switch is performed by this function.
+export function buildViewerV3Preview(details) {
+  return buildCardV3Html(details)
+}
+
+export function saveViewerSnapshot(png, label, details) {
   // Public viewer receives only rendered graphics, never Telegram credentials.
   try {
     fs.mkdirSync("artifacts/web", { recursive: true })
@@ -88,6 +96,12 @@ function saveViewerSnapshot(png, label, details) {
       '</style>'
     const html = buildCardHtml(details).replace("</head>",responsiveCss+"</head>")
     fs.writeFileSync("artifacts/web/" + basename + ".html", html)
+    // Opt-in local/test output only; default production behavior stays unchanged.
+    if (process.env.SVITLOPULS_V3_PREVIEW === "1") {
+      fs.writeFileSync("artifacts/web/v3-" + basename + ".html", buildViewerV3Preview(details))
+      fs.writeFileSync("artifacts/web/v3-" + basename + "-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))
+      if (basename === "today") fs.writeFileSync("artifacts/web/svitlopuls-live.json", JSON.stringify(buildV3LivePayload({...details,now:new Date()}),null,2))
+    }
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
   }

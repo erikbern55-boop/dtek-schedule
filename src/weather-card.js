@@ -190,7 +190,7 @@ export const WEATHER_CSS = [
   'text-align:center;line-height:1.35}',
 ].join("")
 
-export function renderWeatherPanel(weather,date,label="сьогодні") {
+export function renderWeatherPanel(weather,date,label="сьогодні",layout="legacy") {
   const moon=lunarForDate(date)
   const [symbol,desc]=condition(weather?.currentNowCode ?? weather?.code)
   const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA", {
@@ -230,7 +230,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div class="wx-fact wide">☔ Імовірність опадів сьогодні: <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
       '</div>'+
       (hasTomorrow
-        ?'<div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Завтра · '+esc(tomorrowNumber)+'</div>'+
+        ? (layout==="v3" ? '</section><section class="wx-box weather-tomorrow"><h3>🌤 Погода — ЗАВТРА</h3><div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Завтра · '+esc(tomorrowNumber)+'</div>' : '<div class="wx-forecast-box"><div class="wx-forecast-heading">📅 Завтра · '+esc(tomorrowNumber)+'</div>')+
           '<div class="wx-forecast-values"><div>Мінімум<b>'+esc(temp(weather.tomorrowMin))+'</b></div>'+
           '<div>Максимум<b>'+esc(temp(weather.tomorrowMax))+'</b></div></div></div>'
         :'<div class="wx-forecast-box">📅 Прогноз на завтра недоступний</div>')+

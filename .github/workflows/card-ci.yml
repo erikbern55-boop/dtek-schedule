@@ -24,9 +24,19 @@ jobs:
           node --check ./src/card.js
           node --check ./src/media.js
           node --check ./src/schedule.js
-          node --test
+          node --test test/*.test.js
           node ./test/card-smoke.js
+          node ./test/card-v3-smoke.js
+          node ./test/card-approved-smoke.js
       - uses: actions/upload-artifact@v6
         with:
           name: svitlopuls-card-preview
-          path: svitlopuls-preview.png
+          path: |
+            svitlopuls-preview.png
+            svitlopuls-v3-preview.png
+            svitlopuls-v3-fullscreen-preview.html
+            svitlopuls-v3-mobile-preview.png
+            svitlopuls-v3-layout.json
+            svitlopuls-v3-reference-geometry.json
+            svitlopuls-v3-etalon-comparison.json
+            svitlopuls-approved-preview.png
