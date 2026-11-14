@@ -1,0 +1,27 @@
+name: V3 approved weather isolated tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/svitlopuls-v3-independent-generator
+    paths:
+      - 'src/card-v3-temperature.js'
+      - 'src/card-v3-weather-inset.js'
+      - 'test/card-v3-temperature.test.js'
+      - 'test/card-v3-weather-inset.test.js'
+      - '.github/workflows/v3-approved-weather-test.yml'
+jobs:
+  approved-weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check weather modules
+        run: node --check src/card-v3-temperature.js && node --check src/card-v3-weather-inset.js
+      - name: Verify approved weather data and containment contracts
+        run: node --test test/card-v3-temperature.test.js test/card-v3-weather-inset.test.js
