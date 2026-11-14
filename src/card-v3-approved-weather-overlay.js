@@ -23,9 +23,9 @@ export const APPROVED_WEATHER_OVERLAY_CSS=`
 .v3-weather-heading{font-size:clamp(6px,1.55cqw,19px);font-weight:800;white-space:nowrap}
 .v3-weather-temperature{font-size:clamp(9px,3.1cqw,38px);font-weight:800;color:#baffd1}
 .v3-weather-minimum,.v3-weather-maximum,.v3-weather-feelsLike,.v3-weather-conditions{font-size:clamp(5px,1.16cqw,14px)}
-.v3-weather-metrics{display:flex;flex-direction:column;align-items:stretch;justify-content:space-evenly;gap:2%;padding:2% 3%;font-size:clamp(5px,0.83cqw,10px);line-height:1.1}
-.v3-weather-metric-row{display:flex;align-items:center;gap:2%;min-width:0;white-space:nowrap;overflow:visible}
-.v3-weather-metric-icon{flex:0 0 14%;font-size:1.0em;text-align:center}
-.v3-weather-metric-label{flex:0 1 auto;min-width:0;color:#b9ffdf}
-.v3-weather-metric-row strong{flex:0 0 auto;min-width:0;overflow:visible;text-overflow:clip;color:#fff;font-weight:700}
+.v3-weather-metrics{display:flex;flex-direction:column;align-items:stretch;justify-content:space-evenly;gap:2%;padding:2% 2%;font-size:clamp(5px,0.75cqw,9px);line-height:1.1}
+.v3-weather-metric-row{display:grid;grid-template-columns:14px minmax(0,1fr) max-content;align-items:center;column-gap:3px;min-width:0;white-space:nowrap;overflow:visible}
+.v3-weather-metric-icon{font-size:1.0em;text-align:center}
+.v3-weather-metric-label{min-width:0;color:#b9ffdf}
+.v3-weather-metric-row strong{min-width:0;overflow:visible;text-overflow:clip;color:#fff;font-weight:700}
 `;
