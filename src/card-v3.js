@@ -662,6 +662,17 @@ const css = [
   // than a small product-style image on a dark empty background.
   ".v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}",
   ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
+  // Keep approved panel geometry while making every row visible.
+  ".v3-panel .v3-periods{max-height:none!important;overflow:visible!important;gap:3px!important}",
+  ".v3-panel .v3-period{font-size:14px!important;line-height:1.05!important;padding:3px 7px!important;border-width:1px!important;border-radius:9px!important;min-height:0!important}",
+  ".v3-panel .v3-title{font-size:20px!important;line-height:1.1!important;margin:0 0 5px!important}",
+  ".v3-panel .v3-totals{margin-top:3px!important;font-size:13px!important}",
+  ".v3-panel .v3-timeline{margin-top:3px!important;height:29px!important;min-height:0!important}",
+  ".v3-weather .weather-sowing{padding:8px!important}",
+  ".v3-weather .weather-sowing h3{font-size:19px!important;line-height:1.08!important;margin:0 0 5px!important}",
+  ".v3-weather .weather-sowing .wx-sowing{gap:3px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row{font-size:12px!important;line-height:1.1!important;padding:3px 5px!important;border-width:1px!important;border-radius:9px!important;overflow-wrap:anywhere!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row b{font-size:13px!important;line-height:1.1!important;margin:0 0 2px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
