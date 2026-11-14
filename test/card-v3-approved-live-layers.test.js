@@ -6,6 +6,8 @@ const payload={scheduleDate:"2026-11-14",updatedAt:now.toISOString(),power:{peri
 test("all dynamic fields stay within 1404x1536 artwork",()=>{
  const layers=buildApprovedLiveLayers(payload,{now});
  assert.equal(layers.length,14);
+ assert.ok(layers.some(l=>l.id==="power-on"));
+ assert.ok(layers.some(l=>l.id==="power-off"));
  for(const l of layers){assert.ok(l.x>=0&&l.y>=0&&l.x+l.width<=1404&&l.y+l.height<=1536,l.id);}
  assert.equal(layers.find(l=>l.id==="countdown").text,"01:15");
  assert.equal(layers.find(l=>l.id==="date").text,"14.11.2026");
