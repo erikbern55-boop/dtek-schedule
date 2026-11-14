@@ -630,6 +630,24 @@ const css = [
   ".v3-weather .weather-garden .v3-garden-source{justify-content:flex-start!important;padding-top:20px!important;gap:12px!important;font-size:17px!important}",
   ".v3-weather .weather-garden .v3-garden-source b{font-size:18px!important}",
 
+  // Etalon 1404x1536: strengthen major heading hierarchy and image-like neon edges.
+  // Only CSS is changed here; data, schedule, timer, notifications and source links stay intact.
+  ".v3-head .v3-brand strong{font-size:56px!important;font-weight:950!important;line-height:1.02!important}",
+  ".v3-head .v3-brand small{font-size:17px!important;letter-spacing:-.15px!important}",
+  ".v3-head .v3-place strong{font-size:29px!important}",
+  ".v3-head .v3-tag{font-size:19px!important;border-color:#67ff55!important}",
+  ".v3-panel,.v3 .wx-box,.v3-sources,.v3-footer{border-color:#54ff5d!important;background:radial-gradient(ellipse at 50% 40%,#074a22 0%,#00250d 68%,#001507 100%)!important;box-shadow:inset 0 0 13px #139a35,0 0 8px #1cdb35,0 0 2px #9cff8c!important}",
+  ".v3-weather .weather-garden .wx-garden-art{flex:0 0 195px!important;min-width:195px!important;width:195px!important;height:178px!important;min-height:178px!important}",
+  ".v3-weather .weather-garden .wx-garden-art svg{width:195px!important;height:178px!important}",
+  ".v3-weather .weather-garden .wx-garden-copy{font-size:22px!important;line-height:1.26!important}",
+  ".v3-weather .weather-sowing h3{font-size:27px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row.good{background:linear-gradient(90deg,#075322,#003512)!important;border:2px solid #4cff56!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row.avoid{background:linear-gradient(90deg,#551b1c,#290b10)!important;border:2px solid #ff6977!important}",
+  ".v3-weather .weather-moon h3,.v3-weather .weather-astro h3{font-size:27px!important}",
+  ".v3-weather .weather-moon .wx-moon-row{font-size:19px!important}",
+  ".v3-weather .weather-astro p{font-size:20px!important;line-height:1.24!important}",
+  ".v3-sources{font-size:17px!important}",
+  ".v3-footer{font-size:15px!important}",
   // Reference alignment: right-hand advice card uses green/red actionable rows,
   // while retaining the verified dynamic good/avoid/lunar recommendations.
   ".v3-weather .weather-sowing{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;overflow:hidden!important}",
