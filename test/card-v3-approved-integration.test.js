@@ -29,3 +29,12 @@ test("live Open-Meteo pipeline and DTEK periods enter the same approved card",as
  assert.match(result.html,/data-layer="live-astro-forecast"/);
  assert.match(result.html,/svitlo-weather-inset/);
 });
+
+test("approved integration displays actual feels-like without changing adjacent live fields",()=>{
+ const snapshot={...weatherSnapshot,currentFeelsLike:5};
+ const result=buildApprovedArtworkFromSnapshots({artworkUrl,rectangles,schedulePeriods,scheduleDate:"2026-11-13",weatherSnapshot:snapshot,now});
+ assert.equal(result.data.temperatureFeelsLike,"+5°C");
+ assert.match(result.html,/Відчувається: <b>\+5°C<\/b>/);
+ assert.match(result.html,/data-layer="live-power-status"/);
+ assert.match(result.html,/data-layer="live-garden-advice"/);
+});
