@@ -13,3 +13,11 @@ test("no fabricated feels-like and no HTML injection",()=>{
  assert.doesNotMatch(html,/<script>/);
  assert.match(html,/&lt;script&gt;/);
 });
+
+test("right weather column renders four distinct safe icon rows",()=>{
+ const html=approvedWeatherOverlayHtml({wind:"3 м/с",precipitation:"0 мм",pressure:"755",humidity:"70%"});
+ for(const key of ["wind","precipitation","pressure","humidity"])assert.match(html,new RegExp('data-weather-metric="'+key+'"'));
+ assert.equal((html.match(/class="v3-weather-metric-row"/g)||[]).length,4);
+ assert.match(html,/Вітер:/);assert.match(html,/Опади:/);assert.match(html,/Тиск:/);assert.match(html,/Вологість:/);
+ assert.match(APPROVED_WEATHER_OVERLAY_CSS,/flex-direction:column/);
+});
