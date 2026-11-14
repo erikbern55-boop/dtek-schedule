@@ -37,6 +37,7 @@ try{
  for(const selector of [".v3-head",".v3-date-panel",".v3-count",".v3-periods",".weather-air",".weather-sun",".weather-soil",".weather-garden",".weather-sowing",".weather-moon",".weather-astro",".v3-sources",".v3-footer"]){
   assert.equal(await page.locator(selector).count(),1,"Missing V3 section "+selector)
  }
- const overflows=await page.evaluate(()=>[...document.querySelectorAll(".v3-panel,.v3-weather .wx-box")].filter(el=>el.scrollHeight>el.clientHeight+4&&getComputedStyle(el).overflowY==="hidden").map(el=>el.className))
+ const overflows=await page.evaluate(()=>[...document.querySelectorAll(".v3-panel,.v3-weather .wx-box")].filter(el=>el.scrollHeight>el.clientHeight+4&&getComputedStyle(el).overflowY==="hidden").map(el=>({className:el.className,height:el.clientHeight,scrollHeight:el.scrollHeight,overflow:el.scrollHeight-el.clientHeight,children:[...el.children].map(c=>({className:c.className,tag:c.tagName,height:Math.round(c.getBoundingClientRect().height),scrollHeight:c.scrollHeight}))})))
+ console.log("V3 OVERFLOW DIAGNOSTICS:",JSON.stringify(overflows))
  assert.deepEqual(overflows,[],"Clipped panels")
 }finally{await browser.close()}
