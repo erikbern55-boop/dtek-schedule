@@ -673,6 +673,26 @@ const css = [
   ".v3-weather .weather-sowing .wx-sowing{gap:3px!important}",
   ".v3-weather .weather-sowing .wx-sowing-row{font-size:12px!important;line-height:1.1!important;padding:3px 5px!important;border-width:1px!important;border-radius:9px!important;overflow-wrap:anywhere!important}",
   ".v3-weather .weather-sowing .wx-sowing-row b{font-size:13px!important;line-height:1.1!important;margin:0 0 2px!important}",
+  // Four weather panels: today, tomorrow, daylight and soil; no empty center column.
+  ".v3-weather .wx-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:10px!important}",
+  ".v3-weather .weather-air{grid-column:1/6!important;grid-row:1!important;position:relative!important;padding:12px!important}",
+  ".v3-weather .weather-tomorrow{grid-column:6/8!important;grid-row:1!important;width:auto!important;min-width:0!important;padding:12px!important}",
+  ".v3-weather .weather-sun{grid-column:8/11!important;grid-row:1!important;width:auto!important}",
+  ".v3-weather .weather-soil{grid-column:11/13!important;grid-row:1!important;width:auto!important}",
+  ".v3-weather .weather-air h3{font-size:22px!important;margin:0 0 7px!important;line-height:1.1!important}",
+  ".v3-weather .weather-air .wx-weather-main{display:flex!important;align-items:center!important;gap:10px!important;position:relative!important;z-index:1!important}",
+  ".v3-weather .weather-air .wx-symbol{font-size:40px!important;line-height:1!important;flex:0 0 55px!important}",
+  ".v3-weather .weather-air .wx-now{font-size:46px!important;line-height:1!important}",
+  ".v3-weather .weather-air .wx-now-label{font-size:12px!important}",
+  ".v3-weather .weather-air .wx-cond{font-size:14px!important}",
+  ".v3-weather .weather-air .wx-today-box{position:absolute!important;left:12px!important;bottom:12px!important;width:46%!important;z-index:2!important;margin:0!important}",
+  ".v3-weather .weather-air .wx-facts{position:absolute!important;right:10px!important;bottom:12px!important;width:47%!important;display:flex!important;flex-direction:column!important;gap:4px!important;margin:0!important}",
+  ".v3-weather .weather-air .wx-fact{font-size:12px!important;line-height:1.1!important;padding:3px!important}",
+  ".v3-weather .weather-tomorrow h3{font-size:21px!important;white-space:normal!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-box{gap:5px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values{grid-template-columns:1fr!important;gap:6px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values>div{padding:5px 2px!important;gap:2px!important;font-size:12px!important}",
+  ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:25px!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
@@ -698,6 +718,12 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     (_whole,heading,duration,close)=>heading+close+
       '<div class="v3-daylight-duration">'+(duration||'—')+'</div>'
   )
+  // Separate tomorrow's forecast into its own card, as in the approved four-card weather row.
+  // Only the V3 presentation is changed; shared weather data and production remain untouched.
+  const tomorrowMatch=referenceWeather.match(/<div class="wx-forecast-box">[\\s\\S]*?(?=<\\/section>)/)
+  const weatherFourCards=tomorrowMatch
+    ? referenceWeather.replace(tomorrowMatch[0],"").replace('<div class="wx-right-stack">','<section class="wx-box weather-tomorrow"><h3>🌤 Завтра</h3>'+tomorrowMatch[0]+'</section><div class="wx-right-stack">')
+    : referenceWeather
   const html='<article class="v3">'+
     '<header class="v3-head"><div class="v3-place"><svg class="v3-robot" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Бірюзовий робот Світлопульсу з блискавкою"><defs><linearGradient id="v3bot" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#74f8ed"/><stop offset=".55" stop-color="#2bc8c7"/><stop offset="1" stop-color="#087b9c"/></linearGradient></defs><path d="M65 18V7" stroke="#8dfff4" stroke-width="6"/><circle cx="65" cy="7" r="6" fill="#d7fff5"/><rect x="13" y="25" width="104" height="90" rx="26" fill="url(#v3bot)" stroke="#9affed" stroke-width="6"/><rect x="24" y="42" width="82" height="55" rx="19" fill="#082c39" stroke="#5ae9df" stroke-width="2"/><ellipse cx="46" cy="66" rx="12" ry="16" fill="#b4fff0"/><ellipse cx="84" cy="66" rx="12" ry="16" fill="#b4fff0"/><path d="M48 87Q65 102 82 87" fill="none" stroke="#91fff0" stroke-width="5" stroke-linecap="round"/><path d="M73 100l-18 24h12l-7 19 27-32H74l7-11Z" fill="#e7ff45" stroke="#f6ffa6" stroke-width="2" stroke-linejoin="round"/><path d="M70 108l-8 14h10l-4 11 11-19H69Z" fill="#fffbd2" opacity=".88"/><circle cx="65" cy="7" r="11" fill="none" stroke="#9affed" stroke-width="2" opacity=".55"/><path d="M32 52Q65 39 98 52" fill="none" stroke="#aafff0" stroke-width="2" opacity=".25"/><path d="M12 70H3M118 70H127" stroke="#68f0e6" stroke-width="9" stroke-linecap="round"/><path d="M42 115v22m46-22v22" stroke="#68f0e6" stroke-width="10" stroke-linecap="round"/><path d="M28 31Q65 14 102 31" fill="none" stroke="#d1fff7" stroke-width="3" opacity=".7"/><circle cx="41" cy="60" r="4" fill="#fff" opacity=".9"/><circle cx="79" cy="60" r="4" fill="#fff" opacity=".9"/><path d="M18 111Q65 128 112 111" fill="none" stroke="#13a8ad" stroke-width="3"/><circle cx="19" cy="108" r="4" fill="#e7ff45"/><circle cx="111" cy="108" r="4" fill="#e7ff45"/></svg><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div>'+
     '<div class="v3-brand"><strong><span class="v3-brand-white">СВІТЛО</span><span class="v3-brand-green">ПУЛЬС 3.0</span><span class="v3-pulse-mark" aria-hidden="true"><svg viewBox="0 0 100 46" width="100" height="46" xmlns="http://www.w3.org/2000/svg"><path d="M2 25H22L31 13L43 38L55 5L66 25H98" fill="none" stroke="#5bff70" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></strong><small>Моніторинг електропостачання · Погода · Город · Місяць · Астропрогноз</small></div>'+
@@ -706,7 +732,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<section class="v3-panel v3-date-panel"><div class="v3-date"><span class="v3-calendar-icon" aria-hidden="true">▦</span> '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b><span class="v3-weekday">'+esc(weekday(date))+'</span></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
     '<section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">'+esc(eventHeading)+'</div><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
-    '<div class="v3-weather">'+referenceWeather+'</div>'+
+    '<div class="v3-weather">'+weatherFourCards+'</div>'+
     '<section class="v3-sources"><b>▰ Джерела та<br>методика</b><span><strong>⚡ Графіки відключень:</strong><a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · dtek.com.ua</a></span><span><strong>☁ Погода і ґрунт:</strong><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span><span><strong>🌱 Агрономічні поради:</strong><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a><a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span><span><strong>🌙 Місячний календар:</strong><a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span><span><strong>✨ Астропрогноз:</strong><a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span></section>'+
     '<footer class="v3-footer"><span>⟳ Оновлено: '+esc(update)+'</span><span>🔄 Погода: кожні 30 хв</span><span>⚡ Графіки ДТЕК: кожні 5 хв</span><span>ⓘ Рекомендації: перевірені джерела</span><span>⬡ Дані для СТ «Хімік»<small class="v3-source-detail"> · ' +esc(source)+'</small></span></footer></article>'
   // Interactive HTML countdown: the static PNG remains a snapshot for Telegram.
