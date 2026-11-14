@@ -630,6 +630,16 @@ const css = [
   ".v3-weather .weather-garden .v3-garden-source{justify-content:flex-start!important;padding-top:20px!important;gap:12px!important;font-size:17px!important}",
   ".v3-weather .weather-garden .v3-garden-source b{font-size:18px!important}",
 
+  // Reference alignment: right-hand advice card uses green/red actionable rows,
+  // while retaining the verified dynamic good/avoid/lunar recommendations.
+  ".v3-weather .weather-sowing{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;overflow:hidden!important}",
+  ".v3-weather .weather-sowing h3{font-size:25px!important;line-height:1.15!important;margin:0 0 12px!important;text-align:left!important}",
+  ".v3-weather .weather-sowing .wx-sowing{display:flex!important;flex-direction:column!important;gap:10px!important;margin:0!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row{font-size:17px!important;line-height:1.2!important;padding:9px 12px!important;border-radius:15px!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row.good{background:#063b19!important;border:2px solid #3df85b!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row.avoid{background:#351316!important;border:2px solid #ff6c73!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row.lunar{background:#1b1935!important;border:1px solid #9a7df0!important}",
+  ".v3-weather .weather-sowing .wx-sowing-row b{font-size:19px!important;margin-bottom:4px!important}",
   // Reference uses a garden photograph filling the portrait tile, rather
   // than a small product-style image on a dark empty background.
   ".v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}",
@@ -651,7 +661,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const splitGarden=weatherMarkup.replace(
     /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
     (_whole,heading,body,sowing)=>heading.replace(/<h3>[\s\S]*?<\/h3>/,'<h3>🌿 Поради городникам</h3>')+body+'<aside class="v3-garden-source"><b>📖 Джерело порад</b><span>RHS · Royal Horticultural Society</span><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">rhs.org.uk</a></aside></section>'+
-      '<section class="wx-box weather-sowing"><h3>🌱 Посівний календар</h3>'+sowing.slice(0,-10)+"</section>"
+      '<section class="wx-box weather-sowing"><h3>✔ Що можна / не варто</h3>'+sowing.slice(0,-10)+"</section>"
   )
   // V3-only presentation: daylight duration on its own prominent line.
   const referenceWeather=splitGarden.replace(/<div class="wx-garden-heading">Порада на сьогодні:<\/div>/,'<div class="wx-garden-heading">Актуально сьогодні:</div>').replace(/<h3>🌤 Погода — ЗАВТРА<\/h3>/,'<h3>🌤 Завтра</h3>').replace(
