@@ -7,8 +7,10 @@ on:
     paths:
       - 'src/card-v3-temperature.js'
       - 'src/card-v3-weather-inset.js'
+      - 'src/card-v3-neon-weather-geometry.js'
       - 'test/card-v3-temperature.test.js'
       - 'test/card-v3-weather-inset.test.js'
+      - 'test/card-v3-neon-weather-geometry.test.js'
       - 'test/card-v3-approved-integration.test.js'
       - '.github/workflows/v3-approved-weather-test.yml'
 jobs:
