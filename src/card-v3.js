@@ -723,6 +723,9 @@ export async function renderCardV3Png(details) {
   try {
     const page=await browser.newPage({viewport:{width:1404,height:900},deviceScaleFactor:1})
     await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+    // Keep the approved 1404x1536 PNG canvas without stretching any panel.
+    // Taller content remains visible so the geometry check can reject overflow.
+    await page.addStyleTag({content:"html,body{min-height:1536px!important;}body{margin:0!important;}"})
     // A screenshot must not silently capture an empty photo frame.
     await page.locator(".weather-garden .wx-garden-art img").evaluate(async img=>{
       if(!img.complete)await new Promise((resolve,reject)=>{
