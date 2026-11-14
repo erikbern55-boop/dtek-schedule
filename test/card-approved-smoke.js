@@ -50,5 +50,5 @@ try{
  console.log("Approved-layout dimensions",JSON.stringify(v))
  assert.equal(v.w,1404)
  assert.equal(v.h,1536)
- if(v.overflow.length)console.warn("Panels needing visual refinement:",v.overflow)
+ assert.deepEqual(v.overflow,[], "Approved panels must not overflow")
 }finally{await browser.close()}
