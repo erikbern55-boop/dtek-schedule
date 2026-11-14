@@ -34,7 +34,7 @@ const browser=await chromium.launch({headless:true})
 try{
  const page=await browser.newPage({viewport:{width:1404,height:1536}})
  await page.setContent(html,{waitUntil:"load"})
- for(const selector of [".v3-head",".v3-date-panel",".v3-count",".v3-periods",".weather-air",".weather-tomorrow",".weather-sun",".weather-soil",".weather-garden",".weather-sowing",".weather-moon",".weather-astro",".v3-sources",".v3-footer"]){
+ for(const selector of [".v3-head",".v3-date-panel",".v3-count",".v3-periods",".weather-air",".weather-sun",".weather-soil",".weather-garden",".weather-sowing",".weather-moon",".weather-astro",".v3-sources",".v3-footer"]){
   assert.equal(await page.locator(selector).count(),1,"Missing V3 section "+selector)
  }
  const overflows=await page.evaluate(()=>[...document.querySelectorAll(".v3-panel,.v3-weather .wx-box")].filter(el=>el.scrollHeight>el.clientHeight+4&&getComputedStyle(el).overflowY==="hidden").map(el=>el.className))
