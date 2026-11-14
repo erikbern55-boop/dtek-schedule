@@ -60,3 +60,11 @@ test("48 independent half-hour DTEK states equal normalized V3 schedule and HTML
   for(const p of intervals)assert.ok(html.includes(p.begin)&&html.includes(p.end),"Missing boundary "+p.begin+"-"+p.end);
  }
 });
+
+test("approved reference uses actionable green/red garden card without changing source data",()=>{
+ const html=buildCardV3Html(details)
+ assert.match(html,/Що можна \/ не варто/)
+ assert.match(html,/wx-sowing-row\.good/)
+ assert.match(html,/wx-sowing-row\.avoid/)
+ assert.doesNotMatch(html,/Посівний календар<\/h3>/)
+})
