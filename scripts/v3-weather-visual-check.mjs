@@ -29,7 +29,19 @@ try{
   for(const [name,p] of Object.entries(NEON_PANELS))if(name!=="today"&&intersect(b,p))throw Error("Browser overlap "+name+": "+b.key);
   if(b.scrollWidth>b.clientWidth+1||b.scrollHeight>b.clientHeight+1)throw Error("Clipped text in "+b.key);
  }
+ const metricRows=await page.locator("[data-weather-metric]").evaluateAll(els=>els.map(el=>{
+  const parent=el.getBoundingClientRect();
+  const parts=[...el.children].map(c=>{const b=c.getBoundingClientRect();return {text:c.textContent.trim(),left:b.left,right:b.right,scrollWidth:c.scrollWidth,clientWidth:c.clientWidth}});
+  return {key:el.dataset.weatherMetric,left:parent.left,right:parent.right,parts};
+ }));
+ if(metricRows.length!==4)throw Error("Expected 4 weather metric rows, got "+metricRows.length);
+ for(const row of metricRows){
+  for(const part of row.parts){
+   if(part.left<row.left-1||part.right>row.right+1)throw Error("Metric element outside row: "+row.key+" "+part.text);
+   if(part.scrollWidth>part.clientWidth+1)throw Error("Clipped metric text: "+row.key+" "+part.text);
+  }
+ }
  await page.screenshot({path:path.join(output,"weather-overlay-browser.png"),fullPage:true});
- fs.writeFileSync(path.join(output,"weather-overlay-browser-report.json"),JSON.stringify({status:"passed",kind:"approved-weather-overlay-browser-check",reference:NEON_REFERENCE,regions:boxes,disclaimer:"Real responsive weather HTML overlay on placeholder panels, not a pixel comparison to the approved artwork. Approved PNG and clean plate are not in repository."},null,2));
+ fs.writeFileSync(path.join(output,"weather-overlay-browser-report.json"),JSON.stringify({status:"passed",kind:"approved-weather-overlay-browser-check",reference:NEON_REFERENCE,regions:boxes,metricRows,disclaimer:"Real responsive weather HTML overlay on placeholder panels, not a pixel comparison to the approved artwork. Approved PNG and clean plate are not in repository."},null,2));
  console.log("WEATHER OVERLAY VERIFIED:",boxes.length,"regions within Today panel; no clipped text or adjacent-panel overlap");
 }finally{await browser.close()}
