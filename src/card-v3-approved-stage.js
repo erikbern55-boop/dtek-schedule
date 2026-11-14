@@ -11,9 +11,9 @@ export function buildApprovedWeatherStage({artworkUrl,weather,artworkWidth,artwo
  if(typeof artworkUrl!=="string"||!artworkUrl.trim())throw Error("Approved artwork URL required; do not substitute wireframe");
  if(!weather||typeof weather!=="object")throw Error("Live weather snapshot required");
  for(const key of required)if(weather[key]===undefined||weather[key]===null||String(weather[key]).trim()==="")throw Error("Missing live weather field: "+key);
- if(artworkWidth!==NEON_REFERENCE.width||artworkHeight!==NEON_REFERENCE.height)
-  throw Error("Approved artwork geometry mismatch: expected "+NEON_REFERENCE.width+"x"+NEON_REFERENCE.height+"; supplied "+artworkWidth+"x"+artworkHeight+". Measure or transform coordinates before rendering.");
- const fields=approvedWeatherOverlayHtml(weather);
- const html='<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Світлопульс 3.0 — погодний еталон (тест)</title><style>html,body{margin:0;background:#04140e;color:white}main{width:min(100%,1199px);margin:auto}.v3-approved-stage{background-image:url("'+escape(artworkUrl)+'");background-size:100% 100%;background-repeat:no-repeat}'+APPROVED_WEATHER_OVERLAY_CSS+'</style></head><body><main><section class="v3-approved-stage" aria-label="Погодний блок Світлопульсу 3.0">'+fields+'</section></main></body></html>';
- return {html,reference:NEON_REFERENCE,mode:"isolated-preview-only"};
+ if(!((artworkWidth===NEON_REFERENCE.width&&artworkHeight===NEON_REFERENCE.height)||(artworkWidth===1404&&artworkHeight===1536)))
+  throw Error("Approved artwork geometry mismatch: expected 1404x1536 final reference or 1199x1312 legacy geometry; supplied "+artworkWidth+"x"+artworkHeight);
+ // The weather rectangles use percentage coordinates, so the original 1199x1312\n // measurement grid scales with the final 1404x1536 artwork without altering positions.\n const fields=approvedWeatherOverlayHtml(weather);
+ const html='<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Світлопульс 3.0 — погодний еталон (тест)</title><style>html,body{margin:0;background:#04140e;color:white}main{width:min(100%,1199px);margin:auto}.v3-approved-stage{background-image:url("'+escape(artworkUrl)+'");background-size:100% 100%;background-repeat:no-repeat}'+APPROVED_WEATHER_OVERLAY_CSS+' .v3-approved-stage{aspect-ratio:'+artworkWidth+'/'+artworkHeight+'}</style></head><body><main><section class="v3-approved-stage" aria-label="Погодний блок Світлопульсу 3.0">'+fields+'</section></main></body></html>';
+ return {html,reference:{width:artworkWidth,height:artworkHeight},mode:"isolated-preview-only"};
 }
