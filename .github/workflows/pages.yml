@@ -64,17 +64,31 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
+      - name: Restore last validated weather forecast
+        uses: actions/cache/restore@v4
+        with:
+          path: v3-renderer/artifacts/weather-cache.json
+          key: svitlopuls-production-weather-${{ github.run_id }}
+          restore-keys: |
+            svitlopuls-production-weather-
       - name: Generate and validate live V3 page without Telegram messages
         working-directory: v3-renderer
         env:
           REGION: kr
           GROUP: '1.1'
+          PRODUCTION_VIEWER: '1'
         run: |
           cp ../v3-test/live-generator.mjs ./live-generator.mjs
           cp ../v3-test/verify-live.mjs ./verify-live.mjs
           cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
           node live-generator.mjs
           node verify-live.mjs
+      - name: Save validated weather forecast
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: v3-renderer/artifacts/weather-cache.json
+          key: svitlopuls-production-weather-${{ github.run_id }}
       - name: Prepare public site
         run: |
           mkdir -p site
