@@ -39,10 +39,50 @@ jobs:
           ref: artifacts
           path: snapshots
           fetch-depth: 1
+      - name: Checkout approved V3 generator and reference images
+        uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/svitlopuls-v3-test
+          ref: main
+          path: v3-test
+          persist-credentials: false
+      - name: Checkout tested V3 renderer
+        uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/dtek-schedule
+          ref: feature/svitlopuls-v3-independent-generator
+          path: v3-renderer
+          persist-credentials: false
+      - name: Set up Node.js for V3
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: v3-renderer/.nvmrc
+          cache: npm
+          cache-dependency-path: v3-renderer/package-lock.json
+      - name: Install V3 dependencies
+        working-directory: v3-renderer
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Generate and validate live V3 page without Telegram messages
+        working-directory: v3-renderer
+        env:
+          REGION: kr
+          GROUP: '1.1'
+        run: |
+          cp ../v3-test/live-generator.mjs ./live-generator.mjs
+          cp ../v3-test/verify-live.mjs ./verify-live.mjs
+          cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
+          node live-generator.mjs
+          node verify-live.mjs
       - name: Prepare public site
         run: |
           mkdir -p site
-          cp source/docs/index.html site/index.html
+          cp v3-renderer/dist/index.html site/index.html
+          cp v3-renderer/dist/svitlopuls-live.json site/svitlopuls-live.json
+          cp v3-renderer/dist/svitlopuls_etalon_garlic.png site/
+          cp v3-renderer/dist/svitlopuls_etalon_moon.png site/
+          # Keep the existing Telegram-compatible snapshots and URLs intact.
           test -s snapshots/web/today.png
           cp snapshots/web/today.png site/today.png
           if [ -s snapshots/web/today.html ]; then cp snapshots/web/today.html site/today.html; fi
