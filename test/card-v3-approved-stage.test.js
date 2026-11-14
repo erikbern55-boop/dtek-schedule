@@ -10,7 +10,7 @@ test("approved stage requires explicit artwork and complete live weather; no dum
  assert.throws(()=>buildApprovedWeatherStage({weather,artworkWidth:1199,artworkHeight:1312}),/artwork URL/i);
  assert.throws(()=>buildApprovedWeatherStage({artworkUrl,artworkWidth:1199,artworkHeight:1312}),/Live weather/);
  assert.throws(()=>buildApprovedWeatherStage({artworkUrl,weather:{...weather,humidity:""},artworkWidth:1199,artworkHeight:1312}),/humidity/);
- assert.throws(()=>buildApprovedWeatherStage({artworkUrl,weather,artworkWidth:1404,artworkHeight:1536}),/geometry mismatch/);
+ assert.throws(()=>buildApprovedWeatherStage({artworkUrl,weather,artworkWidth:1404,artworkHeight:1312}),/geometry mismatch/);
 });
 test("stage renders weather safely on the supplied reference URL",()=>{
  const result=buildApprovedWeatherStage({artworkUrl,weather,artworkWidth:1199,artworkHeight:1312});
@@ -29,4 +29,13 @@ test("all weather regions remain within Today panel and outside neighboring pane
   assert.ok(inside(region,NEON_PANELS.today),name);
   for(const neighbor of ["tomorrow","daylight","soil"])assert.equal(intersect(region,NEON_PANELS[neighbor]),false,name+" vs "+neighbor);
  }
+});
+
+test("final 1404x1536 approved artwork retains exact aspect ratio and live weather fields",()=>{
+ const result=buildApprovedWeatherStage({artworkUrl,weather,artworkWidth:1404,artworkHeight:1536});
+ assert.deepEqual(result.reference,{width:1404,height:1536});
+ assert.match(result.html,/aspect-ratio:1404\/1536/);
+ assert.match(result.html,/width:min\(100%,1404px\)/);
+ assert.equal((result.html.match(/data-weather-metric=/g)||[]).length,4);
+ assert.equal((result.html.match(/data-weather-field=/g)||[]).length,7);
 });
