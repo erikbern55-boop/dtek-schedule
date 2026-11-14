@@ -8,7 +8,7 @@ export function nextV3Event(data, now = new Date()) {
   const today = `${p.year}-${p.month}-${p.day}`;
   if (!data || data.date !== today || !Array.isArray(data.periods)) return null;
   const minute = Number(p.hour) * 60 + Number(p.minute);
-  const parse = t => { if (!/^(?:[01]\\d|2[0-3]):[0-5]\\d$|^24:00$/.test(t)) throw Error('Invalid time'); const [h,m] = t.split(':').map(Number); return h*60+m; };
+  const parse = t => { if (!/^(?:[01]\d|2[0-3]):[0-5]\d$|^24:00$/.test(t)) throw Error('Invalid time'); const [h,m] = t.split(':').map(Number); return h*60+m; };
   const periods = data.periods.map(x => ({...x, a:parse(x.start), b:parse(x.end)}));
   if (periods.some((x,i) => x.a >= x.b || typeof x.on !== 'boolean' || (i && x.a !== periods[i-1].b))) return null;
   const current = periods.find(x => x.a <= minute && minute < x.b);
