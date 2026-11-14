@@ -23,3 +23,10 @@ test("Today date stays in approved weather header and outside temperature inset"
  assert.ok(weatherHeaderDateHtml("13.11").includes("13.11"));
  assert.throws(()=>weatherHeaderDateHtml("2026-11-13"),/DD.MM/);
 });
+
+test("feels-like appears inside weather inset only when supplied",()=>{
+ const html=weatherInsetHtml({temperatureNow:"+7°C",temperatureTodayMin:"+3°C",temperatureTodayMax:"+8°C",temperatureFeelsLike:"+5°C"});
+ assert.match(html,/svitlo-weather-feels/);
+ assert.match(html,/Відчувається: <b>\+5°C<\/b>/);
+ assert.doesNotMatch(weatherInsetHtml({temperatureNow:"+7°C"}),/svitlo-weather-feels/);
+});
