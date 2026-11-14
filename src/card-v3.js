@@ -720,7 +720,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   )
   // Separate tomorrow's forecast into its own card, as in the approved four-card weather row.
   // Only the V3 presentation is changed; shared weather data and production remain untouched.
-  const tomorrowMatch=referenceWeather.match(/<div class="wx-forecast-box">[\\s\\S]*?(?=<\\/section>)/)
+  const tomorrowMatch=referenceWeather.match(/<div class="wx-forecast-box">[\s\S]*?(?=<\/section>)/)
   const weatherFourCards=tomorrowMatch
     ? referenceWeather.replace(tomorrowMatch[0],"").replace('<div class="wx-right-stack">','<section class="wx-box weather-tomorrow"><h3>🌤 Завтра</h3>'+tomorrowMatch[0]+'</section><div class="wx-right-stack">')
     : referenceWeather
