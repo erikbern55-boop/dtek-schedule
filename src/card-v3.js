@@ -693,6 +693,14 @@ const css = [
   ".v3-weather .weather-tomorrow .wx-forecast-values{grid-template-columns:1fr!important;gap:6px!important}",
   ".v3-weather .weather-tomorrow .wx-forecast-values>div{padding:5px 2px!important;gap:2px!important;font-size:12px!important}",
   ".v3-weather .weather-tomorrow .wx-forecast-values b{font-size:25px!important}",
+  // Lower weather panels: remove legacy fixed widths and translations that caused overlap.
+  // Leave the approved first weather row untouched.
+  ".v3-weather .wx-grid{grid-template-rows:255px 311px 234px!important;align-items:stretch!important}",
+  ".v3-weather .wx-right-stack{display:contents!important}",
+  ".v3-weather .weather-garden{grid-column:1/9!important;grid-row:2!important;width:auto!important;max-width:100%!important;transform:none!important;min-width:0!important;box-sizing:border-box!important}",
+  ".v3-weather .weather-sowing{grid-column:9/13!important;grid-row:2!important;width:auto!important;max-width:100%!important;transform:none!important;min-width:0!important;box-sizing:border-box!important}",
+  ".v3-weather .weather-moon{grid-column:1/6!important;grid-row:3!important;width:auto!important;max-width:100%!important;transform:none!important;min-width:0!important;box-sizing:border-box!important}",
+  ".v3-weather .weather-astro{grid-column:6/13!important;grid-row:3!important;width:auto!important;max-width:100%!important;transform:none!important;min-width:0!important;box-sizing:border-box!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
