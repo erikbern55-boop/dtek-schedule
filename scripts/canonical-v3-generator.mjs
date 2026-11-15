@@ -168,7 +168,10 @@ function apply(n){scale=Math.max(.2,Math.min(2,n));el.style.transform='scale('+s
 function fit(){apply(Math.min(1,Math.max(.2,(shell.clientWidth||innerWidth)/1404)));shell.scrollLeft=0;}\nfunction readable(){apply(Math.max(.65,Math.min(1,innerWidth/1404)));}
 document.getElementById('minus').onclick=()=>apply(scale-.1);
 document.getElementById('plus').onclick=()=>apply(scale+.1);
-document.getElementById('fit').onclick=fit;\nconst readableBtn=document.createElement('button');readableBtn.textContent='Читабельний режим';readableBtn.id='readable';document.getElementById('trial-tools').appendChild(readableBtn);readableBtn.onclick=readable;\nfit();
+document.getElementById('fit').onclick=fit;
+const heightBtn=document.createElement('button');heightBtn.id='fill-height';heightBtn.textContent='На висоту екрана';document.getElementById('trial-tools').appendChild(heightBtn);
+heightBtn.onclick=()=>{const cardHeight=el.scrollHeight||1536;const available=Math.max(300,innerHeight-document.getElementById('trial-tools').offsetHeight-16);apply(Math.min(2,available/cardHeight));shell.scrollLeft=0;};
+window.addEventListener('resize',()=>{if(scale<=1)fit();},{passive:true});\nconst readableBtn=document.createElement('button');readableBtn.textContent='Читабельний режим';readableBtn.id='readable';document.getElementById('trial-tools').appendChild(readableBtn);readableBtn.onclick=readable;\nfit();
 const production=${production};
 const generated=Date.parse('${generatedAt}');
 const clockEl=document.querySelector('.v3-clock');\nif(clockEl&&window.__trialSchedule?.date){clockEl.setAttribute('aria-live','polite');}

@@ -2,7 +2,8 @@ import fs from "node:fs"
 import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
-import { renderCardPng, buildCardHtml } from "./card.js"
+import { buildCardHtml } from "./card.js"
+import { renderCardV3Png as renderCardPng } from "./card-v3.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
@@ -16,7 +17,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-09-svitlopuls-3-approved-release-v13"
+export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-shared-telegram-renderer-v1"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
