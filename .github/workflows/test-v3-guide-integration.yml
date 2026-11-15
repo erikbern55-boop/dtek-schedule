@@ -1,0 +1,33 @@
+name: TEST V3 to Ukrainian guides and back (no deploy)
+on:
+  push:
+    branches: [test/pages-ubuntu2404-20261115]
+    paths:
+      - 'guide/**'
+      - 'src/card-v3.js'
+      - 'scripts/test-v3-guide-integration.mjs'
+      - '.github/workflows/test-v3-guide-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v3-guide-navigation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test V3 links to three guides and return navigation
+        run: node scripts/test-v3-guide-integration.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v3-guide-integration-review
+          path: guide-test-artifacts/integration/
+          if-no-files-found: warn
