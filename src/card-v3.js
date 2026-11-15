@@ -664,9 +664,19 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const forecastStart=referenceWeather.indexOf('<div class="wx-forecast-box">');
   const airEnd=referenceWeather.indexOf('</section>',forecastStart);
   if(forecastStart<0||airEnd<0)throw Error("Tomorrow forecast markup missing");
-  const forecastMarkup=referenceWeather.slice(forecastStart,airEnd);
   const v3Weather=referenceWeather.slice(0,forecastStart)+referenceWeather.slice(airEnd);
-  const tomorrowPanel='<section class="wx-box weather-tomorrow"><h3>🌤 Завтра</h3>'+forecastMarkup+'</section>';
+  // Build the V3 forecast from the same weather data as Telegram, rather than
+  // reusing nested markup that can be suppressed by the shared weather styles.
+  const tomorrowDate=weather?.tomorrowDate?.split("-").slice(1).reverse().join(".") || "—";
+  const forecastTemp=value=>value===null||value===undefined||!Number.isFinite(Number(value))
+    ? "—" : (Number(value)>0?"+":"")+Math.round(Number(value))+"°C";
+  const tomorrowPanel='<section class="wx-box weather-tomorrow"><h3>🌤 Завтра</h3>'+
+    '<div class="v3-tomorrow-readings" style="display:flex;flex-direction:column;justify-content:center;flex:1;gap:16px">'+
+    '<div style="font-size:17px;font-weight:700">📅 Завтра · '+esc(tomorrowDate)+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+    '<div class="v3-tomorrow-min" style="text-align:center;background:#082d20;border-radius:9px;padding:12px 3px">Мінімум<strong style="display:block;font-size:29px;color:white">'+esc(forecastTemp(weather?.tomorrowMin))+'</strong></div>'+
+    '<div class="v3-tomorrow-max" style="text-align:center;background:#082d20;border-radius:9px;padding:12px 3px">Максимум<strong style="display:block;font-size:29px;color:white">'+esc(forecastTemp(weather?.tomorrowMax))+'</strong></div>'+
+    '</div></div></section>';
   const weatherWithTomorrow=v3Weather.replace('</section>', '</section>'+tomorrowPanel);
   const html='<article class="v3">'+
     '<header class="v3-head"><div class="v3-place"><svg class="v3-robot" viewBox="0 0 130 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Бірюзовий робот Світлопульсу з блискавкою"><defs><linearGradient id="v3bot" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#74f8ed"/><stop offset=".55" stop-color="#2bc8c7"/><stop offset="1" stop-color="#087b9c"/></linearGradient></defs><path d="M65 18V7" stroke="#8dfff4" stroke-width="6"/><circle cx="65" cy="7" r="6" fill="#d7fff5"/><rect x="13" y="25" width="104" height="90" rx="26" fill="url(#v3bot)" stroke="#9affed" stroke-width="6"/><rect x="24" y="42" width="82" height="55" rx="19" fill="#082c39" stroke="#5ae9df" stroke-width="2"/><ellipse cx="46" cy="66" rx="12" ry="16" fill="#b4fff0"/><ellipse cx="84" cy="66" rx="12" ry="16" fill="#b4fff0"/><path d="M48 87Q65 102 82 87" fill="none" stroke="#91fff0" stroke-width="5" stroke-linecap="round"/><path d="M73 100l-18 24h12l-7 19 27-32H74l7-11Z" fill="#e7ff45" stroke="#f6ffa6" stroke-width="2" stroke-linejoin="round"/><path d="M70 108l-8 14h10l-4 11 11-19H69Z" fill="#fffbd2" opacity=".88"/><circle cx="65" cy="7" r="11" fill="none" stroke="#9affed" stroke-width="2" opacity=".55"/><path d="M32 52Q65 39 98 52" fill="none" stroke="#aafff0" stroke-width="2" opacity=".25"/><path d="M12 70H3M118 70H127" stroke="#68f0e6" stroke-width="9" stroke-linecap="round"/><path d="M42 115v22m46-22v22" stroke="#68f0e6" stroke-width="10" stroke-linecap="round"/><path d="M28 31Q65 14 102 31" fill="none" stroke="#d1fff7" stroke-width="3" opacity=".7"/><circle cx="41" cy="60" r="4" fill="#fff" opacity=".9"/><circle cx="79" cy="60" r="4" fill="#fff" opacity=".9"/><path d="M18 111Q65 128 112 111" fill="none" stroke="#13a8ad" stroke-width="3"/><circle cx="19" cy="108" r="4" fill="#e7ff45"/><circle cx="111" cy="108" r="4" fill="#e7ff45"/></svg><strong>СТ «Хімік»</strong>Боярська ТГ · Фастівський район</div>'+
