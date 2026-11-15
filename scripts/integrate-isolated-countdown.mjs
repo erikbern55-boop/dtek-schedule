@@ -40,5 +40,15 @@ replace('data.date!==[kyivParts(new Date()).year,kyivParts(new Date()).month,kyi
 replace('tickLive();setInterval(tickLive,1000);','window.__tickCountdownForTest=tickLive;tickLive();setInterval(tickLive,1000);');
 const marker='const production=' + String.fromCharCode(36) + '{production};';
 replace(marker,' '+pure+'\n'+marker);
+// Capture the actual V3 card DOM immediately before the exact screenshot used for PNG.
+const screenshotAnchor="  const png=await page.screenshot({type:'png',fullPage:true});";
+if(!src.includes(screenshotAnchor))throw Error('PNG screenshot anchor changed');
+src=src.replace(screenshotAnchor,[
+"  const pngCountdown=await page.evaluate(()=>({clock:document.querySelector('.v3-clock')?.textContent?.trim()??null,title:document.querySelector('.v3-count-event')?.textContent?.trim()??null}));",
+"  if(item.slug==='today'){",
+"   fs.writeFileSync('dist/png-countdown-before-screenshot.json',JSON.stringify({renderer:'isolated V3 actual PNG page',date:item.date,controlTime:now.toISOString(),clock:pngCountdown.clock,title:pngCountdown.title,source:'DOM read immediately before page.screenshot'},null,2));",
+"  }",
+screenshotAnchor,
+].join('\\n'));
 fs.writeFileSync(file,src);
 console.log('PASS test-only V3 countdown integration applied');
