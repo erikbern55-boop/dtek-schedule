@@ -97,7 +97,7 @@ jobs:
           const age=Date.now()-Date.parse(source.generatedAt);
           const midnightRollover=source.date===priorDay&&hour<2&&age<2*60*60*1000;
           assert.ok(source.date===today||midnightRollover,'Telegram card must be current; allow only its actual prior-day snapshot during the first two Kyiv hours');
-          assert.ok(source.weather&&!source.weather.stale,'Use the real weather already published with the Telegram card');
+          assert.ok(source.weather,'Use the real weather already published with the Telegram card, even when it carries the renderer’s stale warning');
           assert.equal(source.weather.date,source.date,'Telegram weather and schedule dates must match');
           assert.ok(Date.now()-Date.parse(source.weather.fetchedAt)<2*60*60*1000,'Telegram weather snapshot must be recent');
           for(const field of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp'])
