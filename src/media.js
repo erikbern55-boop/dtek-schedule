@@ -86,6 +86,7 @@ export function buildSharedCardSnapshot(details) {
     date,source,update,
     schedule:schedule.map(({begin,end,power})=>({begin,end,power:Boolean(power)})),
     weather,
+    renderedAt:details.now instanceof Date ? details.now.toISOString() : null,
   }
 }
 
@@ -99,7 +100,7 @@ function saveViewerSnapshot(png, label, details) {
     const snapshot=buildSharedCardSnapshot(details)
     const target="artifacts/web/"+basename+".json"
     const temp=target+".tmp"
-    fs.writeFileSync(temp,JSON.stringify(snapshot,null,2)+"\\n")
+    fs.writeFileSync(temp,JSON.stringify(snapshot,null,2)+"\n")
     fs.renameSync(temp,target)
     // Publish real HTML elements and text, never stretch the Telegram bitmap.
     const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
