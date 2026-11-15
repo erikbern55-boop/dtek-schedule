@@ -3,7 +3,9 @@ on:
   pull_request:
     paths:
       - 'docs/fullscreen-sync.js'
+      - 'src/media.js'
       - '.github/workflows/pages.yml'
+      - 'scripts/canonical-v3-generator.mjs'
       - '.github/workflows/fullscreen-staging-test.yml'
   workflow_dispatch:
 permissions:
@@ -37,8 +39,9 @@ jobs:
           import vm from 'node:vm';
           import assert from 'node:assert/strict';
           const script=fs.readFileSync('docs/fullscreen-sync.js','utf8');
+          const sample=[{begin:'00:00',end:'11:30',power:true},{begin:'11:30',end:'15:30',power:false},{begin:'15:30',end:'24:00',power:true}];
           const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
-          async function run(payload) {
+          async function run(payload, canonicalPeriods=sample) {
             const elements=new Map();
             const document={
               body:{appendChild(node){elements.set(node.id,node)}},
@@ -47,16 +50,89 @@ jobs:
               hidden:false,
               createElement(){return {id:'',style:{},innerHTML:'',remove(){elements.delete(this.id)},querySelector(){return {set src(v){this.value=v}}}}}
             };
-            const ctx={document,console,Date,Intl,setInterval(){},fetch:async()=>({ok:true,json:async()=>payload})};
+            const ctx={document,console,Date,Intl,setInterval(){},fetch:async(url)=>({ok:true,json:async()=>url.includes('today.json')?{date:day,generatedAt:new Date().toISOString(),periods:canonicalPeriods}:payload})};
             vm.runInNewContext(script,ctx);
             await new Promise(resolve=>setTimeout(resolve,50));
             return elements.has('telegram-synced-fallback');
           }
-          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString()}),false,'fresh JSON must keep V3');
-          assert.equal(await run({live:true,date:'2000-01-01',generatedAt:new Date().toISOString()}),true,'wrong day must fall back');
-          assert.equal(await run({live:true,date:day,generatedAt:'2000-01-01T00:00:00Z'}),true,'stale data must fall back');
-          assert.equal(await run({live:false,date:day,generatedAt:new Date().toISOString()}),true,'unavailable DTEK must fall back');
-          console.log('Staging freshness/fallback checks passed');
+          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString(),periods:sample}),false,'fresh JSON must keep V3');
+          assert.equal(await run({live:true,date:'2000-01-01',generatedAt:new Date().toISOString(),periods:sample}),true,'wrong day must fall back');
+          assert.equal(await run({live:true,date:day,generatedAt:'2000-01-01T00:00:00Z',periods:sample}),true,'stale data must fall back');
+          assert.equal(await run({live:false,date:day,generatedAt:new Date().toISOString(),periods:sample}),true,'unavailable DTEK must fall back');
+          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString(),periods:sample},[{begin:'00:00',end:'24:00',power:true}]),true,'mismatched schedule must fall back');
+          console.log('Staging freshness/fallback and canonical parity checks passed');
+          JS
+      - name: Checkout real Telegram artifacts
+        uses: actions/checkout@v4
+        with:
+          ref: artifacts
+          path: telegram-artifacts
+      - name: Check real canonical JSON and all 48 half-hour slots
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const filename='telegram-artifacts/web/today.json';
+          assert.ok(fs.existsSync(filename),'Real Telegram today.json not published yet');
+          const data=JSON.parse(fs.readFileSync(filename,'utf8'));
+          const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
+          assert.equal(data.date,today,'Canonical JSON date must be today in Kyiv');
+          assert.equal(data.group,'1.1');
+          assert.ok(Date.now()-Date.parse(data.generatedAt)<12*60000,'Canonical JSON too old');
+          const slots=Array(48).fill(null);
+          const minutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
+          for(const p of data.periods){
+            const start=minutes(p.begin),end=minutes(p.end);
+            assert.ok(start>=0&&end<=1440&&end>start&&start%30===0&&end%30===0);
+            assert.equal(typeof p.power,'boolean');
+            for(let i=start/30;i<end/30;i++){
+              assert.equal(slots[i],null,'Overlapping half-hour slot '+i);
+              slots[i]=p.power;
+            }
+          }
+          assert.ok(slots.every(v=>v!==null),'All 48 slots must be covered');
+          console.log('REAL TELEGRAM JSON: 48/48 slots verified',data.date,data.generatedAt);
+          JS
+      - name: Checkout V3 renderer for real canonical integration test
+        uses: actions/checkout@v4
+        with:
+          ref: feature/svitlopuls-v3-independent-generator
+          path: v3-renderer
+      - name: Checkout V3 reference assets and verifier
+        uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/svitlopuls-v3-test
+          ref: main
+          path: v3-test
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: v3-renderer/.nvmrc
+          cache: npm
+          cache-dependency-path: v3-renderer/package-lock.json
+      - name: Generate actual V3 card from Telegram today.json and verify
+        working-directory: v3-renderer
+        env:
+          REGION: kr
+          GROUP: '1.1'
+          CANONICAL_SNAPSHOT_DIR: '../telegram-artifacts/web'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          cp ../scripts/canonical-v3-generator.mjs ./live-generator.mjs
+          cp ../v3-test/verify-live.mjs ./verify-live.mjs
+          cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
+          node live-generator.mjs
+          node verify-live.mjs
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json'));
+          const generated=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json'));
+          assert.equal(generated.date,canonical.date);
+          assert.equal(generated.group,canonical.group);
+          assert.deepEqual(generated.periods,canonical.periods,'Every V3 interval must match Telegram');
+          const audit=JSON.parse(fs.readFileSync('dist/dtek-interval-audit.json'));
+          console.log('REAL V3-TELEGRAM PARITY PASS',canonical.date,JSON.stringify(audit.days?.today||audit).slice(0,800));
           JS
       - uses: actions/upload-artifact@v4
         with:

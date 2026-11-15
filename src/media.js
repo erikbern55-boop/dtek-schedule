@@ -75,6 +75,13 @@ function saveViewerSnapshot(png, label, details) {
     fs.mkdirSync("artifacts/web", { recursive: true })
     const basename = label === "завтра" ? "tomorrow" : "today"
     fs.writeFileSync("artifacts/web/" + basename + ".png", png)
+    // Canonical periods used to generate the Telegram image.
+    fs.writeFileSync("artifacts/web/" + basename + ".json", JSON.stringify({
+      date: details.date, label: details.label, group: "1.1",
+      generatedAt: new Date().toISOString(), source: details.source,
+      sourceUpdated: details.update,
+      periods: details.schedule.map(({begin,end,power}) => ({begin,end,power}))
+    }, null, 2))
     // Publish real HTML elements and text, never stretch the Telegram bitmap.
     const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
       'html,body{width:100%;min-height:100%;overflow:auto!important;background:#03150e!important}' +

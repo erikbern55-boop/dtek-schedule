@@ -77,8 +77,9 @@ jobs:
           REGION: kr
           GROUP: '1.1'
           PRODUCTION_VIEWER: '1'
+          CANONICAL_SNAPSHOT_DIR: '../snapshots/web'
         run: |
-          cp ../v3-test/live-generator.mjs ./live-generator.mjs
+          cp ../source/scripts/canonical-v3-generator.mjs ./live-generator.mjs
           cp ../v3-test/verify-live.mjs ./verify-live.mjs
           cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
           node live-generator.mjs
@@ -107,6 +108,8 @@ jobs:
           cp v3-renderer/dist/svitlopuls_etalon_moon.png site/
           # Keep the existing Telegram-compatible snapshots and URLs intact.
           test -s snapshots/web/today.png
+          test -s snapshots/web/today.json
+          cp snapshots/web/today.json site/today.json
           cp snapshots/web/today.png site/today.png
           if [ -s snapshots/web/today.html ]; then cp snapshots/web/today.html site/today.html; fi
           if [ -s snapshots/web/tomorrow.png ]; then cp snapshots/web/tomorrow.png site/tomorrow.png; fi
