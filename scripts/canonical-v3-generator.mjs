@@ -1,16 +1,25 @@
 // Isolated V3 live generator. Runs only in the separate test repository.
 import fs from 'node:fs';
 import {getShutdownsData,selectScheduleDays,kyivDate} from './src/source.js';
-import {loadWeather,weatherForDate} from './src/weather.js';
 import {gardenTip,sowingAdvice} from './src/garden.js';
 import {lunarForDate} from './src/moon.js';
 import {astroForMoon} from './src/astro.js';
 import {buildCardV3Html} from './src/card-v3.js';
-const now=new Date(),date=kyivDate(now),generatedAt=now.toISOString();
+const now=new Date(),currentDate=kyivDate(now),generatedAt=now.toISOString();
+const snapshotRoot=process.env.CANONICAL_SNAPSHOT_DIR;
+if(!snapshotRoot)throw Error('CANONICAL_SNAPSHOT_DIR is required');
+const snapshotPath=snapshotRoot+'/today.json';
+const snapshot=fs.existsSync(snapshotPath)?JSON.parse(fs.readFileSync(snapshotPath,'utf8')):null;
+const priorDay=new Date(Date.parse(currentDate+'T12:00:00Z')-86400000).toISOString().slice(0,10);
+const kyivHour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Kyiv',hour:'2-digit',hourCycle:'h23'}).format(now));
+const snapshotAge=snapshot?Date.now()-Date.parse(snapshot.generatedAt):Infinity;
+const midnightSnapshot=!!snapshot&&snapshot.date===priorDay&&kyivHour<2&&snapshotAge<2*60*60*1000;
+const date=midnightSnapshot?snapshot.date:currentDate;
 const tomorrow=new Date(Date.parse(date+'T12:00:00Z')+86400000).toISOString().slice(0,10);
 const daysToRender=[{date,label:'сьогодні',slug:'today'},{date:tomorrow,label:'завтра',slug:'tomorrow'}];
 const daySchedules={};
 const rawDtekByDay={};
+const weatherByDay={};
 const result={generatedAt,date,group:'1.1',live:false,source:null,error:null,periods:[],weather:null,garden:null,moon:null,astro:null};
 const pad=n=>String(n).padStart(2,'0');
 const clock=m=>pad(Math.floor(m/60))+':'+pad(m%60);
@@ -34,8 +43,6 @@ function scheduleForDay(states){
 }
 // Read only the canonical periods emitted by the Telegram publisher.
 try {
-  const snapshotRoot=process.env.CANONICAL_SNAPSHOT_DIR;
-  if(!snapshotRoot)throw Error('CANONICAL_SNAPSHOT_DIR is required');
   for(const item of daysToRender){
     const path=snapshotRoot+'/'+item.slug+'.json';
     if(!fs.existsSync(path)){
@@ -49,7 +56,7 @@ try {
     }
     if(canonical.group!=='1.1'||!Array.isArray(canonical.periods))throw Error('Invalid canonical schedule metadata');
     const parsed=Date.parse(canonical.generatedAt);
-    if(!Number.isFinite(parsed)||Date.now()-parsed>12*60*1000||parsed>Date.now()+60000) {
+    if(!Number.isFinite(parsed)||Date.now()-parsed>(item.slug==='today'&&midnightSnapshot?2*60*60*1000:12*60*1000)||parsed>Date.now()+60000) {
       if(item.slug==='today')throw Error('Canonical schedule is stale');
       continue;
     }
@@ -73,6 +80,7 @@ try {
     if(JSON.stringify(normalized)!==JSON.stringify(canonical.periods))throw Error('Canonical periods are not normalized');
     daySchedules[item.slug]=normalized;
     rawDtekByDay[item.slug]=slots;
+    weatherByDay[item.slug]=canonical.weather??null;
     if(item.slug==='today'){
       result.periods=normalized;
       result.weather=canonical.weather??null;
@@ -93,7 +101,7 @@ function assertCanonicalWeather(weather){
  }
  if(!/^\d{2}:\d{2}$/.test(weather.sunrise??'')||!/^\d{2}:\d{2}$/.test(weather.sunset??''))throw Error('Canonical Telegram daylight times missing');
  const fetched=Date.parse(weather.fetchedAt);
- if(!Number.isFinite(fetched)||Date.now()-fetched>90*60*1000||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
+ if(!Number.isFinite(fetched)||Date.now()-fetched>(midnightSnapshot?2*60*60*1000:90*60*1000)||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
 }
 assertCanonicalWeather(result.weather);
 console.log('WEATHER PARITY: Telegram snapshot',result.weather.fetchedAt);
@@ -147,7 +155,8 @@ function clarifyCountdown(markup,periods,dayLabel){
  }
  return markup;
 }
-const details={schedule:result.periods,date,label:'сьогодні',update:result.sourceUpdated??'',source:result.source??'НЕМАЄ АКТУАЛЬНИХ ДАНИХ',now,weather:result.weather};
+const renderNow=new Date(result.canonicalGeneratedAt);
+const details={schedule:result.periods,date,label:'сьогодні',update:result.sourceUpdated??'',source:result.source??'НЕМАЄ АКТУАЛЬНИХ ДАНИХ',now:renderNow,weather:result.weather};
 let html='';
 if(result.live){
   html=neutralCalendar(clarifyCountdown(buildCardV3Html(details),result.periods,'сьогодні'));
@@ -242,8 +251,8 @@ try{
  for(const item of daysToRender){
   const periods=daySchedules[item.slug];
   if(!periods){pngChecks.days[item.slug]={date:item.date,ok:false,error:'DTEK has not published this day'};continue;}
-  const dayWeather=item.slug==='today'?result.weather:(result.weather?weatherForDate(await loadWeather({now}),item.date,now):null);
-  let markup=neutralCalendar(clarifyCountdown(buildCardV3Html({schedule:periods,date:item.date,label:item.label,source:result.source,update:result.sourceUpdated??'',weather:dayWeather,now}),periods,item.label));
+  const dayWeather=weatherByDay[item.slug];
+  let markup=neutralCalendar(clarifyCountdown(buildCardV3Html({schedule:periods,date:item.date,label:item.label,source:result.source,update:result.sourceUpdated??'',weather:dayWeather,now:renderNow}),periods,item.label));
   markup=markup.split('https://commons.wikimedia.org/wiki/Special:FilePath/Garlic_Bulbs_(Unsplash).jpg?width=500').join('https://svitlopuls-test.invalid/svitlopuls_etalon_garlic.png');
   markup=markup.replace(/<div class="wx-moon-icon"><svg[\s\S]*?<\/svg><\/div>/,'<div class="wx-moon-icon"><img src="https://svitlopuls-test.invalid/svitlopuls_etalon_moon.png" alt="Місяць з еталона"/></div>');
   const page=await browser.newPage({viewport:{width:1404,height:900},deviceScaleFactor:1});
