@@ -105,7 +105,9 @@ jobs:
         run: node audit-source/scripts/test-isolated-countdown-parity.mjs
       - name: Capture deterministic HTML renderer evidence (no deploy)
         working-directory: renderer
-        run: node ../audit-source/scripts/collect-render-countdown-evidence.mjs
+        run: |
+          cp ../audit-source/scripts/collect-render-countdown-evidence.mjs ./collect-render-countdown-evidence.mjs
+          node ./collect-render-countdown-evidence.mjs
       - name: Audit PNG provenance and countdown contract (read-only)
         run: python3 audit-source/scripts/audit-snapshot-contract.py
       - uses: actions/upload-artifact@v4
