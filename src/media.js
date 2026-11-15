@@ -9,10 +9,18 @@ const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
 const MAX_CAPTION = 1024
 const VIEWER_URL = "https://erikbern55-boop.github.io/dtek-schedule/"
 function viewerKeyboard(label) {
-  return { inline_keyboard: [[{
-    text: "⛶ Відкрити на весь екран",
-    url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today"),
-  }]] }
+  return { inline_keyboard: [
+    [{ text: "⛶ Відкрити на весь екран", url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today") }],
+    [
+      { text: "⚡ ДТЕК", url: "https://www.dtek-krem.com.ua/ua/shutdowns" },
+      { text: "🌤 Погода", url: "https://open-meteo.com/" },
+    ],
+    [
+      { text: "🌱 Городникам", url: "https://www.rhs.org.uk/" },
+      { text: "🌙 Місячний календар", url: "https://www.astronomy.com/" },
+    ],
+    [{ text: "✨ Астропрогноз", url: "https://www.astro-seek.com/" }],
+  ] }
 }
 
 // A visual redesign must update the existing Telegram photo even if neither
