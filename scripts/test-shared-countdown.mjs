@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {nextPowerTransition,countdownLabel} from './shared-countdown.mjs';
+const today={periods:[{begin:'00:00',end:'23:00',power:true},{begin:'23:00',end:'24:00',power:false}]};
+const tomorrow={periods:[{begin:'00:00',end:'06:00',power:false},{begin:'06:00',end:'24:00',power:true}]};
+assert.deepEqual(nextPowerTransition(today,tomorrow,23*60+30),{day:'tomorrow',time:'06:00',power:true,remainingMinutes:390});
+assert.equal(countdownLabel(nextPowerTransition(today,tomorrow,23*60+30)).clock,'06:30');
+assert.deepEqual(nextPowerTransition(today,{periods:[{begin:'00:00',end:'24:00',power:true}]},23*60+30),{day:'tomorrow',time:'00:00',power:true,remainingMinutes:30});
+assert.equal(nextPowerTransition(today,null,23*60+30),null);
+assert.equal(nextPowerTransition(today,{periods:[{begin:'00:00',end:'24:00',power:false}]},23*60+30),null);
+console.log('PASS: shared countdown transition and next-day boundaries');
