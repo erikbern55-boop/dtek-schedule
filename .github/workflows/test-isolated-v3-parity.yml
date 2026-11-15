@@ -2,7 +2,7 @@ name: TEST isolated V3 generation and snapshot parity (no deploy)
 on:
   push:
     branches: [test/pages-ubuntu2404-20261115]
-    paths: ['.github/workflows/test-isolated-v3-parity.yml', 'scripts/audit-snapshot-contract.py', 'scripts/snapshot_contract.py', 'scripts/test_snapshot_contract.py', 'scripts/package-isolated-snapshot.mjs', 'scripts/shared-countdown.mjs', 'scripts/test-shared-countdown.mjs', 'scripts/test-isolated-countdown-parity.mjs', 'scripts/integrate-isolated-countdown.mjs', 'scripts/test-renderer-countdown-integration.mjs']
+    paths: ['.github/workflows/test-isolated-v3-parity.yml', 'scripts/audit-snapshot-contract.py', 'scripts/snapshot_contract.py', 'scripts/test_snapshot_contract.py', 'scripts/package-isolated-snapshot.mjs', 'scripts/shared-countdown.mjs', 'scripts/test-shared-countdown.mjs', 'scripts/test-isolated-countdown-parity.mjs', 'scripts/integrate-isolated-countdown.mjs', 'scripts/test-renderer-countdown-integration.mjs', 'scripts/collect-render-countdown-evidence.mjs']
   workflow_dispatch:
 permissions:
   contents: read
@@ -103,6 +103,9 @@ jobs:
         run: node audit-source/scripts/test-shared-countdown.mjs
       - name: Compare countdown from both isolated JSON inputs
         run: node audit-source/scripts/test-isolated-countdown-parity.mjs
+      - name: Capture deterministic HTML renderer evidence (no deploy)
+        working-directory: renderer
+        run: node ../audit-source/scripts/collect-render-countdown-evidence.mjs
       - name: Audit PNG provenance and countdown contract (read-only)
         run: python3 audit-source/scripts/audit-snapshot-contract.py
       - uses: actions/upload-artifact@v4
