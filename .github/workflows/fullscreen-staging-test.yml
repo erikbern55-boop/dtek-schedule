@@ -187,6 +187,7 @@ jobs:
             const page=fs.readFileSync('../guide/'+slug+'/index.html','utf8');
             assert.match(page,/<html lang="uk"/i,'Guide must declare Ukrainian language: '+slug);
             assert.ok(page.includes('href="../../"'),'Guide must link back to the Svitlopuls site: '+slug);
+            assert.doesNotMatch(page,/тестовий макет|без публікації|3\.0 \(тест\)/i,'Guide must be publication-ready: '+slug);
             assert.match(page,/<h1\b/i,'Guide heading missing: '+slug);
           }
           console.log('PASS: all four Ukrainian fullscreen guide links resolve to Ukrainian pages');
