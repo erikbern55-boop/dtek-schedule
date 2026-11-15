@@ -83,29 +83,32 @@ jobs:
         with:
           ref: artifacts
           path: telegram-artifacts
-      - name: Build isolated real-weather canonical snapshot for PR validation
+      - name: Stage the actual Telegram snapshot for parity verification
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import assert from 'node:assert/strict';
-          import {loadWeather,weatherForDate} from './src/weather.js';
           const source=JSON.parse(fs.readFileSync('telegram-artifacts/web/today.json','utf8'));
-          const date=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
-          assert.equal(source.date,date,'DTEK canonical date must match Kyiv today');
-          const snapshot=await loadWeather({now:new Date(),file:'staging/weather-cache.json'});
-          assert.ok(snapshot,'Live Open-Meteo request failed; no synthetic fallback allowed');
-          const weather=weatherForDate(snapshot,date);
-          assert.ok(weather&&!weather.stale,'Fresh forecast required');
+          const now=new Date();
+          const kyiv=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'});
+          const today=kyiv.format(now);
+          const priorDay=new Date(Date.UTC(Number(today.slice(0,4)),Number(today.slice(5,7))-1,Number(today.slice(8,10))-1,12)).toISOString().slice(0,10);
+          const hour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Kyiv',hour:'2-digit',hourCycle:'h23'}).format(now));
+          const age=Date.now()-Date.parse(source.generatedAt);
+          const midnightRollover=source.date===priorDay&&hour<2&&age<2*60*60*1000;
+          assert.ok(source.date===today||midnightRollover,'Telegram card must be current; allow only its actual prior-day snapshot during the first two Kyiv hours');
+          assert.ok(source.weather&&!source.weather.stale,'Use the real weather already published with the Telegram card');
+          assert.equal(source.weather.date,source.date,'Telegram weather and schedule dates must match');
+          assert.ok(Date.now()-Date.parse(source.weather.fetchedAt)<2*60*60*1000,'Telegram weather snapshot must be recent');
           for(const field of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp'])
-            assert.ok(Number.isFinite(weather[field]),'Missing real weather '+field);
+            assert.ok(Number.isFinite(source.weather[field]),'Missing real weather '+field);
           for(const field of ['sunrise','sunset'])
-            assert.match(weather[field],/^\d{2}:\d{2}$/,'Missing '+field);
+            assert.match(source.weather[field],/^\\d{2}:\\d{2}$/,'Missing '+field);
           fs.mkdirSync('staging/canonical',{recursive:true});
-          const output={...source,generatedAt:new Date().toISOString(),weather};
-          fs.writeFileSync('staging/canonical/today.json',JSON.stringify(output,null,2));
+          fs.writeFileSync('staging/canonical/today.json',JSON.stringify(source,null,2));
           if(fs.existsSync('telegram-artifacts/web/tomorrow.json'))
             fs.copyFileSync('telegram-artifacts/web/tomorrow.json','staging/canonical/tomorrow.json');
-          console.log('REAL WEATHER TEST SNAPSHOT:',date,weather.fetchedAt,weather.currentTemp,weather.todayMin,weather.todayMax,weather.tomorrowMin,weather.tomorrowMax,weather.soilTemp);
+          console.log('TELEGRAM PARITY SNAPSHOT:',source.date,source.generatedAt,source.weather.fetchedAt,source.periods.length,'schedule periods');
           JS
       - name: Check real canonical JSON and all 48 half-hour slots
         run: |
@@ -116,9 +119,12 @@ jobs:
           assert.ok(fs.existsSync(filename),'Real Telegram today.json not published yet');
           const data=JSON.parse(fs.readFileSync(filename,'utf8'));
           const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
-          assert.equal(data.date,today,'Canonical JSON date must be today in Kyiv');
+          const priorDay=new Date(Date.UTC(Number(today.slice(0,4)),Number(today.slice(5,7))-1,Number(today.slice(8,10))-1,12)).toISOString().slice(0,10);
+          const hour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Kyiv',hour:'2-digit',hourCycle:'h23'}).format(new Date()));
+          const age=Date.now()-Date.parse(data.generatedAt);
+          assert.ok(data.date===today||(data.date===priorDay&&hour<2&&age<2*60*60*1000),'Canonical JSON must be current, with a short midnight rollover allowance');
           assert.equal(data.group,'1.1');
-          assert.ok(Date.now()-Date.parse(data.generatedAt)<12*60000,'Canonical JSON too old');
+          assert.ok(age<(data.date===priorDay?2*60*60*1000:12*60000),'Canonical JSON too old');
           const slots=Array(48).fill(null);
           const minutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
           for(const p of data.periods){
