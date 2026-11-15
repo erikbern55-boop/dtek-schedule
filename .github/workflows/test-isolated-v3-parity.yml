@@ -90,7 +90,9 @@ jobs:
           pathlib.Path('snapshot-parity-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
           print(json.dumps({k:v for k,v in report.items() if k!='today.json' and k!='svitlopuls-live.json'},ensure_ascii=False,indent=2))
           PY
-      - name: Validate isolated snapshot and countdown contract\n        run: python3 -m unittest discover -s audit-source/scripts -p 'test_snapshot_contract.py' -v\n      - name: Audit PNG provenance and countdown contract (read-only)
+      - name: Validate isolated snapshot and countdown contract
+        run: python3 -m unittest discover -s audit-source/scripts -p 'test_snapshot_contract.py' -v
+      - name: Audit PNG provenance and countdown contract (read-only)
         run: python3 audit-source/scripts/audit-snapshot-contract.py
       - uses: actions/upload-artifact@v4
         if: always()
