@@ -23,7 +23,7 @@ try{
   const backPage=await browser.newPage({viewport:{width:device.width,height:device.height}});
   await backPage.route('**/*',async route=>{
    const req=route.request();
-   if(req.isNavigationRequest()&&req.url().endsWith('/index.html')&&!req.url().includes('/guide/')){
+   if(req.isNavigationRequest()&&(req.url().endsWith('/index.html')||req.url().endsWith('/'))&&!req.url().includes('/guide/')){
     backClicked=true;await route.fulfill({status:200,contentType:'text/html',body:'<html><body>SVITLOPULS TEST DESTINATION</body></html>'});
    }else await route.continue();
   });
@@ -37,7 +37,8 @@ try{
    sourcePage.waitForEvent('popup',{timeout:10000}),
    sourcePage.getByRole('link',{name:'Переглянути першоджерело'}).click()
   ]);
-  sourceClicked=popup.url().startsWith('https://')&&popup.url()===state.sourceHref;
+  await popup.waitForURL(u=>u.href===state.sourceHref,{timeout:10000,waitUntil:'commit'});
+  sourceClicked=popup.url()===state.sourceHref;
   await popup.close();await sourcePage.close();
   const checks={backClickNavigation:backClicked,sourceClickPopup:sourceClicked,ukrainian:state.lang==='uk',title:!!state.heading,backButton:state.backVisible&&state.backHref==='../../',sourceButton:state.sourceVisible&&state.sourceExternal&&state.sourceHref?.startsWith('https://'),noHorizontalOverflow:!state.horizontalOverflow,illustration:slug==='astro'||state.image?.loaded===true};
   const ok=Object.values(checks).every(Boolean);failed||=!ok;
