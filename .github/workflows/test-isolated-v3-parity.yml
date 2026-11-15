@@ -2,7 +2,7 @@ name: TEST isolated V3 generation and snapshot parity (no deploy)
 on:
   push:
     branches: [test/pages-ubuntu2404-20261115]
-    paths: ['.github/workflows/test-isolated-v3-parity.yml']
+    paths: ['.github/workflows/test-isolated-v3-parity.yml', 'scripts/audit-snapshot-contract.py']
   workflow_dispatch:
 permissions:
   contents: read
@@ -85,9 +85,13 @@ jobs:
           pathlib.Path('snapshot-parity-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
           print(json.dumps({k:v for k,v in report.items() if k!='today.json' and k!='svitlopuls-live.json'},ensure_ascii=False,indent=2))
           PY
+      - name: Audit PNG provenance and countdown contract (read-only)
+        run: python3 scripts/audit-snapshot-contract.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: isolated-v3-snapshot-parity
-          path: snapshot-parity-report.json
+          path: |
+            snapshot-parity-report.json
+            snapshot-contract-report.json
           if-no-files-found: warn
