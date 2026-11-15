@@ -89,10 +89,22 @@ jobs:
         with:
           path: v3-renderer/artifacts/weather-cache.json
           key: svitlopuls-production-weather-${{ github.run_id }}
+      - name: Build synced V3 HTML from Telegram snapshots
+        working-directory: v3-renderer
+        run: |
+          cp ../source/scripts/build-synced-viewer.mjs ./build-synced-viewer.mjs
+          # Script imports the V3 renderer from src/, so execute from project root.
+          cp ../source/scripts/build-synced-viewer.mjs ./scripts/build-synced-viewer.mjs
+          node scripts/build-synced-viewer.mjs ../snapshots/web ./dist/synced
+
       - name: Prepare public site
         run: |
           mkdir -p site
           cp v3-renderer/dist/index.html site/index.html
+          cp v3-renderer/dist/synced/today.html site/synced-today.html
+          cp v3-renderer/dist/synced/tomorrow.html site/synced-tomorrow.html
+          cp v3-renderer/dist/synced/today.json site/synced-today.json
+          cp v3-renderer/dist/synced/tomorrow.json site/synced-tomorrow.json
           cp v3-renderer/dist/svitlopuls-live.json site/svitlopuls-live.json
           cp v3-renderer/dist/svitlopuls_etalon_garlic.png site/
           cp v3-renderer/dist/svitlopuls_etalon_moon.png site/
