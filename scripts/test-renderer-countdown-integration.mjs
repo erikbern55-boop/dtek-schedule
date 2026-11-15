@@ -9,7 +9,7 @@ assert.match(s,/function sharedCardCountdown\(/);
 const today={periods:[{begin:'00:00',end:'11:30',power:true},{begin:'11:30',end:'15:30',power:false},{begin:'15:30',end:'24:00',power:true}]};
 const tomorrow={periods:[{begin:'00:00',end:'06:00',power:true},{begin:'06:00',end:'24:00',power:false}]};
 const scenarios=[
- ['today',690,tomorrow,'today','11:30','00:00'],
+ ['today',689,tomorrow,'today','11:30','00:01'],
  ['midnight',1439,tomorrow,'tomorrow','06:00','06:01'],
  ['no-tomorrow',1439,null,null,null,'—:—']
 ];
