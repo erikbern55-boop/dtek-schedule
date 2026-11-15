@@ -25,8 +25,6 @@ jobs:
           now=datetime.datetime.now(datetime.timezone.utc)
           report={'checkedAt':now.isoformat(),'workflows':{},'errors':[]}
           for name in ('schedule.yml','pages.yml'):
-              proc=subprocess.run(['gh','api',f'repos/{os.environ["GH_REPO"]}/actions/workflows/{name}/runs','-f','per_page=10'],capture_output=True,text=True)
-              # gh api -f defaults to POST; use explicit GET below
               proc=subprocess.run(['gh','api','--method','GET',f'repos/{os.environ["GH_REPO"]}/actions/workflows/{name}/runs','-f','per_page=10'],capture_output=True,text=True)
               if proc.returncode:
                   report['errors'].append(name+': '+proc.stderr.strip());continue
