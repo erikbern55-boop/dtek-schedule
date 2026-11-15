@@ -32,6 +32,7 @@ jobs:
           const v3=fs.readFileSync('src/card-v3.js','utf8');
           assert.match(media,/renderCardV3Png as renderCardPng/,'Telegram must use V3 renderer');
           assert.match(v3,/export async function renderCardV3Png/);
+          assert.match(v3,/buildCardV3Html\(details\)\.replace\("🗓️ "/,'Telegram calendar must use fullscreen calendar markup');
           assert.match(media,/publishCanonicalSchedule/,'Canonical Telegram JSON must remain enabled');
           assert.match(media,/imageNeedsRefresh/,'Image refresh must remain enabled');
           console.log('PASS: Telegram V3 renderer wiring and canonical schedule logic preserved');
