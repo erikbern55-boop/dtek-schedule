@@ -17,7 +17,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-shared-telegram-renderer-v1"
+export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-tomorrow-panel-verified-v2"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
