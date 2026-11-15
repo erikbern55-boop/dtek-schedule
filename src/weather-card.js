@@ -259,7 +259,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-moon-main"><div class="wx-moon-icon">'+moonDiscSvg(moon)+'</div>'+
     '<div><div class="wx-moon-number">'+esc(moon.lunarDay)+'-й день</div>'+
     '<div class="wx-moon-note">від молодика<br>на 12:00 за Києвом</div></div></div>'+
-    '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
+    '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Місячний день (12:00, Київ):</span><b class="wx-lunar-day">'+esc(moon.lunarDay)+'-й</b></div><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
     '<div class="wx-moon-row"><span>Освітленість:</span><b>'+esc(moon.illumination)+'%</b></div>'+
     '<div class="wx-moon-row"><span>Знак Місяця:</span><b>'+esc(moon.zodiac)+'</b></div></div></section>'
   const tip=gardenTip(date,weather)
