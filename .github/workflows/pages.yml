@@ -93,6 +93,15 @@ jobs:
         run: |
           mkdir -p site
           cp v3-renderer/dist/index.html site/index.html
+          cp source/docs/fullscreen-sync.js site/fullscreen-sync.js
+          python3 - <<'PY'
+          from pathlib import Path
+          page = Path('site/index.html')
+          html = page.read_text()
+          assert '</body>' in html, 'Missing V3 body closing tag'
+          html = html.replace('</body>', '<script src="./fullscreen-sync.js"></script></body>', 1)
+          page.write_text(html)
+          PY
           cp v3-renderer/dist/svitlopuls-live.json site/svitlopuls-live.json
           cp v3-renderer/dist/svitlopuls_etalon_garlic.png site/
           cp v3-renderer/dist/svitlopuls_etalon_moon.png site/
