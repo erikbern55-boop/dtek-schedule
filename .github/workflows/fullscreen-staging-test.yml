@@ -148,6 +148,28 @@ jobs:
           const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json','utf8'));
           const png=await renderCardV3Png({schedule:canonical.periods,date:canonical.date,label:'сьогодні',source:canonical.source,update:canonical.sourceUpdated,weather:live.weather});
           fs.writeFileSync('dist/telegram-v3-preview.png',png);
+          const {buildCardV3Html}=await import('./src/card-v3.js');
+          const fixtureWeather={...live.weather,tomorrowMin:0,tomorrowMax:6,tomorrowDate:'2026-11-16'};
+          const fixtureHtml=buildCardV3Html({schedule:canonical.periods,date:canonical.date,weather:fixtureWeather});
+          assert.match(fixtureHtml,/class="v3-tomorrow-min"[^>]*>[\\s\\S]*?0°C<\\/strong>/,'Tomorrow minimum must be present in rendered card');
+          assert.match(fixtureHtml,/class="v3-tomorrow-max"[^>]*>[\\s\\S]*?\\+6°C<\\/strong>/,'Tomorrow maximum must be present in rendered card');
+          const {chromium}=await import('playwright');
+          const browser=await chromium.launch({headless:true});
+          try {
+            const page=await browser.newPage({viewport:{width:1404,height:1536}});
+            await page.setContent(fixtureHtml);
+            for(const selector of ['.v3-tomorrow-min strong','.v3-tomorrow-max strong']){
+              const locator=page.locator(selector);
+              assert.equal(await locator.count(),1,'Temperature element must exist: '+selector);
+              assert.equal(await locator.isVisible(),true,'Temperature must be visible in card: '+selector);
+              const rect=await locator.boundingBox();
+              assert.ok(rect&&rect.width>0&&rect.height>0,'Temperature must occupy pixels: '+selector);
+            }
+            assert.equal(await page.locator('.v3-tomorrow-min strong').innerText(),'0°C');
+            assert.equal(await page.locator('.v3-tomorrow-max strong').innerText(),'+6°C');
+            await page.screenshot({path:'dist/tomorrow-panel-verified.png',fullPage:true});
+            console.log('PASS V3 tomorrow minimum/maximum: DOM text, visibility and screenshot');
+          } finally { await browser.close(); }
           assert.ok(png.length>10000,'Telegram V3 PNG unexpectedly small');
           console.log('PASS Telegram V3 PNG render from canonical schedule',png.length);
           JS
