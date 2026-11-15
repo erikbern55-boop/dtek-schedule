@@ -16,10 +16,10 @@ function viewerKeyboard(label) {
       { text: "🌤 Погода", url: "https://open-meteo.com/" },
     ],
     [
-      { text: "🌱 Городникам", url: "https://www.rhs.org.uk/" },
-      { text: "🌙 Місячний календар", url: "https://www.astronomy.com/" },
+      { text: "🌱 Городникам", url: VIEWER_URL + "guide/garden/" },
+      { text: "🌙 Місячний календар", url: VIEWER_URL + "guide/moon/" },
     ],
-    [{ text: "✨ Астропрогноз", url: "https://www.astro-seek.com/" }],
+    [{ text: "✨ Астропрогноз", url: VIEWER_URL + "guide/astro/" }],
   ] }
 }
 
