@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/index.html'
       - 'scripts/canonical-v3-generator.mjs'
+      - 'guide/**'
       - '.github/workflows/pages.yml'
   workflow_run:
     workflows: ["Run power outages schedule generator"]
@@ -94,6 +95,11 @@ jobs:
       - name: Prepare public site
         run: |
           mkdir -p site
+          mkdir -p site/guide
+          for section in weather garden moon astro; do
+            cp -R "source/guide/$section" "site/guide/$section"
+            test -s "site/guide/$section/index.html"
+          done
           cp v3-renderer/dist/index.html site/index.html
           cp source/docs/fullscreen-sync.js site/fullscreen-sync.js
           python3 - <<'PY'
