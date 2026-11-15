@@ -24,7 +24,7 @@ def assert_shared_snapshot(canonical, live, png_metadata):
     return expected
 
 def minutes(clock):
-    if not re.fullmatch(r"(?:[01]\\d|2[0-3]):[0-5]\\d|24:00", clock):
+    if not re.fullmatch(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]|24:00", clock):
         raise ValueError("Invalid schedule time")
     value = int(clock[:2])*60+int(clock[3:])
     return value
