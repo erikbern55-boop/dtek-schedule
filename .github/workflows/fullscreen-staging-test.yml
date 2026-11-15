@@ -4,6 +4,7 @@ on:
     paths:
       - 'docs/fullscreen-sync.js'
       - 'src/media.js'
+      - 'src/card-v3.js'
       - '.github/workflows/pages.yml'
       - 'scripts/canonical-v3-generator.mjs'
       - '.github/workflows/fullscreen-staging-test.yml'
@@ -21,6 +22,20 @@ jobs:
       - name: Validate script syntax and staging page assembly
         run: |
           node --check docs/fullscreen-sync.js
+          node --check src/card-v3.js
+          node --check src/media.js
+          node --check scripts/canonical-v3-generator.mjs
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const media=fs.readFileSync('src/media.js','utf8');
+          const v3=fs.readFileSync('src/card-v3.js','utf8');
+          assert.match(media,/renderCardV3Png as renderCardPng/,'Telegram must use V3 renderer');
+          assert.match(v3,/export async function renderCardV3Png/);
+          assert.match(media,/publishCanonicalSchedule/,'Canonical Telegram JSON must remain enabled');
+          assert.match(media,/imageNeedsRefresh/,'Image refresh must remain enabled');
+          console.log('PASS: Telegram V3 renderer wiring and canonical schedule logic preserved');
+          JS
           mkdir -p staging
           printf '<!doctype html><html><body><main id="card">V3</main></body></html>' > staging/index.html
           cp docs/fullscreen-sync.js staging/fullscreen-sync.js
