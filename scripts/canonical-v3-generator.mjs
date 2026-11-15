@@ -75,6 +75,7 @@ try {
     rawDtekByDay[item.slug]=slots;
     if(item.slug==='today'){
       result.periods=normalized;
+      result.weather=canonical.weather??null;
       result.source=canonical.source;
       result.sourceUpdated=String(canonical.sourceUpdated??'');
       result.canonicalGeneratedAt=canonical.generatedAt;
@@ -83,21 +84,19 @@ try {
   }
   if(!result.live)throw Error('Canonical Telegram today schedule unavailable');
 }catch(error){result.error=String(error.message);console.error('CANONICAL schedule unavailable:',result.error);throw error;}
-// Weather is independent of DTEK: retry transient Open-Meteo failures.
-for(let attempt=1;attempt<=3;attempt++){
-  try{
-    const snapshot=await loadWeather({now});
-    result.weather=weatherForDate(snapshot,date,now);
-    if(!result.weather||result.weather.stale)throw Error('Прогноз погоди недоступний або застарів');
-    delete result.weatherError;
-    break;
-  }catch(error){
-    result.weather=null;
-    result.weatherError='Спроба '+attempt+'/3: '+String(error.message);
-    console.warn('WEATHER:',result.weatherError);
-    if(attempt<3)await new Promise(resolve=>setTimeout(resolve,attempt*2500));
-  }
+// Fullscreen uses exactly the weather already rendered in Telegram.
+// Reject incomplete snapshots rather than publishing blank weather panels.
+function assertCanonicalWeather(weather){
+ if(!weather||weather.stale||weather.date!==date)throw Error('Canonical Telegram weather missing, stale, or wrong date');
+ for(const key of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp']){
+  if(!Number.isFinite(weather[key]))throw Error('Canonical Telegram weather missing '+key);
+ }
+ if(!/^\d{2}:\d{2}$/.test(weather.sunrise??'')||!/^\d{2}:\d{2}$/.test(weather.sunset??''))throw Error('Canonical Telegram daylight times missing');
+ const fetched=Date.parse(weather.fetchedAt);
+ if(!Number.isFinite(fetched)||Date.now()-fetched>90*60*1000||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
 }
+assertCanonicalWeather(result.weather);
+console.log('WEATHER PARITY: Telegram snapshot',result.weather.fetchedAt);
 try{
   result.moon=lunarForDate(date);
   result.astro=astroForMoon(result.moon,date);

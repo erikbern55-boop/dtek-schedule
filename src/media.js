@@ -81,6 +81,7 @@ function saveViewerSnapshot(png, label, details) {
       date: details.date, label: details.label, group: "1.1",
       generatedAt: new Date().toISOString(), source: details.source,
       sourceUpdated: details.update,
+      weather: details.weather ?? null,
       periods: details.schedule.map(({begin,end,power}) => ({begin,end,power}))
     }, null, 2))
     // Publish real HTML elements and text, never stretch the Telegram bitmap.
@@ -101,7 +102,7 @@ function saveViewerSnapshot(png, label, details) {
   }
 }
 
-function publishCanonicalSchedule({schedule,date,label,update,source}) {
+function publishCanonicalSchedule({schedule,date,label,update,source,weather}) {
   // Run only after Telegram confirms an image or caption update.
   const basename=label==="завтра"?"tomorrow":"today"
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error("Invalid schedule date")
@@ -118,7 +119,7 @@ function publishCanonicalSchedule({schedule,date,label,update,source}) {
   if(slots.some(x=>x===null))throw Error("Incomplete 48-slot schedule")
   fs.mkdirSync("artifacts/web",{recursive:true})
   const file="artifacts/web/"+basename+".json"
-  const payload={date,label,group:process.env.GROUP||"1.1",generatedAt:new Date().toISOString(),source,sourceUpdated:update,periods:schedule.map(({begin,end,power})=>({begin,end,power}))}
+  const payload={date,label,group:process.env.GROUP||"1.1",generatedAt:new Date().toISOString(),source,sourceUpdated:update,weather:weather??null,periods:schedule.map(({begin,end,power})=>({begin,end,power}))}
   fs.writeFileSync(file+".tmp",JSON.stringify(payload,null,2))
   fs.renameSync(file+".tmp",file)
   console.log("🟢 Canonical Telegram schedule saved: "+file+" (48/48 slots)")
@@ -179,7 +180,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         })
         console.log("🟢 Updated the existing card caption")
       }
-      try { publishCanonicalSchedule({schedule,date,label,update,source}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
+      try { publishCanonicalSchedule({schedule,date,label,update,source,weather}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
       saveLastMessage({
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
@@ -209,7 +210,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     const reply = replyTo(lastMessage)
     if (reply) form.set("reply_parameters", JSON.stringify(reply))
     const result = await callTelegram("sendPhoto", form)
-    try { publishCanonicalSchedule({schedule,date,label,update,source}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
+    try { publishCanonicalSchedule({schedule,date,label,update,source,weather}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,

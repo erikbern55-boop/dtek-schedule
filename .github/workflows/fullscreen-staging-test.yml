@@ -83,6 +83,30 @@ jobs:
         with:
           ref: artifacts
           path: telegram-artifacts
+      - name: Build isolated real-weather canonical snapshot for PR validation
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import {loadWeather,weatherForDate} from './src/weather.js';
+          const source=JSON.parse(fs.readFileSync('telegram-artifacts/web/today.json','utf8'));
+          const date=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
+          assert.equal(source.date,date,'DTEK canonical date must match Kyiv today');
+          const snapshot=await loadWeather({now:new Date(),file:'staging/weather-cache.json'});
+          assert.ok(snapshot,'Live Open-Meteo request failed; no synthetic fallback allowed');
+          const weather=weatherForDate(snapshot,date);
+          assert.ok(weather&&!weather.stale,'Fresh forecast required');
+          for(const field of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp'])
+            assert.ok(Number.isFinite(weather[field]),'Missing real weather '+field);
+          for(const field of ['sunrise','sunset'])
+            assert.match(weather[field],/^\d{2}:\d{2}$/,'Missing '+field);
+          fs.mkdirSync('staging/canonical',{recursive:true});
+          const output={...source,generatedAt:new Date().toISOString(),weather};
+          fs.writeFileSync('staging/canonical/today.json',JSON.stringify(output,null,2));
+          if(fs.existsSync('telegram-artifacts/web/tomorrow.json'))
+            fs.copyFileSync('telegram-artifacts/web/tomorrow.json','staging/canonical/tomorrow.json');
+          console.log('REAL WEATHER TEST SNAPSHOT:',date,weather.fetchedAt,weather.currentTemp,weather.todayMin,weather.todayMax,weather.tomorrowMin,weather.tomorrowMax,weather.soilTemp);
+          JS
       - name: Check real canonical JSON and all 48 half-hour slots
         run: |
           node --input-type=module <<'JS'
@@ -130,7 +154,7 @@ jobs:
         env:
           REGION: kr
           GROUP: '1.1'
-          CANONICAL_SNAPSHOT_DIR: '../telegram-artifacts/web'
+          CANONICAL_SNAPSHOT_DIR: '../staging/canonical'
         run: |
           npm ci
           npx playwright install --with-deps chromium
@@ -145,7 +169,7 @@ jobs:
           import assert from 'node:assert/strict';
           import {renderCardV3Png} from './src/card-v3.js';
           const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
-          const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json','utf8'));
+          const canonical=JSON.parse(fs.readFileSync('../staging/canonical/today.json','utf8'));
           const png=await renderCardV3Png({schedule:canonical.periods,date:canonical.date,label:'сьогодні',source:canonical.source,update:canonical.sourceUpdated,weather:live.weather});
           fs.writeFileSync('dist/telegram-v3-preview.png',png);
           const {buildCardV3Html}=await import('./src/card-v3.js');
@@ -197,7 +221,7 @@ jobs:
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import assert from 'node:assert/strict';
-          const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json'));
+          const canonical=JSON.parse(fs.readFileSync('../staging/canonical/today.json'));
           const generated=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json'));
           assert.equal(generated.date,canonical.date);
           assert.equal(generated.group,canonical.group);
