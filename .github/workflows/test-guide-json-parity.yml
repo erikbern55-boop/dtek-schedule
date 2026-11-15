@@ -1,0 +1,52 @@
+name: TEST guide JSON snapshot and parity (no publishing)
+
+on:
+  push:
+    branches:
+      - test/guide-json-parity-20261115
+    paths:
+      - 'tests/guide-live-snapshot-audit.mjs'
+      - '.github/workflows/test-guide-json-parity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated test branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Capture live JSON and compare with Telegram canonical snapshot
+        id: audit
+        continue-on-error: true
+        env:
+          SVITLOPULS_URL: https://erikbern55-boop.github.io/dtek-schedule/
+          AUDIT_OUTPUT: svitlopuls-test-snapshot.json
+        run: node tests/guide-live-snapshot-audit.mjs
+      - name: Save report to workflow summary
+        if: always()
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const d=JSON.parse(fs.readFileSync('svitlopuls-test-snapshot.json','utf8'));
+          const rows=['## Світлопульс — тест JSON','', 'Статус: **'+d.status+'**', 'Перевірено: '+d.checkedAt,'','| Поле | Результат |','|---|---|',...d.checks.map(x=>'| '+x.label+' | '+x.status+' |'),'',...d.errors.map(e=>'Помилка: '+e)];
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,rows.join('\n')+'\n');
+          JS
+      - name: Upload isolated JSON snapshot and field-by-field report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svitlopuls-guide-json-audit
+          path: svitlopuls-test-snapshot.json
+          retention-days: 7
+          if-no-files-found: error
+      - name: Mark audit failed when parity is not proven
+        if: steps.audit.outcome != 'success'
+        run: exit 1
