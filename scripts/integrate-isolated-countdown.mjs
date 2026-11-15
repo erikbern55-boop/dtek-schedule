@@ -32,10 +32,7 @@ const tick=[
 '  if(detailEl)detailEl.textContent=event?(event.day==="tomorrow"?"Завтра ":"Сьогодні ")+event.time+" · Київ · за графіком ДТЕК":"Перевір графік ДТЕК на завтра";'
 ].join('\n');
 src=src.slice(0,begin)+tick+src.slice(finish);
-const marker='const production='+'
-replace(marker,' '+pure+'\n'+marker);
-fs.writeFileSync(file,src);
-console.log('PASS test-only V3 countdown integration applied');+'{production};';'
+const marker='const production=' + String.fromCharCode(36) + '{production};';
 replace(marker,' '+pure+'\n'+marker);
 fs.writeFileSync(file,src);
 console.log('PASS test-only V3 countdown integration applied');
