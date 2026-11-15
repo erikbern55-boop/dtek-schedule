@@ -75,12 +75,32 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   return caption
 }
 
+// Shared, versioned snapshot contract: both Telegram and fullscreen V3 must
+// consume the same schedule, weather and source metadata for each day.
+export function buildSharedCardSnapshot(details) {
+  const {schedule,date,label,update,source,weather=null}=details
+  if (!Array.isArray(schedule)||!date) throw Error("Shared snapshot requires schedule and date")
+  return {
+    schemaVersion:1,
+    day:label==="завтра"?"tomorrow":"today",
+    date,source,update,
+    schedule:schedule.map(({begin,end,power})=>({begin,end,power:Boolean(power)})),
+    weather,
+  }
+}
+
 function saveViewerSnapshot(png, label, details) {
   // Public viewer receives only rendered graphics, never Telegram credentials.
   try {
     fs.mkdirSync("artifacts/web", { recursive: true })
     const basename = label === "завтра" ? "tomorrow" : "today"
     fs.writeFileSync("artifacts/web/" + basename + ".png", png)
+    // Atomically publish the same input state used to render the Telegram image.
+    const snapshot=buildSharedCardSnapshot(details)
+    const target="artifacts/web/"+basename+".json"
+    const temp=target+".tmp"
+    fs.writeFileSync(temp,JSON.stringify(snapshot,null,2)+"\\n")
+    fs.renameSync(temp,target)
     // Publish real HTML elements and text, never stretch the Telegram bitmap.
     const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
       'html,body{width:100%;min-height:100%;overflow:auto!important;background:#03150e!important}' +
