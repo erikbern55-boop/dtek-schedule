@@ -27,4 +27,6 @@ report={"jsonParity":parity,"pngProvenance":provenance,"countdown":countdown}
 pathlib.Path("snapshot-contract-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,ensure_ascii=False,indent=2))
 if not all(parity.values()): sys.exit("FAIL: JSON mismatch")
-print("PARTIAL: JSON parity passed; PNG provenance and countdown equality NOT established.")
+if not provenance["verified"]: sys.exit("FAIL: PNG provenance is not verified; snapshotId contract required")
+if not countdown["sameRulesVerified"]: sys.exit("FAIL: countdown rules are not verified")
+print("PASS: complete snapshot and countdown contract verified")
