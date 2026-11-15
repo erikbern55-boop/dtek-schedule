@@ -99,7 +99,7 @@ jobs:
           for(const field of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp'])
             assert.ok(Number.isFinite(weather[field]),'Missing real weather '+field);
           for(const field of ['sunrise','sunset'])
-            assert.match(weather[field],/^\\d{2}:\\d{2}$/,'Missing '+field);
+            assert.match(weather[field],/^\d{2}:\d{2}$/,'Missing '+field);
           fs.mkdirSync('staging/canonical',{recursive:true});
           const output={...source,generatedAt:new Date().toISOString(),weather};
           fs.writeFileSync('staging/canonical/today.json',JSON.stringify(output,null,2));
