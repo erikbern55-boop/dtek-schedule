@@ -6,7 +6,7 @@ const replace=(a,b)=>{if(!src.includes(a))throw Error('Missing anchor: '+a.slice
 replace('function neutralCalendar(markup)', [
 'function sharedCardCountdown(markup,periods,tomorrow,now){',
 ' const fields=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(now).map(p=>[p.type,p.value]));',
-' const minute=Number(fields.hour)*60+Number(fields.minute)+Number(fields.second)/60;',
+' const minute=Number.isFinite(Number(process.env.TEST_PNG_MINUTE))&&process.env.TEST_PNG_MINUTE!==undefined?Number(process.env.TEST_PNG_MINUTE):Number(fields.hour)*60+Number(fields.minute)+Number(fields.second)/60;',
 ' const event=nextPowerTransition({periods},tomorrow,minute);const label=countdownLabel(event);',
 ' for(const [klass,value] of [["v3-count-event",label.title],["v3-clock",label.clock],["v3-next",event?(event.day==="tomorrow"?"Завтра ":"Сьогодні ")+event.time+" · Київ · ДТЕК":"Перевір графік ДТЕК на завтра"]]){',
 '  const start=markup.indexOf("<div class="+String.fromCharCode(34)+klass+String.fromCharCode(34));',
@@ -46,7 +46,7 @@ if(!src.includes(screenshotAnchor))throw Error('PNG screenshot anchor changed');
 src=src.replace(screenshotAnchor,[
 "  const pngCountdown=await page.evaluate(()=>({clock:document.querySelector('.v3-clock')?.textContent?.trim()??null,title:document.querySelector('.v3-count-event')?.textContent?.trim()??null}));",
 "  if(item.slug==='today'){",
-"   fs.writeFileSync('dist/png-countdown-before-screenshot.json',JSON.stringify({renderer:'isolated V3 actual PNG page',date:item.date,controlTime:now.toISOString(),clock:pngCountdown.clock,title:pngCountdown.title,source:'DOM read immediately before page.screenshot'},null,2));",
+"   fs.writeFileSync('dist/png-countdown-before-screenshot.json',JSON.stringify({renderer:'isolated V3 actual PNG page',date:item.date,controlTime:now.toISOString(),controlledMinute:process.env.TEST_PNG_MINUTE??null,clock:pngCountdown.clock,title:pngCountdown.title,source:'DOM read immediately before page.screenshot'},null,2));",
 "  }",
 screenshotAnchor,
 ].join('\n'));
