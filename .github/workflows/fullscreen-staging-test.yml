@@ -141,6 +141,18 @@ jobs:
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import assert from 'node:assert/strict';
+          import {renderCardV3Png} from '../src/card-v3.js';
+          const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
+          const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json','utf8'));
+          const png=await renderCardV3Png({schedule:canonical.periods,date:canonical.date,label:'сьогодні',source:canonical.source,update:canonical.sourceUpdated,weather:live.weather});
+          fs.writeFileSync('dist/telegram-v3-preview.png',png);
+          const {PNG}=await import('pngjs').catch(()=>({PNG:null}));
+          assert.ok(png.length>10000,'Telegram V3 PNG unexpectedly small');
+          console.log('PASS Telegram V3 PNG render from canonical schedule',png.length);
+          JS
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
           const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json'));
           const generated=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json'));
           assert.equal(generated.date,canonical.date);
