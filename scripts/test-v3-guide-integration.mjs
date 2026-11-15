@@ -37,7 +37,15 @@ try{
    await popup.waitForLoadState('domcontentloaded');
    opened=popup.url()===base+'/guide/'+slug+'/';
    sourceLink=await popup.getByRole('link',{name:'Переглянути першоджерело'}).count()===1;
-   photo=slug==='astro'||await popup.locator('img.hero').evaluate(img=>img.complete&&img.naturalWidth>=1000).catch(()=>false);
+   photo=slug==='astro'||await popup.locator('img.hero').evaluate(async img=>{
+    if(!img.complete)await new Promise(resolve=>{
+      const timeout=setTimeout(resolve,15000);
+      img.addEventListener('load',()=>{clearTimeout(timeout);resolve();},{once:true});
+      img.addEventListener('error',()=>{clearTimeout(timeout);resolve();},{once:true});
+    });
+    if(img.naturalWidth>0)await img.decode().catch(()=>{});
+    return img.complete&&img.naturalWidth>=1000;
+   }).catch(()=>false);
    noOverflow=await popup.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2);
    await popup.screenshot({path:path.join(output,slug+'-'+view.name+'.png'),fullPage:true});
    await popup.getByRole('link',{name:/Повернутися до Світлопульсу/}).click();
