@@ -19,7 +19,7 @@
         fallback = document.createElement('div');
         fallback.id = 'telegram-synced-fallback';
         fallback.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#020e08;overflow:auto;text-align:center';
-        fallback.innerHTML = '<div style="font:14px Arial;color:#e3ffeb;padding:8px">Актуальна картка Telegram · резервний перегляд</div><img alt="Поточна картка Telegram" style="width:100%;max-width:1200px;height:auto" />';
+        fallback.innerHTML = '<div style="font:14px Arial;color:#e3ffeb;padding:8px">Остання опублікована картка Telegram · перевір дату й час оновлення</div><img alt="Поточна картка Telegram" style="width:100%;max-width:1200px;height:auto" />';
         document.body.appendChild(fallback);
       }
       fallback.querySelector('img').src = './today.png?t=' + Date.now();
