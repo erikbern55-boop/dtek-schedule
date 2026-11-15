@@ -641,8 +641,8 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const {withPower,withoutPower}=calculateDailyTotals(schedule)
   const periods=schedule.map(p=>'<div class="v3-period'+(p.power?'':' off')+'"><span>'+ (p.power?'⚡ Світло':'🔴 Без світла') +'</span><b>'+esc(p.begin)+' — '+esc(p.end)+'</b></div>').join("")
   const event=nextPowerEvent(schedule,date,now)
-  const countdown=event.kind==="countdown" ? event.remaining : "—:—"
-  const eventHeading=event.kind==="countdown" ? event.title : "Наступна зміна графіка"
+  const countdown=event.remaining ?? "—:—"
+  const eventHeading=event.title ?? "Наступна зміна графіка"
   const eventDetail=event.kind==="countdown" ? event.detail+" · станом на "+kyivTime(now)+" (Київ)" : event.detail
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
     .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_garlic.png" alt="Еталонне фото часнику" loading="eager"/></div>')
@@ -696,7 +696,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-tag">🌿 Все в одному<br>для комфортного життя в СТ</div></header>'+
     '<main class="v3-row v3-power">'+
     '<section class="v3-panel v3-date-panel"><div class="v3-date">🗓️ '+(label==="завтра"?"Завтра":"Сьогодні")+'<b>'+esc(displayDate(date))+'</b><span class="v3-weekday">'+esc(weekday(date))+'</span></div><div class="v3-dial">'+buildDial(schedule)+'</div></section>'+
-    '<section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">'+esc(eventHeading)+'</div><div class="v3-clock" data-countdown-minutes="'+(event.kind==="countdown"?event.minutesRemaining:"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventDetail)+'</div></section>'+
+    '<section class="v3-panel v3-count"><h2 class="v3-title">⏱ Відлік до події</h2><div class="v3-count-event">'+esc(eventHeading)+'</div><div class="v3-clock" data-countdown-minutes="'+(event.minutesRemaining??"")+'">'+esc(countdown)+'</div><div class="v3-next">'+esc(eventDetail)+'</div></section>'+
     '<section class="v3-panel"><h2 class="v3-title">💡 Графік '+(label==="завтра"?"завтра":"сьогодні")+'</h2><div class="v3-periods">'+periods+'</div><div class="v3-totals"><span>⚡ '+esc(formatDuration(withPower))+'</span><span>🔴 '+esc(formatDuration(withoutPower))+'</span></div><div class="v3-timeline">'+buildTimeline(schedule)+'</div></section></main>'+
     '<div class="v3-weather">'+weatherWithTomorrow+'</div>'+
     '<section class="v3-sources"><b>▰ Джерела та<br>методика</b><span><strong>⚡ Графіки відключень:</strong><a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · dtek.com.ua</a></span><span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span><span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span><span><strong>🌙 Місячний календар:</strong><a href="./guide/moon/">Відкрити довідник</a></span><span><strong>✨ Астропрогноз:</strong><a href="./guide/astro/">Відкрити довідник</a></span></section>'+
