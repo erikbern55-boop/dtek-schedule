@@ -49,6 +49,6 @@ src=src.replace(screenshotAnchor,[
 "   fs.writeFileSync('dist/png-countdown-before-screenshot.json',JSON.stringify({renderer:'isolated V3 actual PNG page',date:item.date,controlTime:now.toISOString(),clock:pngCountdown.clock,title:pngCountdown.title,source:'DOM read immediately before page.screenshot'},null,2));",
 "  }",
 screenshotAnchor,
-].join('\\n'));
+].join('\n'));
 fs.writeFileSync(file,src);
 console.log('PASS test-only V3 countdown integration applied');
