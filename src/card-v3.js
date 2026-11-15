@@ -645,8 +645,8 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const eventHeading=event.kind==="countdown" ? event.title : "Наступна зміна графіка"
   const eventDetail=event.kind==="countdown" ? event.detail+" · станом на "+kyivTime(now)+" (Київ)" : event.detail
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
-    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Garlic_Bulbs_(Unsplash).jpg?width=500" alt="Фотографія головок часнику" loading="eager" referrerpolicy="no-referrer"/></div>')
-    .replace(/<div class="wx-moon-icon">[\s\S]*?<\/div>/, "<div class=\"wx-moon-icon\"><svg viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"ml\"><stop stop-color=\"#fffde6\"/><stop offset=\".65\" stop-color=\"#d4d3c6\"/><stop offset=\"1\" stop-color=\"#777d79\"/></radialGradient><clipPath id=\"mc\"><circle cx=\"60\" cy=\"60\" r=\"52\"/></clipPath></defs><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"url(#ml)\"/><g clip-path=\"url(#mc)\" fill=\"#777b78\" opacity=\".28\"><ellipse cx=\"34\" cy=\"42\" rx=\"15\" ry=\"9\"/><ellipse cx=\"78\" cy=\"31\" rx=\"13\" ry=\"18\"/><ellipse cx=\"81\" cy=\"79\" rx=\"24\" ry=\"15\"/><circle cx=\"60\" cy=\"57\" r=\"8\"/></g><circle cx=\"60\" cy=\"60\" r=\"52\" fill=\"none\" stroke=\"#e6f8e1\" stroke-width=\"2\"/></svg></div>")
+    .replace(/<div class="wx-garden-art">[\\s\\S]*?<\\/div>/, '<div class="wx-garden-art"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_garlic.png" alt="Еталонне фото часнику" loading="eager"/></div>')
+    .replace(/<div class="wx-moon-icon">[\\s\\S]*?<\\/div>/, '<div class="wx-moon-icon"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_moon.png" alt="Еталонний Місяць" loading="eager"/></div>')
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
     /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
@@ -705,6 +705,7 @@ export async function renderCardV3Png(details) {
       if(!img.naturalWidth)throw new Error("Garlic photograph is unavailable")
       await img.decode()
     })
+    await page.locator(".weather-moon .wx-moon-icon img").evaluate(async img=>{if(!img.complete)await new Promise((resolve,reject)=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",()=>reject(Error("Moon photograph failed to load")),{once:true})});if(!img.naturalWidth)throw Error("Moon photograph unavailable");await img.decode()})
     const png=await page.screenshot({type:"png",fullPage:true})
     if(png.length<2000)throw Error("Empty V3 card image")
     return png
