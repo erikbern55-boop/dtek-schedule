@@ -18,7 +18,28 @@ try{
    const img=document.querySelector('img.hero');
    return {lang:document.documentElement.lang,heading:document.querySelector('h1')?.textContent,backHref:back?.getAttribute('href'),backVisible:!!back&&getComputedStyle(back).display!=='none',sourceHref:source?.href,sourceVisible:!!source&&getComputedStyle(source).display!=='none',sourceExternal:source?.target==='_blank'&&source?.rel.includes('noopener'),horizontalOverflow:document.documentElement.scrollWidth>innerWidth+2,image:img?{loaded:img.complete&&img.naturalWidth>0,naturalWidth:img.naturalWidth}:null};
   });
-  const checks={ukrainian:state.lang==='uk',title:!!state.heading,backButton:state.backVisible&&state.backHref==='../../',sourceButton:state.sourceVisible&&state.sourceExternal&&state.sourceHref?.startsWith('https://'),noHorizontalOverflow:!state.horizontalOverflow,illustration:slug==='astro'||state.image?.loaded===true};
+  // Exercise real clicks while intercepting only destinations, not the controls.
+  let backClicked=false,sourceClicked=false;
+  const backPage=await browser.newPage({viewport:{width:device.width,height:device.height}});
+  await backPage.route('**/*',async route=>{
+   const req=route.request();
+   if(req.isNavigationRequest()&&req.url().endsWith('/index.html')&&!req.url().includes('/guide/')){
+    backClicked=true;await route.fulfill({status:200,contentType:'text/html',body:'<html><body>SVITLOPULS TEST DESTINATION</body></html>'});
+   }else await route.continue();
+  });
+  await backPage.goto(url,{waitUntil:'load'});
+  await backPage.getByRole('link',{name:/Повернутися до Світлопульсу/}).click();
+  backClicked=backClicked&&((await backPage.locator('body').textContent())??'').includes('SVITLOPULS TEST DESTINATION');
+  await backPage.close();
+  const sourcePage=await browser.newPage({viewport:{width:device.width,height:device.height}});
+  await sourcePage.goto(url,{waitUntil:'load'});
+  const [popup]=await Promise.all([
+   sourcePage.waitForEvent('popup',{timeout:10000}),
+   sourcePage.getByRole('link',{name:'Переглянути першоджерело'}).click()
+  ]);
+  sourceClicked=popup.url().startsWith('https://')&&popup.url()===state.sourceHref;
+  await popup.close();await sourcePage.close();
+  const checks={backClickNavigation:backClicked,sourceClickPopup:sourceClicked,ukrainian:state.lang==='uk',title:!!state.heading,backButton:state.backVisible&&state.backHref==='../../',sourceButton:state.sourceVisible&&state.sourceExternal&&state.sourceHref?.startsWith('https://'),noHorizontalOverflow:!state.horizontalOverflow,illustration:slug==='astro'||state.image?.loaded===true};
   const ok=Object.values(checks).every(Boolean);failed||=!ok;
   const filename=`guide-${slug}-${device.name}.png`;
   fs.mkdirSync('guide-test-artifacts',{recursive:true});
