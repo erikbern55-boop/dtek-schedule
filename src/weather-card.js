@@ -145,6 +145,8 @@ export const WEATHER_CSS = [
   '.wx-moon-row{font-size:21px;padding:7px 1px;border-bottom:1px solid #245e44;',
   'display:flex;justify-content:space-between;gap:9px;line-height:1.3}',
   '.wx-moon-row b{color:#fafffc;text-align:right}',
+  '.weather-moon .wx-moon-rows .wx-moon-row:first-child{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}',
+  '.v3-weather .weather-moon .wx-moon-row .wx-lunar-day{font-size:21px!important;margin-right:12px!important;font-weight:900!important}',
   '.wx-garden-body{display:flex;gap:14px;align-items:flex-start}',
   '.wx-garden-art{font-size:95px;line-height:1.05;min-width:120px;',
   'text-align:center;background:radial-gradient(circle,#1c5b31,#08261a 72%);',
