@@ -54,13 +54,47 @@ try:
     }
     if not (snapshot_valid and png_valid):
         errors.append("PNG hash or snapshot provenance mismatch")
-    # The JS contract is unit-tested independently; that does not prove
-    # both deployed renderers consume it. Fail closed until integration proof exists.
+    # Fail closed: require actual, case-by-case DOM observations from BOTH renderers.
+    # A single pre-screenshot observation cannot establish three-case parity.
+    evidence = load("countdown-render-evidence.json")
+    cases = evidence.get("cases", [])
+    required = {"today-transition", "next-day", "unknown-tomorrow"}
+    names = [case.get("name") for case in cases]
+    case_results = []
+    for case in cases:
+        name = case.get("name")
+        png_case = case.get("png")
+        html_case = case.get("html")
+        control = case.get("minute")
+        valid = (
+            name in required and isinstance(control, (int, float))
+            and isinstance(png_case, dict) and isinstance(html_case, dict)
+            and png_case.get("clock") is not None
+            and png_case.get("title") is not None
+            and png_case.get("clock") == html_case.get("clock")
+            and png_case.get("title") == html_case.get("title")
+            and png_case.get("snapshotId") == expected_id
+            and html_case.get("snapshotId") == expected_id
+            and png_case.get("minute") == control
+            and html_case.get("minute") == control
+            and png_case.get("pngSha256") == digest
+            and png_case.get("capturedBeforeScreenshot") is True
+            and png_case.get("renderer") == "isolated V3 actual PNG page"
+            and html_case.get("renderer") == "isolated fullscreen HTML"
+        )
+        case_results.append({"name": name, "minute": control, "verified": bool(valid),
+                             "png": png_case, "html": html_case})
+    complete = len(cases) == 3 and set(names) == required and len(set(names)) == 3
+    verified = complete and all(case["verified"] for case in case_results)
     report["countdown"] = {
-        "sameRulesVerified": False,
-        "reason": "Shared JS unit tests do not prove Telegram PNG and fullscreen UI use identical countdown logic"
+        "sameRulesVerified": bool(verified),
+        "casesComplete": complete,
+        "cases": case_results,
+        "reason": None if verified else "Missing or mismatched real PNG/HTML renderer evidence for all three control times"
     }
-    errors.append("Cross-renderer countdown equivalence not demonstrated")
+    if not verified:
+        errors.append("Cross-renderer countdown equivalence not demonstrated")
+
 except Exception as exc:
     errors.append(str(exc))
 report["errors"] = errors
