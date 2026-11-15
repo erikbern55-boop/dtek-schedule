@@ -737,6 +737,18 @@ export async function renderCardV3Png(details) {
       await img.decode()
     })
     await page.locator(".weather-moon .wx-moon-icon img").evaluate(async img=>{if(!img.complete)await new Promise((resolve,reject)=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",()=>reject(Error("Moon photograph failed to load")),{once:true})});if(!img.naturalWidth)throw Error("Moon photograph unavailable");await img.decode()})
+    // Fail closed: never publish a Telegram PNG with the tomorrow panel missing or clipped.
+    const tomorrow=page.locator(".v3-weather .weather-tomorrow");
+    const min=tomorrow.locator(".v3-tomorrow-min");
+    const max=tomorrow.locator(".v3-tomorrow-max");
+    if(await tomorrow.count()!==1||await min.count()!==1||await max.count()!==1)throw Error("Telegram V3 tomorrow panel is missing");
+    for(const [name,element] of [["tomorrow",tomorrow],["minimum",min],["maximum",max]]){
+      if(!await element.isVisible())throw Error("Telegram V3 "+name+" is hidden");
+      const rect=await element.boundingBox();
+      if(!rect||rect.width<30||rect.height<18)throw Error("Telegram V3 "+name+" has no visible area");
+      const card=await page.locator(".v3").boundingBox();
+      if(!card||rect.x<card.x-2||rect.y<card.y-2||rect.x+rect.width>card.x+card.width+2||rect.y+rect.height>card.y+card.height+2)throw Error("Telegram V3 "+name+" is outside PNG card");
+    }
     const png=await page.screenshot({type:"png",fullPage:true})
     if(png.length<2000)throw Error("Empty V3 card image")
     return png
