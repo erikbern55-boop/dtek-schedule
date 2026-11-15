@@ -93,6 +93,47 @@ jobs:
           assert.ok(slots.every(v=>v!==null),'All 48 slots must be covered');
           console.log('REAL TELEGRAM JSON: 48/48 slots verified',data.date,data.generatedAt);
           JS
+      - name: Checkout V3 renderer for real canonical integration test
+        uses: actions/checkout@v4
+        with:
+          ref: feature/svitlopuls-v3-independent-generator
+          path: v3-renderer
+      - name: Checkout V3 reference assets and verifier
+        uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/svitlopuls-v3-test
+          ref: main
+          path: v3-test
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: v3-renderer/.nvmrc
+          cache: npm
+          cache-dependency-path: v3-renderer/package-lock.json
+      - name: Generate actual V3 card from Telegram today.json and verify
+        working-directory: v3-renderer
+        env:
+          REGION: kr
+          GROUP: '1.1'
+          CANONICAL_SNAPSHOT_DIR: '../telegram-artifacts/web'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          cp ../scripts/canonical-v3-generator.mjs ./live-generator.mjs
+          cp ../v3-test/verify-live.mjs ./verify-live.mjs
+          cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
+          node live-generator.mjs
+          node verify-live.mjs
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const canonical=JSON.parse(fs.readFileSync('../telegram-artifacts/web/today.json'));
+          const generated=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json'));
+          assert.equal(generated.date,canonical.date);
+          assert.equal(generated.group,canonical.group);
+          assert.deepEqual(generated.periods,canonical.periods,'Every V3 interval must match Telegram');
+          const audit=JSON.parse(fs.readFileSync('dist/dtek-interval-audit.json'));
+          console.log('REAL V3-TELEGRAM PARITY PASS',canonical.date,JSON.stringify(audit.days?.today||audit).slice(0,800));
+          JS
       - uses: actions/upload-artifact@v4
         with:
           name: fullscreen-staging-site
