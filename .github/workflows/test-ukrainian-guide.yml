@@ -1,0 +1,32 @@
+name: TEST Ukrainian guide mobile layouts (no deploy)
+on:
+  push:
+    branches: [test/pages-ubuntu2404-20261115]
+    paths:
+      - 'guide/**'
+      - 'scripts/test-ukrainian-guide.mjs'
+      - '.github/workflows/test-ukrainian-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-guide:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test mobile portrait and landscape, photos and navigation
+        run: node scripts/test-ukrainian-guide.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ukrainian-guide-mobile-review
+          path: guide-test-artifacts/
+          if-no-files-found: warn
