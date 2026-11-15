@@ -3,6 +3,7 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
 import { buildCardHtml } from "./card.js"
+import { nextPowerEvent } from "./countdown.js"
 import { renderCardV3Png as renderCardPng, buildCardV3Html } from "./card-v3.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -13,7 +14,7 @@ function viewerKeyboard(label) {
     [{ text: "⛶ Відкрити на весь екран", url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today") }],
     [
       { text: "⚡ ДТЕК", url: "https://www.dtek-krem.com.ua/ua/shutdowns" },
-      { text: "🌤 Погода", url: "https://open-meteo.com/" },
+      { text: "🌤 Погода", url: VIEWER_URL + "guide/weather/" },
     ],
     [
       { text: "🌱 Городникам", url: VIEWER_URL + "guide/garden/" },
@@ -25,7 +26,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-tomorrow-panel-verified-v2"
+export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-countdown-caption-uk-links-v3"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
@@ -54,6 +55,12 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
     "🚨 Аварії: автоматичної перевірки для СТ «Хімік» немає.",
     '🔎 <a href="https://www.dtek-krem.com.ua/ua/shutdowns">Перевірити відключення за адресою в ДТЕК</a>',
   ]
+  if (label === "сьогодні") {
+    const event = nextPowerEvent(schedule, date)
+    if (event.kind === "countdown") {
+      info.unshift("⏱ <b>" + safe(event.title) + ": " + safe(event.remaining) + "</b> · " + safe(event.detail))
+    }
+  }
   const items = periods.length
     ? periods.map((p) => "🪫 <code>" + safe(p.begin) + " — " + safe(p.end) + "</code>")
     : ["✅ Відключень за графіком немає"]
