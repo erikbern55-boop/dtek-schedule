@@ -1,0 +1,80 @@
+name: TEST fullscreen snapshot timestamp audit (read-only)
+
+on:
+  push:
+    branches: [test/guide-json-parity-20261115]
+    paths: ['.github/workflows/test-fullscreen-timestamps.yml']
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Compare Pages, artifact commits, and deployed JSON
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import datetime,json,os,subprocess,urllib.request
+          from urllib.error import URLError,HTTPError
+          def api(path):
+              p=subprocess.run(['gh','api','--method','GET',f'repos/{os.environ["GH_REPO"]}/{path}'],capture_output=True,text=True)
+              if p.returncode:raise RuntimeError(p.stderr)
+              return json.loads(p.stdout)
+          out={'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{},'runs':{},'errors':[]}
+          for name in ('pages.yml','schedule.yml'):
+              try:
+                  runs=api(f'actions/workflows/{name}/runs?per_page=8')
+                  out['runs'][name]=[{'id':x['id'],'created_at':x['created_at'],'updated_at':x['updated_at'],'conclusion':x['conclusion'],'event':x['event'],'head_sha':x['head_sha'],'url':x['html_url']} for x in runs.get('workflow_runs',[])]
+              except Exception as e:out['errors'].append(f'{name}: {e}')
+          for name in ('web/today.json','web/today.png'):
+              try:
+                  commits=api(f'commits?sha=artifacts&path={name}&per_page=1')
+                  last=commits[0] if commits else None
+                  out['files'][name]={'lastCommitAt':last['commit']['committer']['date'] if last else None,'sha':last['sha'] if last else None}
+              except Exception as e:out['errors'].append(f'{name}: {e}')
+          base='https://erikbern55-boop.github.io/dtek-schedule/'
+          for name in ('today.json','svitlopuls-live.json','today.png'):
+              try:
+                  req=urllib.request.Request(base+name,headers={'Cache-Control':'no-cache','User-Agent':'Svitlopuls-Test-Audit'})
+                  with urllib.request.urlopen(req,timeout=20) as res:
+                      body=res.read()
+                      entry={'httpStatus':res.status,'httpLastModified':res.headers.get('Last-Modified'),'etag':res.headers.get('ETag'),'bytes':len(body)}
+                      if name.endswith('.json'):
+                          data=json.loads(body)
+                          entry.update({k:data.get(k) for k in ('generatedAt','canonicalGeneratedAt','date','group','live')})
+                          entry['weather']={k:(data.get('weather') or {}).get(k) for k in ('fetchedAt','stale','soilTemp')}
+                          entry['periods']=data.get('periods')
+                      out['files']['deployed/'+name]=entry
+              except Exception as e:out['errors'].append(f'deployed/{name}: {e}')
+          a=out['files'].get('deployed/today.json',{})
+          b=out['files'].get('deployed/svitlopuls-live.json',{})
+          out['parity']={'date':a.get('date')==b.get('date') if a and b else None,'group':a.get('group')==b.get('group') if a and b else None,'periods':a.get('periods')==b.get('periods') if a and b else None,'weatherFetchedAt':a.get('weather',{}).get('fetchedAt')==b.get('weather',{}).get('fetchedAt') if a and b else None,'canonicalGeneratedAt':a.get('generatedAt')==b.get('canonicalGeneratedAt') if a and b else None}
+          with open('fullscreen-timestamp-audit.json','w') as f:json.dump(out,f,ensure_ascii=False,indent=2)
+          lines=['## Світлопульс — read-only fullscreen timestamp audit','',f'Перевірено: {out["checkedAt"]}','','| Файл | Генерація UTC | Остання зміна HTTP | Погода fetchedAt |','|---|---|---|---|']
+          for name in ('deployed/today.json','deployed/svitlopuls-live.json','deployed/today.png'):
+              x=out['files'].get(name,{})
+              lines.append(f'| {name} | {x.get("generatedAt","—")} | {x.get("httpLastModified","—")} | {x.get("weather",{}).get("fetchedAt","—")} |')
+          lines+=['','### Порівняння полів','']
+          for k,v in out['parity'].items():lines.append(f'- {k}: {v}')
+          for name,runs in out['runs'].items():
+              lines+=['',f'### Останні запуски {name}','','| Час UTC | Результат | Запуск |','|---|---|---|']
+              for r in runs:lines.append(f'| {r["created_at"]} | {r["conclusion"]} | [#{r["id"]}]({r["url"]}) |')
+          if out['errors']:lines+=['','### Помилки отримання']+['- '+x for x in out['errors']]
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('\n'.join(lines)+'\n')
+          if out['errors']:raise SystemExit(1)
+          PY
+      - name: Upload JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svitlopuls-fullscreen-timestamp-audit
+          path: fullscreen-timestamp-audit.json
+          if-no-files-found: ignore
+          retention-days: 7
