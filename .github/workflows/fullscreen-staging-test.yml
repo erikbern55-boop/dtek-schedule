@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'docs/fullscreen-sync.js'
+      - 'src/media.js'
       - '.github/workflows/pages.yml'
       - '.github/workflows/fullscreen-staging-test.yml'
   workflow_dispatch:
@@ -37,8 +38,9 @@ jobs:
           import vm from 'node:vm';
           import assert from 'node:assert/strict';
           const script=fs.readFileSync('docs/fullscreen-sync.js','utf8');
+          const sample=[{begin:'00:00',end:'11:30',power:true},{begin:'11:30',end:'15:30',power:false},{begin:'15:30',end:'24:00',power:true}];
           const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
-          async function run(payload) {
+          async function run(payload, canonicalPeriods=sample) {
             const elements=new Map();
             const document={
               body:{appendChild(node){elements.set(node.id,node)}},
@@ -47,16 +49,17 @@ jobs:
               hidden:false,
               createElement(){return {id:'',style:{},innerHTML:'',remove(){elements.delete(this.id)},querySelector(){return {set src(v){this.value=v}}}}}
             };
-            const ctx={document,console,Date,Intl,setInterval(){},fetch:async()=>({ok:true,json:async()=>payload})};
+            const ctx={document,console,Date,Intl,setInterval(){},fetch:async(url)=>({ok:true,json:async()=>url.includes('today.json')?{date:day,generatedAt:new Date().toISOString(),periods:canonicalPeriods}:payload})};
             vm.runInNewContext(script,ctx);
             await new Promise(resolve=>setTimeout(resolve,50));
             return elements.has('telegram-synced-fallback');
           }
-          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString()}),false,'fresh JSON must keep V3');
-          assert.equal(await run({live:true,date:'2000-01-01',generatedAt:new Date().toISOString()}),true,'wrong day must fall back');
-          assert.equal(await run({live:true,date:day,generatedAt:'2000-01-01T00:00:00Z'}),true,'stale data must fall back');
-          assert.equal(await run({live:false,date:day,generatedAt:new Date().toISOString()}),true,'unavailable DTEK must fall back');
-          console.log('Staging freshness/fallback checks passed');
+          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString(),periods:sample}),false,'fresh JSON must keep V3');
+          assert.equal(await run({live:true,date:'2000-01-01',generatedAt:new Date().toISOString(),periods:sample}),true,'wrong day must fall back');
+          assert.equal(await run({live:true,date:day,generatedAt:'2000-01-01T00:00:00Z',periods:sample}),true,'stale data must fall back');
+          assert.equal(await run({live:false,date:day,generatedAt:new Date().toISOString(),periods:sample}),true,'unavailable DTEK must fall back');
+          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString(),periods:sample},[{begin:'00:00',end:'24:00',power:true}]),true,'mismatched schedule must fall back');
+          console.log('Staging freshness/fallback and canonical parity checks passed');
           JS
       - uses: actions/upload-artifact@v4
         with:
