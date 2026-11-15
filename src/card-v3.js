@@ -645,8 +645,8 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
   const eventHeading=event.kind==="countdown" ? event.title : "Наступна зміна графіка"
   const eventDetail=event.kind==="countdown" ? event.detail+" · станом на "+kyivTime(now)+" (Київ)" : event.detail
   const weatherMarkup=renderWeatherPanel(weather,date,label,"v3")
-    .replace(/<div class="wx-garden-art">[\\s\\S]*?<\\/div>/, '<div class="wx-garden-art"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_garlic.png" alt="Еталонне фото часнику" loading="eager"/></div>')
-    .replace(/<div class="wx-moon-icon">[\\s\\S]*?<\\/div>/, '<div class="wx-moon-icon"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_moon.png" alt="Еталонний Місяць" loading="eager"/></div>')
+    .replace(/<div class="wx-garden-art">[\s\S]*?<\/div>/, '<div class="wx-garden-art"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_garlic.png" alt="Еталонне фото часнику" loading="eager"/></div>')
+    .replace(/<div class="wx-moon-icon">[\s\S]*?<\/div>/, '<div class="wx-moon-icon"><img src="https://raw.githubusercontent.com/erikbern55-boop/svitlopuls-v3-test/main/svitlopuls_etalon_moon.png" alt="Еталонний Місяць" loading="eager"/></div>')
   // Split the garden markup for V3 only; shared weather rendering is unchanged.
   const splitGarden=weatherMarkup.replace(
     /(<section class="wx-box weather-garden"><h3>[\s\S]*?<\/h3>)([\s\S]*?)(<div class="wx-sowing">[\s\S]*?<\/div><\/section>)/,
