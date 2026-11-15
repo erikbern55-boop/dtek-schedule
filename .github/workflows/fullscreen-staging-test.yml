@@ -7,6 +7,7 @@ on:
       - 'src/card-v3.js'
       - '.github/workflows/pages.yml'
       - 'scripts/canonical-v3-generator.mjs'
+      - 'guide/**'
       - '.github/workflows/fullscreen-staging-test.yml'
   workflow_dispatch:
 permissions:
@@ -176,6 +177,20 @@ jobs:
           fs.writeFileSync(path,source.replace(check,"assert.equal(j.date,process.env.CANONICAL_CARD_DATE||kyivDate,'JSON must match the actual Telegram snapshot date');"));
           JS
           node live-generator.mjs
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const html=fs.readFileSync('dist/index.html','utf8');
+          for (const slug of ['weather','garden','moon','astro']) {
+            const href='./guide/'+slug+'/';
+            assert.ok(html.includes('href="'+href+'"'), 'Fullscreen card missing Ukrainian guide route '+href);
+            const page=fs.readFileSync('../guide/'+slug+'/index.html','utf8');
+            assert.match(page,/<html lang="uk"/i,'Guide must declare Ukrainian language: '+slug);
+            assert.ok(page.includes('href="../../"'),'Guide must link back to the Svitlopuls site: '+slug);
+            assert.match(page,/<h1\b/i,'Guide heading missing: '+slug);
+          }
+          console.log('PASS: all four Ukrainian fullscreen guide links resolve to Ukrainian pages');
+          JS
           CANONICAL_CARD_DATE=$(node -e "console.log(JSON.parse(require('node:fs').readFileSync('../staging/canonical/today.json','utf8')).date)") node verify-live.mjs
           cp ../src/card-v3.js ./src/card-v3.js
           node --input-type=module <<'JS'
