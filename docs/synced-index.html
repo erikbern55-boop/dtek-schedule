@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Світлопульс · синхронізована картка</title></head>
+<body style="background:#03150e;color:#d9ffe2;font-family:system-ui"><p>Відкриваємо актуальну картку Світлопульсу…</p>
+<script>
+const day=new URLSearchParams(location.search).get("day")==="tomorrow"?"tomorrow":"today";
+location.replace("./synced-"+day+".html");
+</script></body></html>
