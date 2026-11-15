@@ -694,7 +694,7 @@ export async function renderCardV3Png(details) {
   const browser=await chromium.launch({headless:true})
   try {
     const page=await browser.newPage({viewport:{width:1404,height:900},deviceScaleFactor:1})
-    await page.setContent(buildCardV3Html(details),{waitUntil:"load"})
+    await page.setContent(buildCardV3Html(details).replace("🗓️ ", '<span class="v3-calendar-icon" aria-hidden="true">▦</span> '),{waitUntil:"load"})
     // A screenshot must not silently capture an empty photo frame.
     await page.locator(".weather-garden .wx-garden-art img").evaluate(async img=>{
       if(!img.complete)await new Promise((resolve,reject)=>{
