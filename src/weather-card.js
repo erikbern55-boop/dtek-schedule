@@ -145,6 +145,9 @@ export const WEATHER_CSS = [
   '.wx-moon-row{font-size:21px;padding:7px 1px;border-bottom:1px solid #245e44;',
   'display:flex;justify-content:space-between;gap:9px;line-height:1.3}',
   '.wx-moon-row b{color:#fafffc;text-align:right}',
+  '.weather-moon .wx-moon-rows .wx-moon-row:first-child{border:2px solid #f3dc4b;border-radius:10px;',
+  'padding:6px 9px;margin:2px 0 5px;background:#183a22;box-shadow:0 0 7px #a6a02b66}',
+  '.weather-moon .wx-lunar-day{color:#fff5a1;font-weight:900}',
   '.wx-garden-body{display:flex;gap:14px;align-items:flex-start}',
   '.wx-garden-art{font-size:95px;line-height:1.05;min-width:120px;',
   'text-align:center;background:radial-gradient(circle,#1c5b31,#08261a 72%);',
@@ -259,7 +262,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
     '<div class="wx-moon-main"><div class="wx-moon-icon">'+moonDiscSvg(moon)+'</div>'+
     '<div><div class="wx-moon-number">'+esc(moon.lunarDay)+'-й день</div>'+
     '<div class="wx-moon-note">від молодика<br>на 12:00 за Києвом</div></div></div>'+
-    '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
+    '<div class="wx-moon-rows"><div class="wx-moon-row"><span>Місячний день (12:00, Київ):</span><b class="wx-lunar-day">'+esc(moon.lunarDay)+'-й</b></div><div class="wx-moon-row"><span>Фаза Місяця:</span><b>'+esc(moon.phase)+'</b></div>'+
     '<div class="wx-moon-row"><span>Освітленість:</span><b>'+esc(moon.illumination)+'%</b></div>'+
     '<div class="wx-moon-row"><span>Знак Місяця:</span><b>'+esc(moon.zodiac)+'</b></div></div></section>'
   const tip=gardenTip(date,weather)
