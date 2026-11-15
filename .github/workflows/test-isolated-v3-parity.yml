@@ -18,6 +18,11 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
+          ref: test/pages-ubuntu2404-20261115
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
           ref: artifacts
           path: snapshots
           persist-credentials: false
@@ -86,7 +91,7 @@ jobs:
           print(json.dumps({k:v for k,v in report.items() if k!='today.json' and k!='svitlopuls-live.json'},ensure_ascii=False,indent=2))
           PY
       - name: Audit PNG provenance and countdown contract (read-only)
-        run: python3 scripts/audit-snapshot-contract.py
+        run: python3 audit-source/scripts/audit-snapshot-contract.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
