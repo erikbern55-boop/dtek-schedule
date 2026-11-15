@@ -145,7 +145,7 @@ function clarifyCountdown(markup,periods,dayLabel){
   markup=replaceText(markup,'v3-clock',change?change.begin:'—');
   return replaceText(markup,'v3-next',change?'Час початку за графіком ДТЕК · Київ':'Перевіряй зміни графіка ДТЕК');
  }
- const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Kyiv',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now).split(':').map(Number);
+ const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Kyiv',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(renderNow).split(':').map(Number);
  const minute=parts[0]*60+parts[1];
  const parse=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
  const upcoming=periods.some((p,i)=>i>0&&parse(p.begin)>minute&&p.power!==periods[i-1].power);
