@@ -96,7 +96,7 @@ function saveViewerSnapshot(png, label, details) {
 function publishCanonicalSchedule({schedule,date,label,update,source}) {
   // Run only after Telegram confirms an image or caption update.
   const basename=label==="завтра"?"tomorrow":"today"
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))throw Error("Invalid schedule date")
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error("Invalid schedule date")
   const slots=Array(48).fill(null)
   const minute=t=>Number(t.slice(0,2))*60+Number(t.slice(3))
   for(const p of schedule){
