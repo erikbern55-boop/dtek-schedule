@@ -149,6 +149,27 @@ jobs:
           const png=await renderCardV3Png({schedule:canonical.periods,date:canonical.date,label:'сьогодні',source:canonical.source,update:canonical.sourceUpdated,weather:live.weather});
           fs.writeFileSync('dist/telegram-v3-preview.png',png);
           const {buildCardV3Html}=await import('./src/card-v3.js');
+          // Assert the actual weather-backed PNG, not only a synthetic HTML fixture.
+          const actualHtml=buildCardV3Html({schedule:canonical.periods,date:canonical.date,weather:live.weather});
+          const actualPage=await (await import('playwright')).chromium.launch({headless:true});
+          try {
+            const p=await actualPage.newPage({viewport:{width:1404,height:1536},deviceScaleFactor:1});
+            await p.setContent(actualHtml,{waitUntil:'load'});
+            const min=p.locator('.v3-weather .weather-tomorrow .v3-tomorrow-min strong');
+            const max=p.locator('.v3-weather .weather-tomorrow .v3-tomorrow-max strong');
+            assert.equal(await min.count(),1,'Actual PNG missing minimum temperature element');
+            assert.equal(await max.count(),1,'Actual PNG missing maximum temperature element');
+            assert.ok(await min.isVisible()&&await max.isVisible(),'Actual PNG temperatures are hidden');
+            const minText=(await min.innerText()).trim(),maxText=(await max.innerText()).trim();
+            assert.match(minText,/^-?\\d+°C$|^\\+\\d+°C$/,'Actual minimum is missing');
+            assert.match(maxText,/^-?\\d+°C$|^\\+\\d+°C$/,'Actual maximum is missing');
+            const panel=p.locator('.v3-weather .weather-tomorrow');
+            const before=await panel.screenshot();
+            await p.addStyleTag({content:'.v3-tomorrow-min strong,.v3-tomorrow-max strong{visibility:hidden!important}'});
+            const after=await panel.screenshot();
+            assert.notDeepEqual(before,after,'PNG panel has no visible temperature pixels');
+            console.log('PASS actual PNG tomorrow panel:',minText,maxText,'pixel difference verified');
+          } finally {await actualPage.close();}
           const fixtureWeather={...live.weather,tomorrowMin:0,tomorrowMax:6,tomorrowDate:'2026-11-16'};
           const fixtureHtml=buildCardV3Html({schedule:canonical.periods,date:canonical.date,weather:fixtureWeather});
           assert.ok(fixtureHtml.includes('class="v3-tomorrow-min"'),'Minimum container missing');
