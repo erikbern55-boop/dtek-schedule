@@ -55,11 +55,11 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
     "🚨 Аварії: автоматичної перевірки для СТ «Хімік» немає.",
     '🔎 <a href="https://www.dtek-krem.com.ua/ua/shutdowns">Перевірити відключення за адресою в ДТЕК</a>',
   ]
-  if (label === "сьогодні") {
-    const event = nextPowerEvent(schedule, date)
-    if (event.kind === "countdown") {
-      info.unshift("⏱ <b>" + safe(event.title) + ": " + safe(event.remaining) + "</b> · " + safe(event.detail))
-    }
+  const event = nextPowerEvent(schedule, date)
+  if (event.kind === "countdown") {
+    info.unshift("⏱ <b>" + safe(event.title) + ": " + safe(event.remaining) + "</b> · " + safe(event.detail))
+  } else if (event.kind === "future") {
+    info.unshift("⏱ <b>" + safe(event.title) + "</b> · " + safe(event.detail))
   }
   const items = periods.length
     ? periods.map((p) => "🪫 <code>" + safe(p.begin) + " — " + safe(p.end) + "</code>")
