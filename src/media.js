@@ -93,6 +93,29 @@ function saveViewerSnapshot(png, label, details) {
   }
 }
 
+function publishCanonicalSchedule({schedule,date,label,update,source}) {
+  // Run only after Telegram confirms an image or caption update.
+  const basename=label==="завтра"?"tomorrow":"today"
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))throw Error("Invalid schedule date")
+  const slots=Array(48).fill(null)
+  const minute=t=>Number(t.slice(0,2))*60+Number(t.slice(3))
+  for(const p of schedule){
+    const a=minute(p.begin),b=minute(p.end)
+    if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b>1440||a>=b||a%30||b%30||typeof p.power!=="boolean")throw Error("Invalid schedule period")
+    for(let i=a/30;i<b/30;i++){
+      if(slots[i]!==null)throw Error("Overlapping slot "+i)
+      slots[i]=p.power
+    }
+  }
+  if(slots.some(x=>x===null))throw Error("Incomplete 48-slot schedule")
+  fs.mkdirSync("artifacts/web",{recursive:true})
+  const file="artifacts/web/"+basename+".json"
+  const payload={date,label,group:process.env.GROUP||"1.1",generatedAt:new Date().toISOString(),source,sourceUpdated:update,periods:schedule.map(({begin,end,power})=>({begin,end,power}))}
+  fs.writeFileSync(file+".tmp",JSON.stringify(payload,null,2))
+  fs.renameSync(file+".tmp",file)
+  console.log("🟢 Canonical Telegram schedule saved: "+file+" (48/48 slots)")
+}
+
 async function callTelegram(method, body) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) throw Error("Telegram credentials are missing")
   const response = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/" + method, {
@@ -148,6 +171,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         })
         console.log("🟢 Updated the existing card caption")
       }
+      publishCanonicalSchedule({schedule,date,label,update,source})
       saveLastMessage({
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
@@ -177,6 +201,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     const reply = replyTo(lastMessage)
     if (reply) form.set("reply_parameters", JSON.stringify(reply))
     const result = await callTelegram("sendPhoto", form)
+    publishCanonicalSchedule({schedule,date,label,update,source})
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
