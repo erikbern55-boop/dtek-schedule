@@ -59,7 +59,7 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   if (event.kind === "countdown") {
     info.unshift("⏱ <b>" + safe(event.title) + ": " + safe(event.remaining) + "</b> · " + safe(event.detail))
   } else if (event.kind === "future") {
-    info.unshift("⏱ <b>" + safe(event.title) + "</b> · " + safe(event.detail))
+    info.unshift("⏱ <b>" + safe(event.title) + (event.remaining ? ": " + safe(event.remaining) : "") + "</b> · " + safe(event.detail))
   }
   const items = periods.length
     ? periods.map((p) => "🪫 <code>" + safe(p.begin) + " — " + safe(p.end) + "</code>")
