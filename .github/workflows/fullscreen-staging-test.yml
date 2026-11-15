@@ -161,8 +161,8 @@ jobs:
             assert.equal(await max.count(),1,'Actual PNG missing maximum temperature element');
             assert.ok(await min.isVisible()&&await max.isVisible(),'Actual PNG temperatures are hidden');
             const minText=(await min.innerText()).trim(),maxText=(await max.innerText()).trim();
-            assert.match(minText,/^-?\\d+°C$|^\\+\\d+°C$/,'Actual minimum is missing');
-            assert.match(maxText,/^-?\\d+°C$|^\\+\\d+°C$/,'Actual maximum is missing');
+            assert.match(minText,/^-?\d+°C$|^\+\d+°C$/,'Actual minimum is missing');
+            assert.match(maxText,/^-?\d+°C$|^\+\d+°C$/,'Actual maximum is missing');
             const panel=p.locator('.v3-weather .weather-tomorrow');
             const before=await panel.screenshot();
             await p.addStyleTag({content:'.v3-tomorrow-min strong,.v3-tomorrow-max strong{visibility:hidden!important}'});
