@@ -2,7 +2,7 @@ name: TEST isolated V3 generation and snapshot parity (no deploy)
 on:
   push:
     branches: [test/pages-ubuntu2404-20261115]
-    paths: ['.github/workflows/test-isolated-v3-parity.yml', 'scripts/audit-snapshot-contract.py', 'scripts/snapshot_contract.py', 'scripts/test_snapshot_contract.py']
+    paths: ['.github/workflows/test-isolated-v3-parity.yml', 'scripts/audit-snapshot-contract.py', 'scripts/snapshot_contract.py', 'scripts/test_snapshot_contract.py', 'scripts/package-isolated-snapshot.mjs']
   workflow_dispatch:
 permissions:
   contents: read
@@ -61,6 +61,8 @@ jobs:
           cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
           node live-generator.mjs
           node verify-live.mjs
+      - name: Package immutable test snapshot and V3 PNG proof
+        run: node audit-source/scripts/package-isolated-snapshot.mjs
       - name: Compare canonical JSON, V3 JSON and PNG metadata
         if: always()
         run: |
@@ -101,4 +103,5 @@ jobs:
           path: |
             snapshot-parity-report.json
             snapshot-contract-report.json
+            isolated-contract/
           if-no-files-found: warn
