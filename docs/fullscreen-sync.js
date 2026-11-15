@@ -8,6 +8,20 @@
       const response = await fetch('./svitlopuls-live.json?t=' + Date.now(), {cache:'no-store'});
       if (!response.ok) throw new Error('live JSON HTTP ' + response.status);
       const data = await response.json();
+      const canonicalResponse = await fetch('./today.json?t=' + Date.now(), {cache:'no-store'});
+      if (!canonicalResponse.ok) throw new Error('canonical Telegram JSON HTTP ' + canonicalResponse.status);
+      const canonical = await canonicalResponse.json();
+      const normalized = periods => JSON.stringify(periods.map(p => [p.begin,p.end,Boolean(p.power)]));
+      if (!Array.isArray(canonical.periods) || !Array.isArray(data.periods) ||
+          canonical.date !== data.date ||
+          normalized(canonical.periods) !== normalized(data.periods)) {
+        throw new Error('V3 schedule differs from canonical Telegram schedule');
+      }
+      const canonicalStamp = Date.parse(canonical.generatedAt);
+      if (canonical.date !== kyivDay() || !Number.isFinite(canonicalStamp) ||
+          Date.now()-canonicalStamp > 12*60*1000) {
+        throw new Error('canonical Telegram snapshot is stale');
+      }
       const stamp = Date.parse(data.generatedAt);
       fresh = data.live === true && data.date === kyivDay() &&
         Number.isFinite(stamp) && Date.now() - stamp < 12 * 60 * 1000 &&
