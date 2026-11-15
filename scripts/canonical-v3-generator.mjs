@@ -162,6 +162,16 @@ const details={schedule:result.periods,date,label:'сьогодні',update:resu
 let html='';
 if(result.live){
   html=neutralCalendar(clarifyCountdown(buildCardV3Html(details),result.periods,'сьогодні'));
+  const guideLinks=[
+    ['<span><strong>☁ Погода і ґрунт:</strong><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span>','<span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span>'],
+    ['<span><strong>🌱 Агрономічні поради:</strong><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a><a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span>','<span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span>'],
+    ['<span><strong>🌙 Місячний календар:</strong><a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span>','<span><strong>🌙 Місячний календар:</strong><a href="./guide/moon/">Український місячний календар</a></span>'],
+    ['<span><strong>✨ Астропрогноз:</strong><a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span>','<span><strong>✨ Астропрогноз:</strong><a href="./guide/astro/">Український астропрогноз</a></span>'],
+  ];
+  for(const [before,after] of guideLinks){
+    if(!html.includes(before))throw Error('Missing expected fullscreen source link: '+before);
+    html=html.replace(before,after);
+  }
 }else{
   // Never render the old demo schedule as today's DTEK data.
   html='<html lang="uk"><head><meta charset="utf-8"></head><body style="background:#04140b;color:white;font:22px Arial;padding:28px"><h1>Світлопульс 3.0 — тест</h1><p>Актуальний графік ДТЕК недоступний. Дані не відображаються, щоб уникнути помилкових відключень.</p></body></html>';
