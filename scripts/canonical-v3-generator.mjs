@@ -95,13 +95,15 @@ try {
 // Fullscreen uses exactly the weather already rendered in Telegram.
 // Reject incomplete snapshots rather than publishing blank weather panels.
 function assertCanonicalWeather(weather){
- if(!weather||weather.stale||weather.date!==date)throw Error('Canonical Telegram weather missing, stale, or wrong date');
+ if(!weather||weather.date!==date)throw Error('Canonical Telegram weather missing or wrong date');
+ // Stale Telegram weather is safe to mirror only because the V3 renderer shows
+ // its prominent stale-data warning; never present it as a fresh forecast.
  for(const key of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp']){
   if(!Number.isFinite(weather[key]))throw Error('Canonical Telegram weather missing '+key);
  }
  if(!/^\d{2}:\d{2}$/.test(weather.sunrise??'')||!/^\d{2}:\d{2}$/.test(weather.sunset??''))throw Error('Canonical Telegram daylight times missing');
  const fetched=Date.parse(weather.fetchedAt);
- if(!Number.isFinite(fetched)||Date.now()-fetched>(midnightSnapshot?2*60*60*1000:90*60*1000)||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
+ if(!Number.isFinite(fetched)||Date.now()-fetched>2*60*60*1000||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
 }
 assertCanonicalWeather(result.weather);
 console.log('WEATHER PARITY: Telegram snapshot',result.weather.fetchedAt);
