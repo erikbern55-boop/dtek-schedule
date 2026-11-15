@@ -3,7 +3,7 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { checkIsNight, getCurrentTime, saveLastMessage } from "./helpers.js"
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from "./constants.js"
 import { buildCardHtml } from "./card.js"
-import { renderCardV3Png as renderCardPng } from "./card-v3.js"
+import { renderCardV3Png as renderCardPng, buildCardV3Html } from "./card-v3.js"
 
 const safe = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 const MAX_CAPTION = 1024
@@ -93,17 +93,40 @@ function saveViewerSnapshot(png, label, details) {
       periods: details.schedule.map(({begin,end,power}) => ({begin,end,power}))
     }, null, 2))
     // Publish real HTML elements and text, never stretch the Telegram bitmap.
-    const responsiveCss = '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
-      'html,body{width:100%;min-height:100%;overflow:auto!important;background:#03150e!important}' +
-      'body{margin:0!important;padding:8px!important;display:flex!important;align-items:stretch!important;justify-content:center!important}' +
-      '.card{width:100%!important;max-width:none!important;min-height:calc(100dvh - 16px)!important;height:auto!important;margin:0!important;display:flex!important;flex-direction:column!important;gap:clamp(6px,1.3vh,16px)!important}' +
-      '.card .weather-zone{flex:1 1 auto!important;display:flex!important;flex-direction:column!important}' +
-      '.card .wx-grid{flex:1 1 auto!important;grid-auto-rows:minmax(min-content,1fr)!important}' +
-      '.card .wx-box{height:100%!important}.card .power-layout{flex:1 1 auto!important}' +
-      '.card .footer{margin-top:auto!important}' +
-      '@media(max-width:650px){body{padding:4px!important}.card{min-height:calc(100dvh - 8px)!important}}' +
-      '</style>'
-    const html = buildCardHtml(details).replace("</head>",responsiveCss+"</head>")
+    const responsiveCss = `<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"><style>
+html,body{width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:hidden!important}
+body{margin:0!important;background:#020e08!important}
+#v3-stage{width:100%;position:relative;overflow:hidden}
+#v3-card{width:1404px;transform-origin:top left}
+#v3-controls{position:fixed;right:9px;bottom:12px;z-index:100000;display:flex;gap:6px}
+#v3-controls button{font:700 13px system-ui;border:1px solid #79f88c;border-radius:10px;background:#052516;color:#eaffed;padding:9px 11px}
+#v3-stage[data-mode="detail"]{overflow-x:auto;touch-action:pan-x pan-y}
+</style>`;
+    const controls='<nav id="v3-controls" aria-label="Масштаб картки"><button id="v3-fit" type="button">Умістити</button><button id="v3-detail" type="button">100%</button></nav>';
+    const script=`<script>
+(function(){
+const stage=document.getElementById('v3-stage'),card=document.getElementById('v3-card');
+let mode='fit';
+function layout(){
+ const scale=mode==='fit'?Math.min(1,Math.max(1,stage.clientWidth)/1404):1;
+ card.style.transform='scale('+scale+')';
+ stage.style.height=Math.ceil(card.scrollHeight*scale)+'px';
+ stage.style.overflowX=mode==='detail'?'auto':'hidden';
+ stage.dataset.mode=mode;
+}
+document.getElementById('v3-fit').addEventListener('click',()=>{mode='fit';layout();});
+document.getElementById('v3-detail').addEventListener('click',()=>{mode='detail';layout();});
+window.addEventListener('resize',layout);
+window.addEventListener('orientationchange',()=>requestAnimationFrame(layout));
+window.addEventListener('load',layout);
+if('ResizeObserver' in window)new ResizeObserver(layout).observe(card);
+layout();
+})();
+</script>`;
+    let html=buildCardV3Html(details).replace('</head>',responsiveCss+'</head>');
+    html=html.replace(/<body([^>]*)>/i,(_m,attrs)=>'<body'+attrs+'>'+controls+'<div id="v3-stage"><div id="v3-card">');
+    html=html.replace('</article>','</article></div></div>');
+    html=html.replace('</body>',script+'</body>');
     fs.writeFileSync("artifacts/web/" + basename + ".html", html)
   } catch (error) {
     console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
