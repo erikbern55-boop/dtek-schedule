@@ -91,7 +91,7 @@ function assertCanonicalWeather(weather){
  for(const key of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp']){
   if(!Number.isFinite(weather[key]))throw Error('Canonical Telegram weather missing '+key);
  }
- if(!/^\\d{2}:\\d{2}$/.test(weather.sunrise??'')||!/^\\d{2}:\\d{2}$/.test(weather.sunset??''))throw Error('Canonical Telegram daylight times missing');
+ if(!/^\d{2}:\d{2}$/.test(weather.sunrise??'')||!/^\d{2}:\d{2}$/.test(weather.sunset??''))throw Error('Canonical Telegram daylight times missing');
  const fetched=Date.parse(weather.fetchedAt);
  if(!Number.isFinite(fetched)||Date.now()-fetched>90*60*1000||fetched>Date.now()+60000)throw Error('Canonical Telegram weather timestamp invalid or too old');
 }
