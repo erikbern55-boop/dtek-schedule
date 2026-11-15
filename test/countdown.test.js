@@ -46,13 +46,14 @@ test("last period counts down to midnight without inventing tomorrow switch",()=
  assert.match(e.title,/завершення добового графіка/)
 })
 
-test("tomorrow card does not show a ticking timer for today's time",()=>{
+test("tomorrow card counts down to its first scheduled transition",()=>{
  const e=nextPowerEvent(schedule,date,new Date("2026-11-07T19:00:00Z"))
  assert.equal(e.kind,"future")
- assert.equal(e.title,"Перша зміна графіка")
+ assert.equal(e.title,"До першої зміни завтра")
  assert.equal(e.time,"01:30")
  assert.equal(e.detail,"Завтра о 01:30")
- assert.equal(e.remaining,undefined)
+ assert.equal(e.remaining,"04:30")
+ assert.equal(e.minutesRemaining,270)
 })
 
 test("no transitions are handled without promises about actual grid status",()=>{

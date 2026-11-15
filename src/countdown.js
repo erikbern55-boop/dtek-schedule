@@ -24,9 +24,17 @@ export function nextPowerEvent(schedule,date,now=new Date()) {
   }
   if(date>today){
     const first=changes[0]
+    // Show a countdown only for the next calendar day; more distant dates
+    // remain informational to avoid presenting an inaccurate duration.
+    const tomorrow=new Date(now.getTime()+86400000)
+    const isTomorrow=date===dateFormatter.format(tomorrow)
+    const nowMinute=minute(clockFormatter.format(now))
+    const remaining=isTomorrow&&first ? 1440-nowMinute+first.at : null
     return first
-      ? {kind:"future",title:"Перша зміна графіка",detail:"Завтра о "+first.clock,
-         time:first.clock,power:first.power}
+      ? {kind:"future",title:"До першої зміни завтра",detail:"Завтра о "+first.clock,
+         time:first.clock,power:first.power,
+         ...(remaining===null?{}:{minutesRemaining:remaining,
+           remaining:pad(Math.floor(remaining/60))+":"+pad(remaining%60)})}
       : {kind:"future",title:"Зміни завтра не заплановані",
          detail:"За графіком на добу"}
   }
