@@ -21,8 +21,8 @@ src="import {nextPowerTransition,countdownLabel} from './shared-countdown.mjs';\
 replace("clarifyCountdown(buildCardV3Html(details),result.periods,'сьогодні')","sharedCardCountdown(buildCardV3Html(details),result.periods,{periods:daySchedules.tomorrow??null},now)");
 replace('clarifyCountdown(buildCardV3Html({schedule:periods','sharedCardCountdown(buildCardV3Html({schedule:periods');
 replace('}),periods,item.label));',"}),periods,{periods:item.slug==='today'?daySchedules.tomorrow??null:null},now));");
-const begin=src.indexOf('  const toMin=(t)=>',src.indexOf('function tickLive()'));
-const finish=src.indexOf('\n }\n window.__trialSchedule=',begin);
+const begin=src.indexOf(' const toMin=(t)=>',src.indexOf('function tickLive()'));
+const finish=src.indexOf('\n}\n',begin);
 if(begin<0||finish<0)throw Error('Browser countdown section changed');
 const tick=[
 '  const event=nextPowerTransition({periods:data.periods},data.tomorrow,nowMin);',
@@ -32,7 +32,10 @@ const tick=[
 '  if(detailEl)detailEl.textContent=event?(event.day==="tomorrow"?"Завтра ":"Сьогодні ")+event.time+" · Київ · за графіком ДТЕК":"Перевір графік ДТЕК на завтра";'
 ].join('\n');
 src=src.slice(0,begin)+tick+src.slice(finish);
-const marker=' const production='+'$'+'{production};';
+const marker='const production='+'
+replace(marker,' '+pure+'\n'+marker);
+fs.writeFileSync(file,src);
+console.log('PASS test-only V3 countdown integration applied');+'{production};';'
 replace(marker,' '+pure+'\n'+marker);
 fs.writeFileSync(file,src);
 console.log('PASS test-only V3 countdown integration applied');
