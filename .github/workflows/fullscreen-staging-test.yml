@@ -1,0 +1,64 @@
+name: Verify fullscreen staging deployment (no production publish)
+on:
+  pull_request:
+    paths:
+      - 'docs/fullscreen-sync.js'
+      - '.github/workflows/pages.yml'
+      - '.github/workflows/fullscreen-staging-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate script syntax and staging page assembly
+        run: |
+          node --check docs/fullscreen-sync.js
+          mkdir -p staging
+          printf '<!doctype html><html><body><main id="card">V3</main></body></html>' > staging/index.html
+          cp docs/fullscreen-sync.js staging/fullscreen-sync.js
+          python3 - <<'PY'
+          from pathlib import Path
+          page=Path('staging/index.html')
+          html=page.read_text()
+          assert '</body>' in html
+          page.write_text(html.replace('</body>','<script src="./fullscreen-sync.js"></script></body>',1))
+          assert 'fullscreen-sync.js' in page.read_text()
+          PY
+      - name: Test stale/fresh JSON and Telegram fallback behavior
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import vm from 'node:vm';
+          import assert from 'node:assert/strict';
+          const script=fs.readFileSync('docs/fullscreen-sync.js','utf8');
+          const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Kyiv'}).format(new Date());
+          async function run(payload) {
+            const elements=new Map();
+            const document={
+              body:{appendChild(node){elements.set(node.id,node)}},
+              getElementById(id){return elements.get(id)||null},
+              addEventListener(){},
+              hidden:false,
+              createElement(){return {id:'',style:{},innerHTML:'',remove(){elements.delete(this.id)},querySelector(){return {set src(v){this.value=v}}}}}
+            };
+            const ctx={document,console,Date,Intl,setInterval(){},fetch:async()=>({ok:true,json:async()=>payload})};
+            vm.runInNewContext(script,ctx);
+            await new Promise(resolve=>setTimeout(resolve,50));
+            return elements.has('telegram-synced-fallback');
+          }
+          assert.equal(await run({live:true,date:day,generatedAt:new Date().toISOString()}),false,'fresh JSON must keep V3');
+          assert.equal(await run({live:true,date:'2000-01-01',generatedAt:new Date().toISOString()}),true,'wrong day must fall back');
+          assert.equal(await run({live:true,date:day,generatedAt:'2000-01-01T00:00:00Z'}),true,'stale data must fall back');
+          assert.equal(await run({live:false,date:day,generatedAt:new Date().toISOString()}),true,'unavailable DTEK must fall back');
+          console.log('Staging freshness/fallback checks passed');
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fullscreen-staging-site
+          path: staging/
