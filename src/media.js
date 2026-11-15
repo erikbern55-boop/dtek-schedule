@@ -171,7 +171,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
         })
         console.log("🟢 Updated the existing card caption")
       }
-      publishCanonicalSchedule({schedule,date,label,update,source})
+      try { publishCanonicalSchedule({schedule,date,label,update,source}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
       saveLastMessage({
         date: result.date || lastMessage.date,
         message_id: lastMessage.message_id,
@@ -201,7 +201,7 @@ export async function publishCard({ schedule, date, label, update, source, messa
     const reply = replyTo(lastMessage)
     if (reply) form.set("reply_parameters", JSON.stringify(reply))
     const result = await callTelegram("sendPhoto", form)
-    publishCanonicalSchedule({schedule,date,label,update,source})
+    try { publishCanonicalSchedule({schedule,date,label,update,source}) } catch (error) { console.warn("Canonical JSON unavailable: "+error.message) }
     saveLastMessage({
       date: result.date, message_id: result.message_id,
       scheduleText: message.scheduleText, changeSummary: message.changeSummary,
