@@ -1,0 +1,93 @@
+name: TEST isolated V3 generation and snapshot parity (no deploy)
+on:
+  push:
+    branches: [test/pages-ubuntu2404-20261115]
+    paths: ['.github/workflows/test-isolated-v3-parity.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-parity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: artifacts
+          path: snapshots
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/svitlopuls-v3-test
+          ref: main
+          path: v3-test
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: erikbern55-boop/dtek-schedule
+          ref: feature/svitlopuls-v3-independent-generator
+          path: renderer
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: renderer/.nvmrc
+          cache: npm
+          cache-dependency-path: renderer/package-lock.json
+      - name: Install Chromium and dependencies
+        working-directory: renderer
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Generate V3 only in temporary runner workspace
+        working-directory: renderer
+        env:
+          REGION: kr
+          GROUP: '1.1'
+          PRODUCTION_VIEWER: '1'
+          CANONICAL_SNAPSHOT_DIR: '../snapshots/web'
+        run: |
+          cp ../source/scripts/canonical-v3-generator.mjs ./live-generator.mjs
+          cp ../v3-test/verify-live.mjs ./verify-live.mjs
+          cp ../v3-test/svitlopuls_etalon_garlic.png ../v3-test/svitlopuls_etalon_moon.png ./
+          node live-generator.mjs
+          node verify-live.mjs
+      - name: Compare canonical JSON, V3 JSON and PNG metadata
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, datetime, struct
+          root=pathlib.Path('snapshots/web')
+          report={}
+          for name in ('today.json','today.png'):
+            p=root/name
+            report[name]={'exists':p.is_file(),'bytes':p.stat().st_size if p.is_file() else None}
+          png=root/'today.png'
+          if png.is_file():
+            data=png.read_bytes()
+            report['today.png']['pngSignatureValid']=data[:8]==b'\x89PNG\r\n\x1a\n'
+            if len(data)>=24 and report['today.png']['pngSignatureValid']:
+              report['today.png']['dimensions']=list(struct.unpack('>II',data[16:24]))
+            report['today.png']['generatedAt']='not embedded; cannot infer from HTTP Last-Modified'
+          for name,path in [('today.json',root/'today.json'),('svitlopuls-live.json',pathlib.Path('renderer/dist/svitlopuls-live.json'))]:
+            if path.is_file():
+              d=json.loads(path.read_text())
+              report[name]={**report.get(name,{}),'generatedAt':d.get('generatedAt'),'canonicalGeneratedAt':d.get('canonicalGeneratedAt'),'date':d.get('date'),'group':d.get('group'),'weatherFetchedAt':(d.get('weather') or {}).get('fetchedAt'),'weather':{k:(d.get('weather') or {}).get(k) for k in ('currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','currentWind','currentGust','soilTemp')},'periods':d.get('periods')}
+          a=report.get('today.json',{})
+          b=report.get('svitlopuls-live.json',{})
+          report['parity']={k:a.get(k)==b.get(k) for k in ('date','group','weatherFetchedAt','weather','periods')}
+          report['parity']['canonicalGeneratedAt']=a.get('generatedAt')==b.get('canonicalGeneratedAt')
+          report['generatedUTC']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+          pathlib.Path('snapshot-parity-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps({k:v for k,v in report.items() if k!='today.json' and k!='svitlopuls-live.json'},ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: isolated-v3-snapshot-parity
+          path: snapshot-parity-report.json
+          if-no-files-found: warn
