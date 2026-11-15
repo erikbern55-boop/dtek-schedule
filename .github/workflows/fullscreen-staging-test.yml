@@ -103,7 +103,7 @@ jobs:
           for(const field of ['currentTemp','todayMin','todayMax','tomorrowMin','tomorrowMax','soilTemp'])
             assert.ok(Number.isFinite(source.weather[field]),'Missing real weather '+field);
           for(const field of ['sunrise','sunset'])
-            assert.match(source.weather[field],/^\\d{2}:\\d{2}$/,'Missing '+field);
+            assert.match(source.weather[field],/^\d{2}:\d{2}$/,'Missing '+field);
           fs.mkdirSync('staging/canonical',{recursive:true});
           fs.writeFileSync('staging/canonical/today.json',JSON.stringify(source,null,2));
           if(fs.existsSync('telegram-artifacts/web/tomorrow.json'))
