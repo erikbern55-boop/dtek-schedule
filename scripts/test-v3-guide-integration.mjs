@@ -31,12 +31,17 @@ try{
   await page.goto(base+'/',{waitUntil:'domcontentloaded'});
   const link=page.locator('.v3-sources a[href="./guide/'+slug+'/"]');
   const present=await link.count()===1;
-  let opened=false,returned=false,sourceLink=false,photo=false,noOverflow=false;
+  let opened=false,returned=false,sourceLink=false,photo=false,noOverflow=false,novemberContent=true,sourceTarget=true;
   if(present){
    const [popup]=await Promise.all([page.waitForEvent('popup'),link.click()]);
    await popup.waitForLoadState('domcontentloaded');
    opened=popup.url()===base+'/guide/'+slug+'/';
    sourceLink=await popup.getByRole('link',{name:'Переглянути першоджерело'}).count()===1;
+   if(slug==='garden'){
+    const content=await popup.locator('main').innerText();
+    novemberContent=['Листопад: що перевірити','температуру ґрунту','заморозків','сезон посадки'].every(part=>content.includes(part));
+    sourceTarget=await popup.getByRole('link',{name:'Переглянути першоджерело'}).getAttribute('href')==='https://www.meteo.gov.ua/ua/Monitorinh-perezimivli';
+   }
    photo=slug==='astro'||await popup.locator('img.hero').evaluate(async img=>{
     if(!img.complete)await new Promise(resolve=>{
       const timeout=setTimeout(resolve,15000);
@@ -53,7 +58,7 @@ try{
    returned=popup.url()===base+'/'&&await popup.locator('.v3-sources').count()===1;
    await popup.close();
   }
-  const checks={present,opened,returned,sourceLink,photo,noOverflow,noPageErrors:errors.length===0};
+  const checks={present,opened,returned,sourceLink,sourceTarget,novemberContent,photo,noOverflow,noPageErrors:errors.length===0};
   const ok=Object.values(checks).every(Boolean);if(!ok)failed=true;
   results.push({slug,viewport:view.name,ok,checks,errors});
   console.log(ok?'PASS':'FAIL',slug,view.name,JSON.stringify(checks));
