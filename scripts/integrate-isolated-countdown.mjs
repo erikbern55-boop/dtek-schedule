@@ -25,13 +25,19 @@ const begin=src.indexOf(' const toMin=(t)=>',src.indexOf('function tickLive()'))
 const finish=src.indexOf('\n}\n',begin);
 if(begin<0||finish<0)throw Error('Browser countdown section changed');
 const tick=[
-'  const event=nextPowerTransition({periods:data.periods},data.tomorrow,nowMin);',
+'  const controlledMinute=window.__countdownTestMinute;',
+'  const event=nextPowerTransition({periods:data.periods},data.tomorrow,Number.isFinite(controlledMinute)?controlledMinute:nowMin);',
 '  const label=countdownLabel(event);',
 '  clockEl.textContent=label.clock;',
 '  if(headingEl)headingEl.textContent=label.title;',
 '  if(detailEl)detailEl.textContent=event?(event.day==="tomorrow"?"Завтра ":"Сьогодні ")+event.time+" · Київ · за графіком ДТЕК":"Перевір графік ДТЕК на завтра";'
 ].join('\n');
 src=src.slice(0,begin)+tick+src.slice(finish);
+replace('function tickLive(){','function tickLive(){');
+replace(' const stale=!Number.isFinite(generated)||age>12*60000;',' const stale=!Number.isFinite(generated)||age>12*60000;');
+replace('||stale){clockEl.textContent=', '||(stale&&!Number.isFinite(window.__countdownTestMinute))){clockEl.textContent=');
+replace('data.date!==[kyivParts(new Date()).year,kyivParts(new Date()).month,kyivParts(new Date()).day].join(\'-\')','(!Number.isFinite(window.__countdownTestMinute)&&data.date!==[kyivParts(new Date()).year,kyivParts(new Date()).month,kyivParts(new Date()).day].join(\'-\'))');
+replace('tickLive();setInterval(tickLive,1000);','window.__tickCountdownForTest=tickLive;tickLive();setInterval(tickLive,1000);');
 const marker='const production=' + String.fromCharCode(36) + '{production};';
 replace(marker,' '+pure+'\n'+marker);
 fs.writeFileSync(file,src);
