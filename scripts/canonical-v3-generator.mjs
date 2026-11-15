@@ -77,7 +77,7 @@ try {
       result.periods=normalized;
       result.source=canonical.source;
       result.sourceUpdated=String(canonical.sourceUpdated??'');
-      result.generatedAt=canonical.generatedAt;
+      result.canonicalGeneratedAt=canonical.generatedAt;
       result.live=true;
     }
   }
