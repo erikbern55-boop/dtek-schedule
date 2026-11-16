@@ -47,6 +47,37 @@ export function isSlipaEpisodeTitle(title) {
     !/(анонс|трейлер|тизер|короткий\s+огляд|шортс|shorts?)/iu.test(value)
 }
 
+async function sendEpisodeNotification(entry) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    throw new Error("Telegram token or chat ID is missing")
+  }
+  const response = await fetch(
+    "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: "🎬 <b>Вийшла нова серія «Сліпа»!</b>\n\n" +
+          entry.title.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+        parse_mode: "HTML",
+        disable_notification: checkIsNight(),
+        reply_markup: {
+          inline_keyboard: [[{
+            text: "▶️ Дивитися серію на YouTube",
+            url: entry.url,
+          }]],
+        },
+      }),
+      signal: AbortSignal.timeout(20_000),
+    },
+  )
+  const result = await response.json()
+  if (!response.ok || !result.ok) {
+    throw new Error("Telegram Slipa notification: " + (result.description || response.status))
+  }
+  return result.result
+}
+
 // The first run records the current latest upload as a baseline. Later runs
 // notify once per new episode and persist progress after each successful send.
 export async function publishNewSlipaEpisodes({
