@@ -11,7 +11,7 @@ const schedule=[
 {begin:"22:30",end:"24:00",power:true},
 ]
 const weather={
- currentTemp:3,currentNowTemp:3,currentNowCode:2,currentNowWind:4,
+ currentTemp:3,currentNowTemp:3,currentNowCode:2,currentNowWind:4,currentNowPressure:1008,currentNowHumidity:72,
  todayDate:"2026-11-07",todayMin:-1,todayMax:8,todayRain:35,todayGust:11,
  tomorrowDate:"2026-11-08",tomorrowMin:-2,tomorrowMax:5,
  min:-1,max:8,currentWind:5,rain:35,gust:11,code:2,
@@ -90,13 +90,16 @@ try {
  assert.ok(geometry.footer.y>=geometry.weather.bottom-3,"footer below weather")
  assert.ok(geometry.card.bottom>=geometry.footer.bottom,"footer within card")
  assert.ok(geometry.items.every(x=>!x.clipped),"weather panels must not clip")
- assert.equal(geometry.windRows.length,2)
+ assert.equal(geometry.windRows.length,5)
  for(const wind of geometry.windRows) {
   assert.ok(wind.scrollWidth<=wind.clientWidth+2,"wind text must not overflow")
   assert.ok(wind.childRight<=wind.rowRight+2,"wind value visible")
  }
  assert.match(geometry.windRows[0].label,/Вітер зараз/)
- assert.match(geometry.windRows[1].label,/Пориви вітру сьогодні/)
+ assert.match(geometry.windRows[1].label,/Пориви сьогодні/)
+ assert.match(geometry.windRows[2].label,/Опади сьогодні/)
+ assert.match(geometry.windRows[3].label,/Тиск/)
+ assert.match(geometry.windRows[4].label,/Вологість/)
  assert.ok(geometry.garden.bottom<=geometry.soil.y+3)
  assert.ok(geometry.soil.x>=geometry.garden.x-3,"soil belongs in right column")
   assert.ok(geometry.sun.x<geometry.soil.x,"sun belongs in left column")

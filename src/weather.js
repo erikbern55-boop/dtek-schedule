@@ -20,7 +20,7 @@ export function weatherApiUrl() {
   const p = {
     latitude: String(KHIMIK.latitude), longitude: String(KHIMIK.longitude),
     timezone: "Europe/Kyiv", wind_speed_unit: "ms", forecast_days: "3",
-    current: "temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day",
+    current: "temperature_2m,relative_humidity_2m,surface_pressure,weather_code,wind_speed_10m,wind_gusts_10m,is_day",
     hourly: "soil_temperature_6cm",
     daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,wind_gusts_10m_max",
   }
@@ -181,6 +181,8 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentNowTemp: Number.isFinite(currentNow?.temperature_2m) ? currentNow.temperature_2m : null,
     currentNowCode: Number.isFinite(currentNow?.weather_code) ? currentNow.weather_code : null,
     currentNowWind: Number.isFinite(currentNow?.wind_speed_10m) ? currentNow.wind_speed_10m : null,
+    currentNowPressure: Number.isFinite(currentNow?.surface_pressure) ? currentNow.surface_pressure : null,
+    currentNowHumidity: Number.isFinite(currentNow?.relative_humidity_2m) ? currentNow.relative_humidity_2m : null,
     currentNowGust: Number.isFinite(currentNow?.wind_gusts_10m) ? currentNow.wind_gusts_10m : null,
     currentNowAt: currentNow?.time ?? null,
     todayDate, todayMin, todayMax, todayRain, todayGust,

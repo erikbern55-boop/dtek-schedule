@@ -18,7 +18,7 @@ const sample={
     "2026-11-08T12:00","2026-11-09T12:00"],
   soil_temperature_6cm:[2.5,3.2,3.4,3.6,4.5,5.2,6.1,7.0],
  },
- current:{temperature_2m:-1,weather_code:3,wind_speed_10m:4},
+ current:{temperature_2m:-1,relative_humidity_2m:72,surface_pressure:1008,weather_code:3,wind_speed_10m:4},
  daily:{
   time:dates,weather_code:[3,61,2],
   temperature_2m_max:[6,8,9],
@@ -221,8 +221,8 @@ test("today and tomorrow cards both show actual current reading and clearly labe
    assert.match(html,/class="wx-now">-1°C<\/div>/)
    assert.match(html,/Мінімум<b>-3°C<\/b>/)
    assert.match(html,/Максимум<b>\+6°C<\/b>/)
-   assert.match(html,/Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
-   assert.match(html,/Імовірність опадів сьогодні: <b>65%<\/b>/)
+   assert.match(html,/Пориви сьогодні <b>17 м\/с<\/b>/)
+   assert.match(html,/Опади сьогодні <b>65%<\/b>/)
    assert.match(html,/Мінімум<b>\+2°C<\/b>/)
    assert.match(html,/Максимум<b>\+8°C<\/b>/)
    assert.doesNotMatch(html,/class="wx-now">\+8°C<\/div>/)
@@ -238,10 +238,10 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
   for (const h of [today,tomorrow]) {
     assert.match(h,/Сьогодні · 07\.11/)
     assert.match(h,/Завтра · 08\.11/)
-    assert.match(h,/Вітер зараз: <b>4 м\/с<\/b>/)
+    assert.match(h,/Вітер зараз <b>4 м\/с<\/b>/)
     const markers=[
       "Температура зараз","Сьогодні · 07.11",
-      "Вітер зараз","Пориви вітру сьогодні","Імовірність опадів сьогодні",
+      "Вітер зараз","Пориви сьогодні","Опади сьогодні",
       "Завтра · 08.11",
     ]
     let prev=-1
@@ -250,7 +250,7 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
       assert.ok(at>prev,"Incorrect weather order for "+marker)
       prev=at
     }
-    assert.equal((h.match(/Імовірність опадів сьогодні/g)||[]).length,1)
+    assert.equal((h.match(/Опади сьогодні/g)||[]).length,1)
   }
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
@@ -265,8 +265,8 @@ test("wind now and daily wind gusts have clear labels and correct units on both 
   ]){
    const w=weatherForDate(snap,day,start)
    const h=renderWeatherPanel(w,day,label)
-   assert.match(h,/Вітер зараз: <b>4 м\/с<\/b>/)
-   assert.match(h,/Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
+   assert.match(h,/Вітер зараз <b>4 м\/с<\/b>/)
+   assert.match(h,/Пориви сьогодні <b>17 м\/с<\/b>/)
    assert.doesNotMatch(h,/Пориви вітру завтра: <b>9 м\/с/)
   }
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
@@ -315,11 +315,11 @@ test("current wind and today's gusts are two full-width, readable rows",async()=
   const snap=await loadWeather({now:start,file,requester:async()=>sender()})
   for(const [date,label] of [["2026-11-07","сьогодні"],["2026-11-08","завтра"]]){
    const h=renderWeatherPanel(weatherForDate(snap,date,start),date,label)
-   assert.match(h,/class="wx-fact wide windline">🌬 Вітер зараз: <b>4 м\/с<\/b>/)
-   assert.match(h,/class="wx-fact wide gust windline">💨 Пориви вітру сьогодні: <b>17 м\/с<\/b>/)
-   assert.ok(h.indexOf("Вітер зараз")<h.indexOf("Пориви вітру сьогодні"))
-   assert.ok(h.indexOf("Пориви вітру сьогодні")<h.indexOf("Імовірність опадів сьогодні"))
-   assert.ok(h.indexOf("Імовірність опадів сьогодні")<h.indexOf("Завтра ·"))
+   assert.match(h,/class="wx-fact windline">🌬 Вітер зараз <b>4 м\/с<\/b>/)
+   assert.match(h,/class="wx-fact windline">💨 Пориви сьогодні <b>17 м\/с<\/b>/)
+   assert.ok(h.indexOf("Вітер зараз")<h.indexOf("Пориви сьогодні"))
+   assert.ok(h.indexOf("Пориви сьогодні")<h.indexOf("Опади сьогодні"))
+   assert.ok(h.indexOf("Опади сьогодні")<h.indexOf("Завтра ·"))
   }
  }finally{fs.rmSync(d,{recursive:true,force:true})}
 })

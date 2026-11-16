@@ -5,6 +5,7 @@ on:
       - 'docs/fullscreen-sync.js'
       - 'src/media.js'
       - 'src/card-v3.js'
+      - 'src/weather-card.js'
       - '.github/workflows/pages.yml'
       - 'scripts/canonical-v3-generator.mjs'
       - 'guide/**'
@@ -200,6 +201,7 @@ jobs:
           JS
           CANONICAL_CARD_DATE=$(node -e "console.log(JSON.parse(require('node:fs').readFileSync('../staging/canonical/today.json','utf8')).date)") node verify-live.mjs
           cp ../src/card-v3.js ./src/card-v3.js
+          cp ../src/weather-card.js ./src/weather-card.js
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           import assert from 'node:assert/strict';
