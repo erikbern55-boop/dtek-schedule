@@ -250,7 +250,7 @@ test("day-specific range and tomorrow range are not conflated",async()=>{
       assert.ok(at>prev,"Incorrect weather order for "+marker)
       prev=at
     }
-    assert.equal((h.match(/Імовірність опадів сьогодні/g)||[]).length,1)
+    assert.equal((h.match(/Опади сьогодні/g)||[]).length,1)
   }
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 })
