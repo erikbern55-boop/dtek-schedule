@@ -22,4 +22,7 @@ test("currency source is directly beside the astro link in the fullscreen card",
   const card = fs.readFileSync(new URL("../src/card-v3.js", import.meta.url), "utf8");
   const astroSource = card.match(/<strong>✨ Астропрогноз:<\/strong><a href="\.\/guide\/astro\/">Відкрити довідник<\/a><a href="https:\/\/minfin\.com\.ua\/ua\/currency\/kiev\/"[^>]*>💱 Курс валют<\/a>/);
   assert.ok(astroSource, "Minfin link should be next to the astro guide in the same source block");
+  const generator = fs.readFileSync(new URL("../scripts/canonical-v3-generator.mjs", import.meta.url), "utf8");
+  assert.match(generator, /<a href="\.\/guide\/astro\/">Український астропрогноз<\/a><a href="https:\/\/minfin\.com\.ua\/ua\/currency\/kiev\/"[^>]*>💱 Курс валют<\/a>/,
+    "published fullscreen viewer generator should keep the currency link beside the Ukrainian astro link");
 });

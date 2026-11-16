@@ -166,7 +166,7 @@ if(result.live){
     ['<span><strong>☁ Погода і ґрунт:</strong><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span>','<span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span>'],
     ['<span><strong>🌱 Агрономічні поради:</strong><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a><a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span>','<span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span>'],
     ['<span><strong>🌙 Місячний календар:</strong><a href="https://www.astronomy.com/" target="_blank" rel="noopener noreferrer">Astronomy.com</a></span>','<span><strong>🌙 Місячний календар:</strong><a href="./guide/moon/">Український місячний календар</a></span>'],
-    ['<span><strong>✨ Астропрогноз:</strong><a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span>','<span><strong>✨ Астропрогноз:</strong><a href="./guide/astro/">Український астропрогноз</a></span>'],
+    ['<span><strong>✨ Астропрогноз:</strong><a href="https://www.astro-seek.com/" target="_blank" rel="noopener noreferrer">AstroSeek</a></span>','<span><strong>✨ Астропрогноз:</strong><a href="./guide/astro/">Український астропрогноз</a><a href="https://minfin.com.ua/ua/currency/kiev/" target="_blank" rel="noopener noreferrer">💱 Курс валют</a></span>'],
   ];
   for(const [before,after] of guideLinks){
     if(!html.includes(before))throw Error('Missing expected fullscreen source link: '+before);
