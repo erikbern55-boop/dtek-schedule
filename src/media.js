@@ -171,15 +171,43 @@ function publishCanonicalSchedule({schedule,date,label,update,source,weather}) {
 
 async function callTelegram(method, body) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) throw Error("Telegram credentials are missing")
-  const response = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/" + method, {
-    method: "POST",
-    ...(body instanceof FormData ? { body } :
-      { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
-    signal: AbortSignal.timeout(25_000),
-  })
-  const result = await response.json()
-  if (!response.ok || !result.ok) throw Error(method + ": " + (result.description || response.status))
-  return result.result
+
+  // Editing an existing card is idempotent. Retry Telegram's transient 5xx,
+  // rate-limit, and network failures so one temporary outage cannot leave a
+  // stale image until the next scheduled poll.
+  const canRetry = method === "editMessageMedia" || method === "editMessageCaption"
+  const maxAttempts = canRetry ? 3 : 1
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let response
+    let result
+    try {
+      response = await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/" + method, {
+        method: "POST",
+        ...(body instanceof FormData ? { body } :
+          { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+        signal: AbortSignal.timeout(25_000),
+      })
+      result = await response.json()
+    } catch (error) {
+      if (attempt === maxAttempts) throw Error(method + ": " + error.message)
+      console.warn("⚠️ " + method + " network error; retrying (" + attempt + "/" + maxAttempts + "): " + error.message)
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
+      continue
+    }
+
+    if (response.ok && result.ok) return result.result
+
+    const error = Error(method + ": " + (result.description || response.status))
+    const retryable = response.status >= 500 || response.status === 429
+    if (!retryable || attempt === maxAttempts) throw error
+
+    const retryAfter = Number(result.parameters?.retry_after)
+    const delayMs = response.status === 429 && Number.isFinite(retryAfter)
+      ? retryAfter * 1000
+      : 1000 * attempt
+    console.warn("⚠️ " + error.message + "; retrying (" + attempt + "/" + maxAttempts + ")")
+    await new Promise(resolve => setTimeout(resolve, delayMs))
+  }
 }
 
 function replyTo(last) {
@@ -235,7 +263,8 @@ export async function publishCard({ schedule, date, label, update, source, messa
       if (String(error).includes("message is not modified")) {
         console.log("🟡 Caption already up to date")
       } else {
-        console.warn("⚠️ Telegram photo edit failed: " + error.message)
+        console.error("❌ Telegram card edit failed after retries: " + error.message)
+        throw error
       }
     }
     return
