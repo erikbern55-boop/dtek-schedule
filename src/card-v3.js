@@ -701,7 +701,7 @@ export function buildCardV3Html({schedule,date,label="сьогодні",source="
     '<div class="v3-weather">'+weatherWithTomorrow+'</div>'+
     '<section class="v3-sources"><b>▰ Джерела та<br>методика</b>'+
     '<span><strong>⚡ Графіки відключень:</strong><a href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer">ДТЕК · dtek.com.ua</a></span>'+
-    '<span><strong>💡 Корисні хитрощі:</strong><a href="./guide/lifehacks/">Дім · кухня · сад · захист рослин</a></span>'+
+    '<span><strong>💡 Корисні хитрощі:</strong><a href="https://erikbern55-boop.github.io/dtek-schedule/guide/lifehacks/">Дім · кухня · сад · захист рослин</a></span>'+
     '<span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span>'+
     '<span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span>'+
     '<span><strong>🌙 Місячний календар:</strong><a href="./guide/moon/">Відкрити довідник</a></span>'+
