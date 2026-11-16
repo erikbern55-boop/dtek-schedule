@@ -635,7 +635,7 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art{background:#26371c!important;overflow:hidden!important}",
   ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
   ".v3-sources .v3-tips-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;align-self:flex-start!important;padding:7px 11px!important;border:1px solid #82ff9b!important;border-radius:12px!important;background:linear-gradient(135deg,#38c764,#157d3a)!important;color:#04240f!important;text-decoration:none!important;font-size:14px!important;font-weight:800!important;line-height:1.2!important;box-shadow:0 0 10px #32e06666!important;white-space:nowrap!important}",
-  ".v3-weather .weather-air .wx-fact{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 2px!important;font-size:12px!important;line-height:1.05!important;white-space:nowrap!important;border-bottom:1px solid #287b3c!important}",
+  ".v3-weather .weather-air .wx-fact{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 2px!important;font-size:12px!important;line-height:1.05!important;min-height:0!important;white-space:nowrap!important;border-bottom:1px solid #287b3c!important}",
   ".v3-weather .weather-air .wx-fact b{font-size:14px!important;white-space:nowrap!important}",
 ].join("\n")
 
