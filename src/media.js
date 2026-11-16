@@ -20,13 +20,16 @@ function viewerKeyboard(label) {
       { text: "🌱 Городникам", url: VIEWER_URL + "guide/garden/" },
       { text: "🌙 Місячний календар", url: VIEWER_URL + "guide/moon/" },
     ],
-    [{ text: "✨ Астропрогноз", url: VIEWER_URL + "guide/astro/" }],
+    [
+      { text: "✨ Астропрогноз", url: VIEWER_URL + "guide/astro/" },
+      { text: "💱 Курс валют", url: "https://minfin.com.ua/ua/currency/kiev/" },
+    ],
   ] }
 }
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-15-neon-v3-countdown-caption-uk-links-v3"
+export const CARD_RENDER_VERSION = "2026-11-16-neon-v3-currency-link-uk"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
