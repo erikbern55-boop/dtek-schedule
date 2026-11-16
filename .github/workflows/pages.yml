@@ -96,7 +96,7 @@ jobs:
         run: |
           mkdir -p site
           mkdir -p site/guide
-          for section in weather garden moon astro; do
+          for section in weather garden moon astro lifehacks; do
             cp -R "source/guide/$section" "site/guide/$section"
             test -s "site/guide/$section/index.html"
           done
