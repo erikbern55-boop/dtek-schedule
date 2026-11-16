@@ -152,8 +152,11 @@ function clarifyCountdown(markup,periods,dayLabel){
  const parse=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
  const upcoming=periods.some((p,i)=>i>0&&parse(p.begin)>minute&&p.power!==periods[i-1].power);
  if(!upcoming){
-  markup=replaceText(markup,'v3-count-event','До кінця доби змін немає');
-  markup=replaceText(markup,'v3-clock','00:00');
+  const remaining=Math.max(0,1440-minute);
+  const clock=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+  markup=replaceText(markup,'v3-count-event','До кінця графіка на сьогодні');
+  markup=replaceText(markup,'v3-clock',clock);
+  markup=replaceText(markup,'v3-next','Завтрашній графік ще не опубліковано ДТЕК');
  }
  return markup;
 }
@@ -231,7 +234,11 @@ function tickLive(){
     return;
    }
   }
-  clockEl.textContent='—:—';if(headingEl)headingEl.textContent='Наступну подію не визначено';if(detailEl)detailEl.textContent='Перевір графік ДТЕК на завтра';return;
+  const remaining=Math.max(0,Math.ceil(1440-nowMin));
+  clockEl.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+  if(headingEl)headingEl.textContent='До кінця графіка на сьогодні';
+  if(detailEl)detailEl.textContent='Завтрашній графік ще не опубліковано ДТЕК';
+  return;
  }
  const remaining=Math.max(0,Math.ceil(toMin(next.begin)-nowMin));
  clockEl.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
