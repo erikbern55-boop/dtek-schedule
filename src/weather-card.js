@@ -6,6 +6,9 @@ const esc = x => String(x ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
   .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
 const temp = x => Number.isFinite(x) ? (Math.round(x)>0?"+":"") + Math.round(x)+"°C" : "—"
 const val = (x,unit) => Number.isFinite(x) ? Math.round(x)+unit : "—"
+const pressureValue = hPa => Number.isFinite(hPa)
+  ? `${Math.round(hPa)} гПа / ${Math.round(hPa * 0.750061683)} мм рт. ст.`
+  : "—"
 // Contextual icons are derived from today's actual recommendation text.
 // Prioritize specific crops before general weather or gardening actions.
 const adviceIcons = text => {
@@ -230,7 +233,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні",layout=
       '<div class="wx-fact windline">🌬 Вітер зараз <b>'+esc(val(weather.currentNowWind??weather.currentWind," м/с"))+'</b></div>'+
       '<div class="wx-fact windline">💨 Пориви сьогодні <b>'+esc(val(weather.todayGust," м/с"))+'</b></div>'+
       '<div class="wx-fact windline">☔ Опади сьогодні <b>'+esc(val(weather.todayRain,"%"))+'</b></div>'+
-      '<div class="wx-fact windline">🧭 Тиск <b>'+esc(val(weather.currentNowPressure," гПа"))+'</b></div>'+
+      '<div class="wx-fact windline wx-pressure">🧭 Тиск <b>'+esc(pressureValue(weather.currentNowPressure))+'</b></div>'+
       '<div class="wx-fact windline">💧 Вологість <b>'+esc(val(weather.currentNowHumidity,"%"))+'</b></div>'+
       '</div>'+
       (hasTomorrow
