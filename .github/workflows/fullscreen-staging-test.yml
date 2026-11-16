@@ -181,8 +181,14 @@ jobs:
           import fs from 'node:fs';
           import assert from 'node:assert/strict';
           const html=fs.readFileSync('dist/index.html','utf8');
-          for (const slug of ['weather','garden','moon','astro']) {
-            const href='./guide/'+slug+'/';
+          const guideRoutes={
+            weather:'./guide/weather/',
+            garden:'./guide/garden/',
+            moon:'./guide/moon/',
+            astro:'./guide/astro/',
+            lifehacks:'https://erikbern55-boop.github.io/dtek-schedule/guide/lifehacks/'
+          };
+          for (const [slug,href] of Object.entries(guideRoutes)) {
             assert.ok(html.includes('href="'+href+'"'), 'Fullscreen card missing Ukrainian guide route '+href);
             const page=fs.readFileSync('../guide/'+slug+'/index.html','utf8');
             assert.match(page,/<html lang="uk"/i,'Guide must declare Ukrainian language: '+slug);
@@ -190,7 +196,7 @@ jobs:
             assert.doesNotMatch(page,/тестовий макет|без публікації|3\.0 \(тест\)/i,'Guide must be publication-ready: '+slug);
             assert.match(page,/<h1\b/i,'Guide heading missing: '+slug);
           }
-          console.log('PASS: all four Ukrainian fullscreen guide links resolve to Ukrainian pages');
+          console.log('PASS: all five Ukrainian fullscreen guide links resolve to Ukrainian pages');
           JS
           CANONICAL_CARD_DATE=$(node -e "console.log(JSON.parse(require('node:fs').readFileSync('../staging/canonical/today.json','utf8')).date)") node verify-live.mjs
           cp ../src/card-v3.js ./src/card-v3.js
