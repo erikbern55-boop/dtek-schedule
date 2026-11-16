@@ -13,7 +13,6 @@ const USEFUL_TIPS_URL = VIEWER_URL + "guide/lifehacks/?v=20261116-hochu-home-gar
 function viewerKeyboard(label) {
   return { inline_keyboard: [
     [{ text: "⛶ Відкрити на весь екран", url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today") }],
-    [{ text: "💡 Корисні хитрощі", url: USEFUL_TIPS_URL }],
     [
       { text: "⚡ ДТЕК", url: "https://www.dtek-krem.com.ua/ua/shutdowns" },
       { text: "🌤 Погода", url: VIEWER_URL + "guide/weather/" },
@@ -33,7 +32,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-16-neon-v3-hochu-home-garden"
+export const CARD_RENDER_VERSION = "2026-11-16-neon-v3-hochu-home-garden-one-tips-button"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
