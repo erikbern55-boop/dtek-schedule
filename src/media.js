@@ -12,6 +12,7 @@ const VIEWER_URL = "https://erikbern55-boop.github.io/dtek-schedule/"
 function viewerKeyboard(label) {
   return { inline_keyboard: [
     [{ text: "⛶ Відкрити на весь екран", url: VIEWER_URL + "?day=" + (label === "завтра" ? "tomorrow" : "today") }],
+    [{ text: "💡 Корисні хитрощі", url: VIEWER_URL + "guide/lifehacks/" }],
     [
       { text: "⚡ ДТЕК", url: "https://www.dtek-krem.com.ua/ua/shutdowns" },
       { text: "🌤 Погода", url: VIEWER_URL + "guide/weather/" },
@@ -29,7 +30,7 @@ function viewerKeyboard(label) {
 
 // A visual redesign must update the existing Telegram photo even if neither
 // the weather timestamp nor the power schedule has changed.
-export const CARD_RENDER_VERSION = "2026-11-16-neon-v3-currency-link-uk"
+export const CARD_RENDER_VERSION = "2026-11-16-neon-v3-useful-tips-menu-v1"
 
 export function imageNeedsRefresh(lastMessage, { source, update, weatherStamp, countdownTick }) {
   return lastMessage.source !== source ||
