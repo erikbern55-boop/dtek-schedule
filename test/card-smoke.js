@@ -96,7 +96,10 @@ try {
   assert.ok(wind.childRight<=wind.rowRight+2,"wind value visible")
  }
  assert.match(geometry.windRows[0].label,/Вітер зараз/)
- assert.match(geometry.windRows[1].label,/Пориви сьогодні/)\n assert.match(geometry.windRows[2].label,/Опади сьогодні/)\n assert.match(geometry.windRows[3].label,/Тиск/)\n assert.match(geometry.windRows[4].label,/Вологість/)
+ assert.match(geometry.windRows[1].label,/Пориви сьогодні/)
+ assert.match(geometry.windRows[2].label,/Опади сьогодні/)
+ assert.match(geometry.windRows[3].label,/Тиск/)
+ assert.match(geometry.windRows[4].label,/Вологість/)
  assert.ok(geometry.garden.bottom<=geometry.soil.y+3)
  assert.ok(geometry.soil.x>=geometry.garden.x-3,"soil belongs in right column")
   assert.ok(geometry.sun.x<geometry.soil.x,"sun belongs in left column")
