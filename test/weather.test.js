@@ -272,6 +272,13 @@ test("wind now and daily wind gusts have clear labels and correct units on both 
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 })
 
+test("pressure is displayed in hectopascals and millimeters of mercury",()=>{
+ const html=renderWeatherPanel({currentNowPressure:1008,currentNowHumidity:72,
+   currentNowTemp:-1,currentNowWind:4,todayMin:-3,todayMax:6,todayRain:65,todayGust:17,
+   tomorrowMin:2,tomorrowMax:8,tomorrowDate:"2026-11-08"},"2026-11-07")
+ assert.match(html,/Тиск <b>1008 гПа \/ 756 мм рт\. ст\.<\/b>/)
+})
+
 test("astrology is visibly marked as entertainment, independent of weather availability",()=>{
  const day="2026-11-08"
  for (const w of [null,{currentNowTemp:2,soilTemp:5,code:2,min:0,max:6,
