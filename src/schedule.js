@@ -4,6 +4,7 @@ import { calculateDailyTotals, formatDuration } from "./summary.js"
 import { publishCard } from "./media.js"
 import { loadWeather, weatherForDate } from "./weather.js"
 import { publishDueTransitions } from "./transitions.js"
+import { publishNewSlipaEpisodes } from "./series.js"
 
 import {
   createPeriod,
@@ -106,6 +107,13 @@ function generateMessage(schedule = [], update, lastMessage = {}, dayLabel, date
 }
 
 async function run() {
+  try {
+    await publishNewSlipaEpisodes()
+  } catch (error) {
+    // A YouTube feed failure must never block DTEK schedule generation.
+    console.warn("⚠️ Slipa episode check failed: " + error.message)
+  }
+
   const { fact, source } = await getShutdownsData()
   const days = selectScheduleDays(fact)
   if (!days.length) {
