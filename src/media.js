@@ -27,6 +27,7 @@ function viewerKeyboard(label) {
       { text: "💱 Курс валют", url: "https://minfin.com.ua/ua/currency/kiev/" },
     ],
     [{ text: "💡 Корисні хитрощі", url: USEFUL_TIPS_URL }],
+    [{ text: "🎬 Українські фільми й серіали", url: VIEWER_URL + "guide/cinema/" }],
   ] }
 }
 
