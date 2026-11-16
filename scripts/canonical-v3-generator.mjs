@@ -218,6 +218,12 @@ function tickLive(){
  const nowMin=Number(k.hour)*60+Number(k.minute)+Number(k.second)/60;
  const toMin=(t)=>{const m=/^([0-9]{2}):([0-9]{2})$/.exec(t||'');return m?Number(m[1])*60+Number(m[2]):NaN};
  const periods=data.periods;
+ const showCountdown=(minutes)=>{
+  const total=Math.max(0,Math.ceil(minutes*60));
+  const parts=[Math.floor(total/3600),Math.floor(total%3600/60),total%60];
+  clockEl.textContent=parts.map(value=>String(value).padStart(2,'0')).join(':');
+  clockEl.style.fontSize='54px';
+ };
  const next=periods.find((p,i)=>i>0&&toMin(p.begin)>nowMin&&p.power!==periods[i-1].power);
  if(!next){
   const tomorrow=data.tomorrow;
@@ -227,21 +233,18 @@ function tickLive(){
    const midnight=tomorrowPeriods[0]?.power!==current;
    const first=midnight?{begin:'00:00',power:tomorrowPeriods[0].power}:tomorrowPeriods.find((p,i)=>i>0&&p.power!==tomorrowPeriods[i-1].power);
    if(first){
-    const remaining=Math.max(0,Math.ceil(1440-nowMin+toMin(first.begin)));
-    clockEl.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+    showCountdown(1440-nowMin+toMin(first.begin));
     if(headingEl)headingEl.textContent=first.power?'До наступного ввімкнення':'До наступного вимкнення';
     if(detailEl)detailEl.textContent='Завтра '+first.begin+' · Київ · за графіком ДТЕК';
     return;
    }
   }
-  const remaining=Math.max(0,Math.ceil(1440-nowMin));
-  clockEl.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+  showCountdown(1440-nowMin);
   if(headingEl)headingEl.textContent='До кінця графіка на сьогодні';
   if(detailEl)detailEl.textContent='Завтрашній графік ще не опубліковано ДТЕК';
   return;
  }
- const remaining=Math.max(0,Math.ceil(toMin(next.begin)-nowMin));
- clockEl.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+ showCountdown(toMin(next.begin)-nowMin);
  if(headingEl)headingEl.textContent=next.power?'До планового ввімкнення':'До планового вимкнення';
  if(detailEl)detailEl.textContent='Очікувана подія: '+next.begin+' · Київ · JSON: '+fmtKyiv(new Date(generated));
 }
