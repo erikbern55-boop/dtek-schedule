@@ -636,6 +636,7 @@ const css = [
   ".v3-weather .weather-garden .wx-garden-art img{object-fit:contain!important;object-position:center!important;display:block!important;width:100%!important;height:100%!important}",
   ".v3-weather .weather-air .wx-fact{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 2px!important;font-size:12px!important;line-height:1.05!important;min-height:0!important;white-space:nowrap!important;border-bottom:1px solid #287b3c!important}",
   ".v3-weather .weather-air .wx-fact b{font-size:14px!important;white-space:nowrap!important}",
+  ".v3-weather .weather-air .wx-fact.wx-pressure b{font-size:12px!important;white-space:nowrap!important}",
 ].join("\n")
 
 export function buildCardV3Html({schedule,date,label="сьогодні",source="ДТЕК",update="—",weather=null,now=new Date()}) {
