@@ -112,7 +112,7 @@ function render(){
  renderTasks(m,day,selectedIso,today);renderWeather(selectedIso,today);
 }
 function addDays(dateString,n){const d=fromIso(dateString);d.setDate(d.getDate()+n);return iso(d)}
-function taskFor(m,weekday,category){return plans[m][category][weekday]}
+function taskFor(m,weekday,category){const index={garden:0,flower:1,orchard:2}[category];return plans[m][index][weekday]}
 function renderTasks(m,day,dateString,today){
  const catInfo=[['garden','🌱','Городник'],['flower','🌷','Квітникар'],['orchard','🌳','Садівник']];
  const weekday=(selected.getDay()+6)%7;
