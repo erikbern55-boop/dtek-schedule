@@ -267,6 +267,51 @@ jobs:
           const audit=JSON.parse(fs.readFileSync('dist/dtek-interval-audit.json'));
           console.log('REAL V3-TELEGRAM PARITY PASS',canonical.date,JSON.stringify(audit.days?.today||audit).slice(0,800));
           JS
+      - name: Verify the garden calendar at phone width with live weather
+        working-directory: v3-renderer
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          import http from 'node:http';
+          import { chromium } from 'playwright';
+          const html=fs.readFileSync('../guide/garden/index.html','utf8');
+          const tips=fs.readFileSync('../guide/lifehacks/index.html','utf8');
+          const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
+          const server=http.createServer((req,res)=>{
+            if(req.url.startsWith('/guide/garden/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(html);return}
+            if(req.url.startsWith('/guide/lifehacks/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(tips);return}
+            if(req.url.startsWith('/svitlopuls-live.json')){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(live));return}
+            res.writeHead(404);res.end('not found');
+          });
+          await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+          const browser=await chromium.launch({headless:true});
+          try{
+            const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,timezoneId:'Europe/Kyiv'});
+            const base='http://127.0.0.1:'+server.address().port;
+            await page.goto(base+'/guide/lifehacks/',{waitUntil:'networkidle'});
+            assert.equal(await page.locator('a.calendar-link[href="../garden/"]').count(),1,'Useful tips garden section must link to the calendar');
+            await page.screenshot({path:'../staging/useful-tips-mobile.png',fullPage:true});
+            await page.locator('a.calendar-link').click();
+            assert.ok(new URL(page.url()).pathname.endsWith('/guide/garden/'),'Calendar button must open the garden page');
+            await page.waitForFunction(()=>!document.querySelector('#weather b')?.textContent?.includes('Завантажую'));
+            assert.equal(await page.locator('.task').count(),3,'Show separate garden, flower and orchard jobs');
+            const parts=live.date.split('-').map(Number);
+            const expected=new Intl.DateTimeFormat('uk-UA',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(Date.UTC(parts[0],parts[1]-1,parts[2],12)));
+            assert.equal((await page.locator('#selectedDate').innerText()).trim().toLocaleLowerCase('uk-UA'),expected.toLocaleLowerCase('uk-UA'),'Calendar must default to live Kyiv date');
+            const dimensions=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,columns:getComputedStyle(document.querySelector('#tasks')).gridTemplateColumns.split(' ').length}));
+            assert.ok(dimensions.scroll<=dimensions.width,'Garden calendar must not overflow phone width: '+JSON.stringify(dimensions));
+            assert.equal(dimensions.columns,1,'Phone layout must show one task card per row');
+            const weather=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
+            assert.ok(weather.includes(String(Math.round(live.weather.todayMin)))&&weather.includes(String(Math.round(live.weather.todayMax))),'Today temperatures must match live JSON: '+weather);
+            await page.screenshot({path:'../staging/garden-calendar-mobile-today.png',fullPage:true});
+            await page.locator('#nextDay').click();
+            const tomorrow=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
+            assert.ok(tomorrow.includes(String(Math.round(live.weather.tomorrowMin)))&&tomorrow.includes(String(Math.round(live.weather.tomorrowMax))),'Tomorrow temperatures must match live JSON: '+tomorrow);
+            await page.screenshot({path:'../staging/garden-calendar-mobile-tomorrow.png',fullPage:true});
+            console.log('PASS garden calendar phone QA',live.date,JSON.stringify(dimensions),'today/tomorrow temperatures match live snapshot');
+          }finally{await browser.close();server.close()}
+          JS
       - uses: actions/upload-artifact@v4
         with:
           name: fullscreen-staging-site
