@@ -117,9 +117,9 @@ function renderTasks(m,day,dateString,today){
  const catInfo=[['garden','🌱','Городник'],['flower','🌷','Квітникар'],['orchard','🌳','Садівник']];
  const weekday=(selected.getDay()+6)%7;
  let items=catInfo.map(([key,icon,title])=>({key,icon,title,text:taskFor(m,weekday,key),tag:'Завдання на '+['понеділок','вівторок','середу','четвер','п’ятницю','суботу','неділю'][weekday]}));
- const todayWeather=live?.weather;
- const exactToday=dateString===today&&live?.date===today?todayWeather:null;
- const exactTomorrow=dateString===addDays(today,1)&&todayWeather?.tomorrowDate===dateString?todayWeather:null;
+ const todayWeather=live?.weather,weatherFresh=isFreshWeather(todayWeather);
+ const exactToday=dateString===today&&live?.date===today&&weatherFresh?todayWeather:null;
+ const exactTomorrow=dateString===addDays(today,1)&&todayWeather?.tomorrowDate===dateString&&weatherFresh?todayWeather:null;
  if(exactToday){
   if(Number.isFinite(exactToday.todayRain)&&exactToday.todayRain>=70){
    items[0].text='Не працюй на мокрих грядках. Перебери насіння, оглянь теплицю чи сховище, а посів і розпушування перенеси до підсихання ґрунту.';
@@ -148,8 +148,9 @@ function renderTasks(m,day,dateString,today){
  }
  $('tasks').innerHTML=items.map(x=>'<article class="task"><div class="taskhead"><div class="icon">'+x.icon+'</div><div><small class="category">'+(x.key==='garden'?'ГОРОД':x.key==='flower'?'КВІТНИК':'САД')+'</small><h3>'+x.title+'</h3></div></div><p>'+escapeHtml(x.text)+'</p><span class="tag">'+escapeHtml(x.tag)+'</span></article>').join('');
 }
+function isFreshWeather(w){const stamp=Date.parse(w?.fetchedAt||'');return w?.stale!==true&&Number.isFinite(stamp)&&Date.now()-stamp<30*60*1000&&Date.now()>=stamp-60*1000}
 function renderWeather(dateString,today){
- const box=$('weather'),w=live?.weather,stamp=Date.parse(w?.fetchedAt||''),fresh=Number.isFinite(stamp)&&Date.now()-stamp<30*60*1000&&Date.now()>=stamp-60*1000;
+ const box=$('weather'),w=live?.weather,stamp=Date.parse(w?.fetchedAt||''),fresh=isFreshWeather(w);
  box.className='weather'+(fresh?'':' stale');
  if(dateString===today&&w?.date===today&&fresh){
   const when=w.fetchedAt?new Intl.DateTimeFormat('uk-UA',{timeZone:'Europe/Kyiv',hour:'2-digit',minute:'2-digit'}).format(new Date(w.fetchedAt)):'—';
@@ -159,7 +160,9 @@ function renderWeather(dateString,today){
   box.innerHTML='<span class="symbol">🌤️</span><div><b>Завтра · '+temp(w.tomorrowMin)+'…'+temp(w.tomorrowMax)+'</b><small>Опади та температура ґрунту для завтра в наявному знімку окремо не вказані; перевір місцеві умови перед посадкою.</small></div>';return;
  }
  box.className='weather unavailable';
- if(dateString===today){box.innerHTML='<span class="symbol">🌿</span><div><b>Актуальний прогноз тимчасово недоступний</b><small>Показані сезонні справи. Перед роботою перевір погоду й ґрунт.</small></div>'}
+ if(dateString===today&&w?.date===today&&Number.isFinite(stamp)){const when=new Intl.DateTimeFormat('uk-UA',{timeZone:'Europe/Kyiv',hour:'2-digit',minute:'2-digit'}).format(new Date(stamp)),age=Math.max(0,Math.floor((Date.now()-stamp)/60000)),ageLabel=age<1?'щойно':'приблизно '+age+' хв тому';box.className='weather stale';box.innerHTML='<span class="symbol">⏳</span><div><b>Прогноз ще не оновився</b><small>Останні дані — '+when+' за Києвом ('+ageLabel+'). Поки показуємо сезонні справи без застарілих погодних підказок.</small></div>'}
+ else if(dateString===today){box.innerHTML='<span class="symbol">🌿</span><div><b>Актуальний прогноз тимчасово недоступний</b><small>Показані сезонні справи. Перед роботою перевір погоду й ґрунт.</small></div>'}
+ else if(dateString===addDays(today,1)&&!fresh&&w?.date===today){box.className='weather stale';box.innerHTML='<span class="symbol">⏳</span><div><b>Прогноз на завтра не оновився</b><small>Свіжих погодних даних поки немає; календар показує сезонні справи.</small></div>'}
  else if(dateString===addDays(today,1)){box.innerHTML='<span class="symbol">🌿</span><div><b>Прогноз на завтра ще недоступний</b><small>Календар покаже сезонні справи без припущень про погоду.</small></div>'}
  else{box.innerHTML='<span class="symbol">📅</span><div><b>Сезонний план без прогнозу погоди</b><small>Погода на цю дату ще не доступна. Календарна порада не означає, що умови придатні.</small></div>'}
 }
