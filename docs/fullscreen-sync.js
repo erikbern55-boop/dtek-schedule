@@ -1,7 +1,6 @@
 // Keep today's live V3 page and tomorrow's Telegram card on the same published snapshot.
 (async () => {
-  const requestedDay = new URLSearchParams(globalThis.location?.search || '').get('day');
-  const day = requestedDay === 'tomorrow' ? 'tomorrow' : 'today';
+  const day = /(?:^|[?&])day=tomorrow(?:&|$)/.test(globalThis.location?.search || '') ? 'tomorrow' : 'today';
   const kyivDay = () => new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Kyiv'}).format(new Date());
   const check = async () => {
     let fresh = false;
