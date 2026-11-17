@@ -303,11 +303,22 @@ jobs:
             assert.ok(dimensions.scroll<=dimensions.width,'Garden calendar must not overflow phone width: '+JSON.stringify(dimensions));
             assert.equal(dimensions.columns,1,'Phone layout must show one task card per row');
             const weather=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
-            assert.ok(weather.includes(String(Math.round(live.weather.todayMin)))&&weather.includes(String(Math.round(live.weather.todayMax))),'Today temperatures must match live JSON: '+weather);
+            const weatherAge=Date.now()-Date.parse(live.weather.fetchedAt);
+            const staleWeather=live.weather.stale===true||weatherAge>=30*60*1000||weatherAge< -60000;
+            if(staleWeather){
+              assert.match(weather,/Прогноз ще не оновився/,'Stale weather must be labelled clearly: '+weather);
+              assert.doesNotMatch(await page.locator('#tasks').innerText(),/Опади \d+%|Завтра мінімум|Завтра [+-]?\d+…\d+ °C/,'Stale forecast must not alter garden tasks');
+            }else{
+              assert.ok(weather.includes(String(Math.round(live.weather.todayMin)))&&weather.includes(String(Math.round(live.weather.todayMax))),'Today temperatures must match live JSON: '+weather);
+            }
             await page.screenshot({path:'../staging/garden-calendar-mobile-today.png',fullPage:true});
             await page.locator('#nextDay').click();
             const tomorrow=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
-            assert.ok(tomorrow.includes(String(Math.round(live.weather.tomorrowMin)))&&tomorrow.includes(String(Math.round(live.weather.tomorrowMax))),'Tomorrow temperatures must match live JSON: '+tomorrow);
+            if(staleWeather){
+              assert.match(tomorrow,/Прогноз на завтра не оновився/,'Tomorrow must disclose missing fresh data: '+tomorrow);
+            }else{
+              assert.ok(tomorrow.includes(String(Math.round(live.weather.tomorrowMin)))&&tomorrow.includes(String(Math.round(live.weather.tomorrowMax))),'Tomorrow temperatures must match live JSON: '+tomorrow);
+            }
             await page.screenshot({path:'../staging/garden-calendar-mobile-tomorrow.png',fullPage:true});
             console.log('PASS garden calendar phone QA',live.date,JSON.stringify(dimensions),'today/tomorrow temperatures match live snapshot');
           }finally{await browser.close();server.close()}
