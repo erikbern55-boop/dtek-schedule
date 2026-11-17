@@ -207,6 +207,7 @@ jobs:
           import assert from 'node:assert/strict';
           import {renderCardV3Png} from './src/card-v3.js';
           const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
+          let servedLive=live;
           const canonical=JSON.parse(fs.readFileSync('../staging/canonical/today.json','utf8'));
           const png=await renderCardV3Png({schedule:canonical.periods,date:canonical.date,label:'сьогодні',source:canonical.source,update:canonical.sourceUpdated,weather:live.weather});
           fs.writeFileSync('dist/telegram-v3-preview.png',png);
@@ -278,10 +279,11 @@ jobs:
           const html=fs.readFileSync('../guide/garden/index.html','utf8');
           const tips=fs.readFileSync('../guide/lifehacks/index.html','utf8');
           const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
+          let servedLive=live;
           const server=http.createServer((req,res)=>{
             if(req.url.startsWith('/guide/garden/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(html);return}
             if(req.url.startsWith('/guide/lifehacks/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(tips);return}
-            if(req.url.startsWith('/svitlopuls-live.json')){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(live));return}
+            if(req.url.startsWith('/svitlopuls-live.json')){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(servedLive));return}
             res.writeHead(404);res.end('not found');
           });
           await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -303,13 +305,38 @@ jobs:
             assert.ok(dimensions.scroll<=dimensions.width,'Garden calendar must not overflow phone width: '+JSON.stringify(dimensions));
             assert.equal(dimensions.columns,1,'Phone layout must show one task card per row');
             const weather=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
-            assert.ok(weather.includes(String(Math.round(live.weather.todayMin)))&&weather.includes(String(Math.round(live.weather.todayMax))),'Today temperatures must match live JSON: '+weather);
+            const weatherAge=Date.now()-Date.parse(live.weather.fetchedAt);
+            const staleWeather=live.weather.stale===true||weatherAge>=30*60*1000||weatherAge< -60000;
+            if(staleWeather){
+              assert.match(weather,/Прогноз ще не оновився/,'Stale weather must be labelled clearly: '+weather);
+              assert.doesNotMatch(await page.locator('#tasks').innerText(),/Опади \d+%|Завтра мінімум|Завтра [+-]?\d+…\d+ °C/,'Stale forecast must not alter garden tasks');
+            }else{
+              assert.ok(weather.includes(String(Math.round(live.weather.todayMin)))&&weather.includes(String(Math.round(live.weather.todayMax))),'Today temperatures must match live JSON: '+weather);
+            }
             await page.screenshot({path:'../staging/garden-calendar-mobile-today.png',fullPage:true});
             await page.locator('#nextDay').click();
             const tomorrow=(await page.locator('#weather').innerText()).replace(/\s+/g,' ');
-            assert.ok(tomorrow.includes(String(Math.round(live.weather.tomorrowMin)))&&tomorrow.includes(String(Math.round(live.weather.tomorrowMax))),'Tomorrow temperatures must match live JSON: '+tomorrow);
+            if(staleWeather){
+              assert.match(tomorrow,/Прогноз на завтра не оновився/,'Tomorrow must disclose missing fresh data: '+tomorrow);
+            }else{
+              assert.ok(tomorrow.includes(String(Math.round(live.weather.tomorrowMin)))&&tomorrow.includes(String(Math.round(live.weather.tomorrowMax))),'Tomorrow temperatures must match live JSON: '+tomorrow);
+            }
             await page.screenshot({path:'../staging/garden-calendar-mobile-tomorrow.png',fullPage:true});
-            console.log('PASS garden calendar phone QA',live.date,JSON.stringify(dimensions),'today/tomorrow temperatures match live snapshot');
+            const staleCopy=structuredClone(live);
+            staleCopy.weather.stale=true;
+            staleCopy.weather.fetchedAt=new Date(Date.now()-36*60*1000).toISOString();
+            servedLive=staleCopy;
+            await page.goto(base+'/guide/garden/',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>!document.querySelector('#weather b')?.textContent?.includes('Завантажую'));
+            const staleToday=(await page.locator('#weather').innerText()).replace(/\\s+/g,' ');
+            assert.match(staleToday,/Прогноз ще не оновився/,'Stale today weather must disclose its status and last fetch time');
+            assert.doesNotMatch(await page.locator('#tasks').innerText(),/Опади \\d+%|Завтра мінімум|Завтра [+-]?\\d+…\\d+ °C/,'Stale weather must not alter tasks');
+            await page.screenshot({path:'../staging/garden-calendar-stale-mobile-today.png',fullPage:true});
+            await page.locator('#nextDay').click();
+            const staleTomorrow=(await page.locator('#weather').innerText()).replace(/\\s+/g,' ');
+            assert.match(staleTomorrow,/Прогноз на завтра не оновився/,'Stale tomorrow weather must be disclosed');
+            await page.screenshot({path:'../staging/garden-calendar-stale-mobile-tomorrow.png',fullPage:true});
+            console.log('PASS garden calendar phone QA',live.date,JSON.stringify(dimensions),'fresh and stale weather paths verified');
           }finally{await browser.close();server.close()}
           JS
       - uses: actions/upload-artifact@v4
