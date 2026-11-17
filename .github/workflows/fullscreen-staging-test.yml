@@ -276,9 +276,11 @@ jobs:
           import http from 'node:http';
           import { chromium } from 'playwright';
           const html=fs.readFileSync('../guide/garden/index.html','utf8');
+          const tips=fs.readFileSync('../guide/lifehacks/index.html','utf8');
           const live=JSON.parse(fs.readFileSync('dist/svitlopuls-live.json','utf8'));
           const server=http.createServer((req,res)=>{
             if(req.url.startsWith('/guide/garden/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(html);return}
+            if(req.url.startsWith('/guide/lifehacks/')){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(tips);return}
             if(req.url.startsWith('/svitlopuls-live.json')){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(live));return}
             res.writeHead(404);res.end('not found');
           });
@@ -286,7 +288,12 @@ jobs:
           const browser=await chromium.launch({headless:true});
           try{
             const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,timezoneId:'Europe/Kyiv'});
-            await page.goto('http://127.0.0.1:'+server.address().port+'/guide/garden/',{waitUntil:'networkidle'});
+            const base='http://127.0.0.1:'+server.address().port;
+            await page.goto(base+'/guide/lifehacks/',{waitUntil:'networkidle'});
+            assert.equal(await page.locator('a.calendar-link[href="../garden/"]').count(),1,'Useful tips garden section must link to the calendar');
+            await page.screenshot({path:'../staging/useful-tips-mobile.png',fullPage:true});
+            await page.locator('a.calendar-link').click();
+            assert.ok(new URL(page.url()).pathname.endsWith('/guide/garden/'),'Calendar button must open the garden page');
             await page.waitForFunction(()=>!document.querySelector('#weather b')?.textContent?.includes('Завантажую'));
             assert.equal(await page.locator('.task').count(),3,'Show separate garden, flower and orchard jobs');
             const parts=live.date.split('-').map(Number);
