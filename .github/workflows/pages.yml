@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/index.html'
+      - 'docs/fullscreen-sync.js'
       - 'scripts/canonical-v3-generator.mjs'
       - 'guide/**'
       - '.github/workflows/pages.yml'
