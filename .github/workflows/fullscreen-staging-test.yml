@@ -300,7 +300,8 @@ jobs:
             assert.equal(await page.locator('.task').count(),3,'Show separate garden, flower and orchard jobs');
             const parts=live.date.split('-').map(Number);
             const expected=new Intl.DateTimeFormat('uk-UA',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'}).format(new Date(Date.UTC(parts[0],parts[1]-1,parts[2],12)));
-            const displayed=(await page.locator('#selectedDate').innerText()).trim().toLocaleLowerCase('uk-UA').replace(/^.*?,\\s*/, '');
+            const displayed=(await page.locator('#selectedDate').innerText()).trim().toLocaleLowerCase('uk-UA');
+            const displayedDate=displayed.slice(displayed.indexOf(',')+2);
             assert.equal(displayed,expected.toLocaleLowerCase('uk-UA'),'Calendar must default to live Kyiv date');
             const dimensions=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,columns:getComputedStyle(document.querySelector('#tasks')).gridTemplateColumns.split(' ').length}));
             assert.ok(dimensions.scroll<=dimensions.width,'Garden calendar must not overflow phone width: '+JSON.stringify(dimensions));
