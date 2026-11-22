@@ -117,11 +117,15 @@ jobs:
           # Keep the existing Telegram-compatible snapshots and URLs intact.
           test -s snapshots/web/today.png
           test -s snapshots/web/today.json
+          test -s snapshots/web/today.html
           cp snapshots/web/today.json site/today.json
           cp snapshots/web/today.png site/today.png
-          if [ -s snapshots/web/today.html ]; then cp snapshots/web/today.html site/today.html; fi
-          if [ -s snapshots/web/tomorrow.png ]; then cp snapshots/web/tomorrow.png site/tomorrow.png; fi
-          if [ -s snapshots/web/tomorrow.html ]; then cp snapshots/web/tomorrow.html site/tomorrow.html; fi
+          cp snapshots/web/today.html site/today.html
+          if [ -s snapshots/web/tomorrow.png ]; then
+            test -s snapshots/web/tomorrow.html
+            cp snapshots/web/tomorrow.png site/tomorrow.png
+            cp snapshots/web/tomorrow.html site/tomorrow.html
+          fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
