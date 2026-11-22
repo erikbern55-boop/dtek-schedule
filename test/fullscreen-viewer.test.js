@@ -24,3 +24,11 @@ test("pages deployment reads snapshots from artifact branch", () => {
   assert.match(yaml, /snapshots\/web\/today.png/)
   assert.match(yaml, /actions\/deploy-pages@/)
 })
+
+test("fullscreen schedule panels open the official DTEK schedule", () => {
+  const sync = fs.readFileSync(new URL("../docs/fullscreen-sync.js", import.meta.url), "utf8")
+  assert.match(sync, /\.v3-power > \.v3-panel:last-child/)
+  assert.match(sync, /class="dtek-schedule-hotspot"/)
+  assert.match(sync, /https:\/\/www\.dtek-krem\.com\.ua\/ua\/shutdowns/)
+  assert.match(sync, /left:68\.5%;top:8%;width:30%;height:15\.3%/)
+})
