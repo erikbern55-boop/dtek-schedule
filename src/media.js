@@ -91,6 +91,8 @@ export function buildCaption({ schedule, date, label, source, changeSummary = ""
   return caption
 }
 
+// Publish PNG, canonical JSON and scrollable HTML as one unit. A failure must
+// stop the Telegram photo update so the live viewer cannot fall behind the card.
 function saveViewerSnapshot(png, label, details) {
   // Public viewer receives only rendered graphics, never Telegram credentials.
   try {
@@ -142,7 +144,8 @@ layout();
     html=html.replace('</body>',script+'</body>');
     fs.writeFileSync("artifacts/web/" + basename + ".html", html)
   } catch (error) {
-    console.warn("⚠️ Viewer snapshot unavailable: " + error.message)
+    console.error("❌ Viewer snapshot unavailable; Telegram image update cancelled to keep both views aligned: " + error.message)
+    throw error
   }
 }
 
