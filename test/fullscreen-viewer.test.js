@@ -25,10 +25,15 @@ test("pages deployment reads snapshots from artifact branch", () => {
   assert.match(yaml, /actions\/deploy-pages@/)
 })
 
-test("fullscreen schedule panels open the official DTEK schedule", () => {
+test("fullscreen Telegram snapshots retain scrollable schedule HTML", () => {
   const sync = fs.readFileSync(new URL("../docs/fullscreen-sync.js", import.meta.url), "utf8")
-  assert.match(sync, /\.v3-power > \.v3-panel:last-child/)
-  assert.match(sync, /class="dtek-schedule-hotspot"/)
-  assert.match(sync, /https:\/\/www\.dtek-krem\.com\.ua\/ua\/shutdowns/)
-  assert.match(sync, /left:68\.5%;top:8%;width:30%;height:15\.3%/)
+  const yaml = fs.readFileSync(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8")
+  const media = fs.readFileSync(new URL("../src/card-v3.js", import.meta.url), "utf8")
+  assert.match(sync, /<iframe title="Прокручувана картка Telegram"/)
+  assert.match(sync, /frame\.src = '\.\/' \+ day \+ '\.html\?fullscreen='/)
+  assert.doesNotMatch(sync, /dtek-schedule-hotspot/)
+  assert.match(media, /v3-periods[^\n]*overflow:auto/)
+  assert.match(media, /www\.dtek-krem\.com\.ua\/ua\/shutdowns/)
+  assert.match(yaml, /test -s snapshots\/web\/today\.html/)
+  assert.match(yaml, /test -s snapshots\/web\/tomorrow\.html/)
 })
