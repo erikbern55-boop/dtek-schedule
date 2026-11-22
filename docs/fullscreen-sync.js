@@ -1,7 +1,25 @@
 // Keep today's live V3 page and tomorrow's Telegram card on the same published snapshot.
 (async () => {
   const day = /(?:^|[?&])day=tomorrow(?:&|$)/.test(globalThis.location?.search || '') ? 'tomorrow' : 'today';
+  const DTEK_SCHEDULE_URL = 'https://www.dtek-krem.com.ua/ua/shutdowns';
   const kyivDay = () => new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Kyiv'}).format(new Date());
+
+  // Today's card is live HTML, so make its schedule panel a direct DTEK link.
+  const addLiveScheduleLink = () => {
+    const panel = document.querySelector?.('.v3-power > .v3-panel:last-child');
+    if (!panel || panel.querySelector?.('.dtek-schedule-hotspot')) return;
+    panel.style.position = 'relative';
+    const link = document.createElement('a');
+    link.className = 'dtek-schedule-hotspot';
+    link.href = DTEK_SCHEDULE_URL;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', 'Відкрити офіційний графік відключень ДТЕК');
+    link.title = 'Відкрити офіційний графік ДТЕК';
+    link.style.cssText = 'position:absolute;inset:0;z-index:10;display:block;text-decoration:none;cursor:pointer';
+    panel.appendChild(link);
+  };
+
   const check = async () => {
     let fresh = false;
     if (day === 'today') {
@@ -39,7 +57,7 @@
         fallback = document.createElement('div');
         fallback.id = 'telegram-synced-fallback';
         fallback.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#020e08;overflow:auto;text-align:center';
-        fallback.innerHTML = '<div style="font:14px Arial;color:#e3ffeb;padding:8px">Опублікована картка Telegram · оновлюється разом із графіком</div><img alt="Поточна картка Telegram" style="width:100%;max-width:1200px;height:auto" />';
+        fallback.innerHTML = '<div style="font:14px Arial;color:#e3ffeb;padding:8px">Опублікована картка Telegram · оновлюється разом із графіком</div><div style="position:relative;width:100%;max-width:1200px;margin:0 auto"><img alt="Поточна картка Telegram" style="display:block;width:100%;height:auto" /><a class="dtek-schedule-hotspot" href="https://www.dtek-krem.com.ua/ua/shutdowns" target="_blank" rel="noopener noreferrer" aria-label="Відкрити офіційний графік відключень ДТЕК" title="Відкрити офіційний графік ДТЕК" style="position:absolute;left:68.5%;top:8%;width:30%;height:15.3%;z-index:2;display:block;text-decoration:none;cursor:pointer"></a></div>';
         document.body.appendChild(fallback);
       }
       fallback.querySelector('img').src = './' + day + '.png?t=' + Date.now();
@@ -47,6 +65,7 @@
       fallback.remove();
     }
   };
+  addLiveScheduleLink();
   await check();
   setInterval(check, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
