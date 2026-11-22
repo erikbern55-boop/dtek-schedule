@@ -17,6 +17,7 @@ test("published cards use artifact worktree and Telegram viewer button", () => {
   assert.match(media, /artifacts\/web\//)
   assert.match(media, /Відкрити на весь екран/)
   assert.match(media, /reply_markup/)
+  assert.match(media, /console\\.error\\("❌ Viewer snapshot unavailable; Telegram image update cancelled to keep both views aligned: " \\+ error\\.message\\)\\s*throw error/)
 })
 test("pages deployment reads snapshots from artifact branch", () => {
   const yaml = fs.readFileSync(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8")
