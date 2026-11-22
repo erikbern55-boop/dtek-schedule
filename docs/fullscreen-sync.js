@@ -1,7 +1,6 @@
 // Keep today's live V3 page and tomorrow's Telegram card on the same published snapshot.
 (async () => {
   const day = /(?:^|[?&])day=tomorrow(?:&|$)/.test(globalThis.location?.search || '') ? 'tomorrow' : 'today';
-  const DTEK_SCHEDULE_URL = 'https://www.dtek-krem.com.ua/ua/shutdowns';
   const kyivDay = () => new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Kyiv'}).format(new Date());
 
   const check = async () => {
