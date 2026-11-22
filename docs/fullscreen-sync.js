@@ -44,6 +44,7 @@
         document.body.appendChild(fallback);
       }
       const frame = fallback.querySelector('iframe');
+      frame.dataset = frame.dataset || {};
       const frameDay = frame.dataset.day;
       if (frameDay !== day) {
         frame.dataset.day = day;
