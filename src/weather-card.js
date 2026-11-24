@@ -199,6 +199,8 @@ export const WEATHER_CSS = [
 export function renderWeatherPanel(weather,date,label="сьогодні") {
   const moon=lunarForDate(date)
   const [symbol,desc]=condition(weather?.currentNowCode ?? weather?.code)
+  const todayCondition=condition(weather?.todayCode)
+  const todayConditionLabel=Number.isFinite(weather?.todayCode)?" · "+todayCondition[0]+" "+todayCondition[1]:""
   const stamp=weather?.fetchedAt?new Intl.DateTimeFormat("uk-UA", {
     timeZone:"Europe/Kyiv",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"
   }).format(new Date(weather.fetchedAt)):"—"
@@ -226,7 +228,7 @@ export function renderWeatherPanel(weather,date,label="сьогодні") {
       '<div class="wx-weather-main"><div class="wx-symbol">'+esc(symbol)+'</div>'+
       '<div><div class="wx-now-label">🌡 Температура зараз</div>'+
       '<div class="wx-now">'+esc(temp(air))+'</div><div class="wx-cond">'+esc(desc)+'</div></div></div>'+
-      '<div class="wx-today-box"><div class="wx-today-heading">📅 Сьогодні · '+esc(todayNumber)+'</div>'+
+      '<div class="wx-today-box"><div class="wx-today-heading">📅 Сьогодні · '+esc(todayNumber)+esc(todayConditionLabel)+'</div>'+
       '<div class="wx-forecast-values">'+
       '<div>Мінімум<b>'+esc(temp(weather.todayMin))+'</b></div>'+
       '<div>Максимум<b>'+esc(temp(weather.todayMax))+'</b></div></div></div>'+
