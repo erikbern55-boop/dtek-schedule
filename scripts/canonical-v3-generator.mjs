@@ -164,7 +164,7 @@ function addTodayForecastCondition(markup,weather){
  const code=weather?.todayCode;
  if(!Number.isFinite(code))return markup;
  const condition=code===0?['☀️','Ясно']:[1,2].includes(code)?['🌤','Мінлива хмарність']:code===3?['☁️','Хмарно']:[45,48].includes(code)?['🌫','Туман']:[51,53,55,56,57].includes(code)?['🌦','Мряка']:[61,63,65,66,67,80,81,82].includes(code)?['🌧','Дощ']:[71,73,75,77,85,86].includes(code)?['❄️','Сніг']:[95,96,99].includes(code)?['⛈','Гроза']:['☁️','Прогноз недоступний'];
- const heading=/(<div class="wx-today-heading">📅 Сьогодні · [^<]*?)(<\/div>);
+ const heading=/(<div class="wx-today-heading">📅 Сьогодні · [^<]*?)(<\/div>)/;
  if(!heading.test(markup))throw Error('Fullscreen today forecast heading missing');
  return markup.replace(heading,(_match,before,after)=>before+' · '+condition[0]+' '+condition[1]+after);
 }
