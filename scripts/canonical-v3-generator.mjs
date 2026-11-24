@@ -160,11 +160,20 @@ function clarifyCountdown(markup,periods,dayLabel){
  }
  return markup;
 }
+function addTodayForecastCondition(markup,weather){
+ const code=weather?.todayCode;
+ if(!Number.isFinite(code))return markup;
+ const condition=code===0?['☀️','Ясно']:[1,2].includes(code)?['🌤','Мінлива хмарність']:code===3?['☁️','Хмарно']:[45,48].includes(code)?['🌫','Туман']:[51,53,55,56,57].includes(code)?['🌦','Мряка']:[61,63,65,66,67,80,81,82].includes(code)?['🌧','Дощ']:[71,73,75,77,85,86].includes(code)?['❄️','Сніг']:[95,96,99].includes(code)?['⛈','Гроза']:['☁️','Прогноз недоступний'];
+ const heading=/(<div class="wx-today-heading">📅 Сьогодні · [^<]*?)(<\/div>)/;
+ if(!heading.test(markup))throw Error('Fullscreen today forecast heading missing');
+ return markup.replace(heading,(_match,before,after)=>before+' · '+condition[0]+' '+condition[1]+after);
+}
 const renderNow=new Date(result.canonicalGeneratedAt);
 const details={schedule:result.periods,date,label:'сьогодні',update:result.sourceUpdated??'',source:result.source??'НЕМАЄ АКТУАЛЬНИХ ДАНИХ',now:renderNow,weather:result.weather};
 let html='';
 if(result.live){
   html=neutralCalendar(clarifyCountdown(buildCardV3Html(details),result.periods,'сьогодні'));
+  html=addTodayForecastCondition(html,result.weather);
   const guideLinks=[
     ['<span><strong>☁ Погода і ґрунт:</strong><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span>','<span><strong>☁ Погода і ґрунт:</strong><a href="./guide/weather/">Український довідник погоди</a></span>'],
     ['<span><strong>🌱 Агрономічні поради:</strong><a href="https://www.rhs.org.uk/" target="_blank" rel="noopener noreferrer">RHS</a><a href="https://ucanr.edu/" target="_blank" rel="noopener noreferrer">UCANR</a></span>','<span><strong>🌱 Агрономічні поради:</strong><a href="./guide/garden/">Поради городникам</a></span>'],

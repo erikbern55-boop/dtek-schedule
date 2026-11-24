@@ -307,6 +307,7 @@ test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather 
   assert.match(today,/Порада на сьогодні/)
   for(const html of [today,tomorrow]) {
     assert.match(html,/Сьогодні · 07\.11/)
+    assert.match(html,/☁️ Хмарно/)
     assert.match(html,/Мінімум<b>-3°C<\/b>/)
     assert.match(html,/Максимум<b>\+6°C<\/b>/)
     assert.match(html,/Завтра · 08\.11/)
@@ -353,4 +354,10 @@ test("sowing guidance is seasonal, changes daily and avoids unsafe outdoor sowin
  assert.match(panel,/Можна сіяти \/ саджати/)
  assert.match(panel,/Поки не варто/)
  assert.match(panel,/За місячним календарем/)
+})
+
+test("today forecast condition is shown independently from current conditions",()=>{
+ const html=renderWeatherPanel({currentNowCode:3,todayCode:71,todayDate:"2026-11-07",min:-3,max:6},"2026-11-07")
+ assert.match(html,/Хмарно/)
+ assert.match(html,/Сьогодні · 07\.11 · ❄️ Сніг/)
 })
