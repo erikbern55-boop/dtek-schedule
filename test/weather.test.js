@@ -17,7 +17,7 @@ const sample={
     "2026-11-07T12:00","2026-11-07T16:00","2026-11-08T11:00",
     "2026-11-08T12:00","2026-11-09T12:00"],
   soil_temperature_6cm:[2.5,3.2,3.4,3.6,4.5,5.2,6.1,7.0],
-  weather_code:[3,3,61,61,2,3,2,3],
+  weather_code:[3,3,61,61,3,3,2,3],
  },
  current:{temperature_2m:-1,relative_humidity_2m:72,surface_pressure:1008,weather_code:3,wind_speed_10m:4},
  daily:{
@@ -74,7 +74,7 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(today.tomorrowMax,8)
   assert.equal(today.tomorrowDate,"2026-11-08")
   assert.equal(today.todayDate,"2026-11-07")
-  assert.equal(today.todayCode,2) // Hourly conditions override a conflicting daily snow code
+  assert.equal(today.todayCode,3) // Hourly conditions override a conflicting daily snow code
   assert.equal(today.todayMin,-3)
   assert.equal(today.todayMax,6)
   assert.equal(today.todayRain,65)
@@ -310,7 +310,7 @@ test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather 
   assert.match(today,/Порада на сьогодні/)
   for(const html of [today,tomorrow]) {
     assert.match(html,/Сьогодні · 07\.11/)
-    assert.match(html,/☁️ Хмарно/)
+    assert.match(html,/Сьогодні · 07\\.11 · ☁️ Хмарно/)
     assert.match(html,/Мінімум<b>-3°C<\/b>/)
     assert.match(html,/Максимум<b>\+6°C<\/b>/)
     assert.match(html,/Завтра · 08\.11/)
