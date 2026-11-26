@@ -17,10 +17,11 @@ const sample={
     "2026-11-07T12:00","2026-11-07T16:00","2026-11-08T11:00",
     "2026-11-08T12:00","2026-11-09T12:00"],
   soil_temperature_6cm:[2.5,3.2,3.4,3.6,4.5,5.2,6.1,7.0],
+  weather_code:[3,3,61,61,3,3,2,3],
  },
  current:{temperature_2m:-1,relative_humidity_2m:72,surface_pressure:1008,weather_code:3,wind_speed_10m:4},
  daily:{
-  time:dates,weather_code:[3,61,2],
+  time:dates,weather_code:[85,61,2],
   temperature_2m_max:[6,8,9],
   temperature_2m_min:[-3,2,1],
   sunrise:["2026-11-07T07:02","2026-11-08T07:04","2026-11-09T07:06"],
@@ -43,7 +44,8 @@ test("settlement weather query uses precise provided coordinates and Kyiv timezo
  assert.equal(u.searchParams.get("timezone"),"Europe/Kyiv")
  assert.equal(u.searchParams.get("wind_speed_unit"),"ms")
  assert.match(u.searchParams.get("daily"),/sunrise,sunset/)
- assert.equal(u.searchParams.get("hourly"),"soil_temperature_6cm")
+ assert.ok(u.searchParams.get("hourly").includes("soil_temperature_6cm"))
+ assert.ok(u.searchParams.get("hourly").includes("weather_code"))
 })
 test("weather is fetched once and refreshed every 30 minutes (independent of five-minute polling)",async()=>{
  const d=makeDir(),file=path.join(d,"weather.json")
@@ -72,6 +74,7 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(today.tomorrowMax,8)
   assert.equal(today.tomorrowDate,"2026-11-08")
   assert.equal(today.todayDate,"2026-11-07")
+  assert.equal(today.todayCode,3) // Hourly conditions override a conflicting daily snow code
   assert.equal(today.todayMin,-3)
   assert.equal(today.todayMax,6)
   assert.equal(today.todayRain,65)
@@ -157,7 +160,7 @@ test("bad response cannot masquerade as real settlement forecast",async()=>{
 test("unavailable soil never becomes a fabricated 0°C or sensor reading", async()=>{
  const dir=makeDir(),file=path.join(dir,"cache.json")
  try{
-  const data={...sample,hourly:{time:["2026-11-07T12:00"],soil_temperature_6cm:[null]}}
+  const data={...sample,hourly:{time:["2026-11-07T12:00"],soil_temperature_6cm:[null],weather_code:[3]}}
   const snap=await loadWeather({now:start,file,requester:async()=>({ok:true,json:async()=>data})})
   const weather=weatherForDate(snap,"2026-11-07",start)
   assert.equal(weather.soilTemp,null)
@@ -307,7 +310,7 @@ test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather 
   assert.match(today,/Порада на сьогодні/)
   for(const html of [today,tomorrow]) {
     assert.match(html,/Сьогодні · 07\.11/)
-    assert.match(html,/☁️ Хмарно/)
+    assert.match(html,/Сьогодні[^<]*☁️ Хмарно/)
     assert.match(html,/Мінімум<b>-3°C<\/b>/)
     assert.match(html,/Максимум<b>\+6°C<\/b>/)
     assert.match(html,/Завтра · 08\.11/)
