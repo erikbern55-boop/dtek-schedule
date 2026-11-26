@@ -17,10 +17,11 @@ const sample={
     "2026-11-07T12:00","2026-11-07T16:00","2026-11-08T11:00",
     "2026-11-08T12:00","2026-11-09T12:00"],
   soil_temperature_6cm:[2.5,3.2,3.4,3.6,4.5,5.2,6.1,7.0],
+  weather_code:[3,3,61,61,2,3,2,3],
  },
  current:{temperature_2m:-1,relative_humidity_2m:72,surface_pressure:1008,weather_code:3,wind_speed_10m:4},
  daily:{
-  time:dates,weather_code:[3,61,2],
+  time:dates,weather_code:[85,61,2],
   temperature_2m_max:[6,8,9],
   temperature_2m_min:[-3,2,1],
   sunrise:["2026-11-07T07:02","2026-11-08T07:04","2026-11-09T07:06"],
@@ -43,7 +44,8 @@ test("settlement weather query uses precise provided coordinates and Kyiv timezo
  assert.equal(u.searchParams.get("timezone"),"Europe/Kyiv")
  assert.equal(u.searchParams.get("wind_speed_unit"),"ms")
  assert.match(u.searchParams.get("daily"),/sunrise,sunset/)
- assert.equal(u.searchParams.get("hourly"),"soil_temperature_6cm")
+ assert.ok(u.searchParams.get("hourly").includes("soil_temperature_6cm"))
+ assert.ok(u.searchParams.get("hourly").includes("weather_code"))
 })
 test("weather is fetched once and refreshed every 30 minutes (independent of five-minute polling)",async()=>{
  const d=makeDir(),file=path.join(d,"weather.json")
@@ -72,6 +74,7 @@ test("weather forecast data is date-specific; tomorrow does not show today's cur
   assert.equal(today.tomorrowMax,8)
   assert.equal(today.tomorrowDate,"2026-11-08")
   assert.equal(today.todayDate,"2026-11-07")
+  assert.equal(today.todayCode,2) // Hourly conditions override a conflicting daily snow code
   assert.equal(today.todayMin,-3)
   assert.equal(today.todayMax,6)
   assert.equal(today.todayRain,65)
