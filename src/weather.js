@@ -21,7 +21,7 @@ export function weatherApiUrl() {
     latitude: String(KHIMIK.latitude), longitude: String(KHIMIK.longitude),
     timezone: "Europe/Kyiv", wind_speed_unit: "ms", forecast_days: "3",
     current: "temperature_2m,relative_humidity_2m,surface_pressure,weather_code,wind_speed_10m,wind_gusts_10m,is_day",
-    hourly: "soil_temperature_6cm",
+    hourly: "soil_temperature_6cm,weather_code",
     daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,wind_gusts_10m_max",
   }
   for (const [k, v] of Object.entries(p)) u.searchParams.set(k, v)
@@ -49,7 +49,40 @@ function validateForecast(data, now) {
       Math.abs(Number(data.longitude) - KHIMIK.longitude) > 0.3) {
     throw Error("Weather forecast coordinates do not match the requested area")
   }
+  const hourly = data.hourly
+  if (!Array.isArray(hourly?.time) || !Array.isArray(hourly.weather_code) ||
+      hourly.weather_code.length !== hourly.time.length ||
+      hourly.weather_code.some(code => !Number.isFinite(code))) {
+    throw Error("Open-Meteo missing hourly weather_code")
+  }
   return data
+}
+
+function representativeHourlyCode(hourly, date, now) {
+  const times = hourly?.time
+  const codes = hourly?.weather_code
+  if (!Array.isArray(times) || !Array.isArray(codes) || times.length !== codes.length) return null
+  const hour = new Intl.DateTimeFormat("en-GB", {
+    timeZone:"Europe/Kyiv", hour:"2-digit", hourCycle:"h23",
+  }).format(now)
+  const cutoff = date + "T" + hour + ":00"
+  const day = []
+  const upcoming = []
+  for (let i=0; i<times.length; i++) {
+    if (times[i]?.slice(0,10) !== date || !Number.isFinite(codes[i])) continue
+    day.push(codes[i])
+    if (times[i] >= cutoff) upcoming.push(codes[i])
+  }
+  const candidates = upcoming.length ? upcoming : day
+  if (!candidates.length) return null
+  const counts = new Map()
+  for (const code of candidates) counts.set(code, (counts.get(code) ?? 0) + 1)
+  let representative = candidates[0], highest = 0
+  for (const code of candidates) {
+    const count = counts.get(code)
+    if (count > highest) { representative = code; highest = count }
+  }
+  return representative
 }
 
 function readWeatherCache(file) {
@@ -83,7 +116,8 @@ export async function loadWeather({
   const age = cached ? now.getTime() - Date.parse(cached.fetchedAt) : Infinity
   const fresh = cached && age >= 0 && age < WEATHER_REFRESH_MS &&
     cached.data?.daily?.time?.includes(kyivDate(now)) &&
-    Array.isArray(cached.data.hourly?.soil_temperature_6cm)
+    Array.isArray(cached.data.hourly?.soil_temperature_6cm) &&
+    Array.isArray(cached.data.hourly?.weather_code)
   if (fresh) return cached
   try {
     const response = await requester(weatherApiUrl(), {
@@ -132,6 +166,7 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     ? daily.precipitation_probability_max[iToday] : null
   const todayGust = Number.isFinite(daily.wind_gusts_10m_max?.[iToday])
     ? daily.wind_gusts_10m_max[iToday] : null
+  const todayCode = representativeHourlyCode(snapshot.data?.hourly, todayDate, now)
   const tomorrowIndex = iToday >= 0 ? iToday + 1 : -1
   const tomorrowDate = tomorrowIndex >= 0 ? dates[tomorrowIndex] ?? null : null
   const tomorrowMin = Number.isFinite(daily.temperature_2m_min?.[tomorrowIndex])
@@ -185,7 +220,7 @@ export function weatherForDate(snapshot, date, now = new Date()) {
     currentNowHumidity: Number.isFinite(currentNow?.relative_humidity_2m) ? currentNow.relative_humidity_2m : null,
     currentNowGust: Number.isFinite(currentNow?.wind_gusts_10m) ? currentNow.wind_gusts_10m : null,
     currentNowAt: currentNow?.time ?? null,
-    todayDate, todayCode: Number.isFinite(daily.weather_code?.[iToday]) ? daily.weather_code[iToday] : null,
+    todayDate, todayCode,
     todayMin, todayMax, todayRain, todayGust,
     tomorrowDate, tomorrowMin, tomorrowMax,
     currentWind: Number.isFinite(current?.wind_speed_10m) ? current.wind_speed_10m : null,
