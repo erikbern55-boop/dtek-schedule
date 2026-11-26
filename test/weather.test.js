@@ -160,7 +160,7 @@ test("bad response cannot masquerade as real settlement forecast",async()=>{
 test("unavailable soil never becomes a fabricated 0°C or sensor reading", async()=>{
  const dir=makeDir(),file=path.join(dir,"cache.json")
  try{
-  const data={...sample,hourly:{time:["2026-11-07T12:00"],soil_temperature_6cm:[null]}}
+  const data={...sample,hourly:{time:["2026-11-07T12:00"],soil_temperature_6cm:[null],weather_code:[3]}}
   const snap=await loadWeather({now:start,file,requester:async()=>({ok:true,json:async()=>data})})
   const weather=weatherForDate(snap,"2026-11-07",start)
   assert.equal(weather.soilTemp,null)
