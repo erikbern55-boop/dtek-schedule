@@ -310,7 +310,7 @@ test("tomorrow panel keeps tomorrow-specific soil and gardening but the weather 
   assert.match(today,/Порада на сьогодні/)
   for(const html of [today,tomorrow]) {
     assert.match(html,/Сьогодні · 07\.11/)
-    assert.match(html,/Сьогодні · 07\\.11 · ☁️ Хмарно/)
+    assert.match(html,/Сьогодні[^<]*☁️ Хмарно/)
     assert.match(html,/Мінімум<b>-3°C<\/b>/)
     assert.match(html,/Максимум<b>\+6°C<\/b>/)
     assert.match(html,/Завтра · 08\.11/)
